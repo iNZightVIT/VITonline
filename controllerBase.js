@@ -63,10 +63,11 @@ controllerBase.prototype.parseRestOfURL = function() {
 	this.model.display.changeStat(stat);
 
 
-	var sampleSize = urlParams.get("samplesize");
+	var sampleSize = urlParams.has("samplesize") ? urlParams.get("samplesize") : this.model.display.sampleSize;
 	this.switchTab2();
 	var statSelection = d3.select("#statSelect");
 	statSelection.attr("value", stat);
+
 	this.startVisFull(sampleSize);
 }
 function getUrlParameter(name) {
