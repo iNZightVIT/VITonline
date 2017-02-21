@@ -86,7 +86,7 @@ controllerBase.prototype.startVisFull = function(sampleSize){
 		this.model.destroy();
 		//var sampleSize = d3.select("#sampsize").property("value");
 		this.model.display.setUpPopulation();
-		this.model.display.setUpSamples(this.model.inputData.length);
+		this.model.display.setUpSamples(sampleSize);
 		this.model.display.draw();
 		this.view.finishSetUp();
 
@@ -170,7 +170,7 @@ controllerBase.prototype.statChanged = function(e){
 	}
 controllerBase.prototype.startVisPressed = function(){
 		//this.view.finishSetUp();
-		this.startVisFull(this.model.inputData.length);
+		this.startVisFull(40);
 		d3.select("#Calculate").attr("disabled", true);
 		d3.select("#Pause").attr("disabled", null);
 	}
