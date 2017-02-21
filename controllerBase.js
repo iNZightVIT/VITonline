@@ -3,6 +3,8 @@ var controllerBase = function(){
 	this.model = new model(this);
 	this.model.loadData();
 	this.view.loadMain(this.model.dataHeadings);
+	this.parseURL(window.location.search);
+
 	this.paused = false;
 	this.going = false;
 	this.fadeOn = false;
@@ -10,21 +12,81 @@ var controllerBase = function(){
 controllerBase.prototype.getPresets = function(){
 		this.model.getPresets(this.view.setupPresets);
 	}
-controllerBase.prototype.loadFromPreset = function(filename){
-	this.model.loadFromPreset(filename);
+controllerBase.prototype.loadFromPreset = function(filename, fromURL){
+	this.model.loadFromPreset(filename, fromURL);
+	var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?file=' + filename;
+	this.fileURL = newurl;
+	if(!fromURL){
+		window.history.pushState({path:newurl},'', newurl);
+	}
 }
+controllerBase.prototype.parseURL = function(url){
+	var urlParams = new URLSearchParams(window.location.search);
+	//alert(url);
+	var file = urlParams.get("file");
+	if(file){
+		if(file == "test"){
+			this.loadTestData(true);
+		}else{
+			this.loadFromPreset(file, true);
+		}
+	}
+}
+
+controllerBase.prototype.parseRestOfURL = function() {
+	var urlParams = new URLSearchParams(window.location.search);
+	// set input vars as fake variables ()
+	var variables = urlParams.getAll("var");
+	if(variables){
+		var e = {};
+		e.target = {};
+		e.target.selectedOptions = [];
+		for (var v in variables){
+			var va = {};
+			va.value = variables[v];
+			e.target.selectedOptions.push(va);
+		}
+	}
+	this.varSelected(e, true);
+
+	var focus = urlParams.get("focus");
+	if(focus){
+		var e = {};
+		e.target = {};
+		e.target.value = focus;
+		this.focusSelected(e, true);
+	}
+
+	var stat = urlParams.get("stat");
+	if(stat != "Mean" && stat != "Median" && stat != "proportion")
+		stat = "Mean";
+	this.model.display.changeStat(stat);
+
+
+	var sampleSize = 40;
+	var sampleSize = urlParams.get("samplesize");
+	this.switchTab2();
+	var statSelection = d3.select("#statSelect");
+	statSelection.attr("value", stat);
+	this.startVisFull(sampleSize);
+}
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+};
 controllerBase.prototype.startAnimation = function(numReps, goSlow, incDist){
 		this.model.display.startAnim(numReps, goSlow, incDist);
 	}
 controllerBase.prototype.resetScreen = function(){
 		this.model.display.resetLines();
 	}
-controllerBase.prototype.startVisFull = function(){
+controllerBase.prototype.startVisFull = function(sampleSize){
 		this.model.destroy();
 		//var sampleSize = d3.select("#sampsize").property("value");
-		var sampleSize = this.model.inputData.length;
 		this.model.display.setUpPopulation();
-		this.model.display.setUpSamples(sampleSize);
+		this.model.display.setUpSamples(this.model.inputData.length);
 		this.model.display.draw();
 		this.view.finishSetUp();
 
@@ -52,26 +114,44 @@ controllerBase.prototype.impButPressed = function(e){
 		this.view.destroyVSelect();
 		this.model.getFile(e);
 	}
-controllerBase.prototype.loadTestData = function(){
+controllerBase.prototype.loadTestData = function(fromURL){
 		this.view.destroyFocus();
 		this.view.destroyVSelect();
-		this.model.loadPresetData();
+		this.model.loadPresetData(fromURL);
 	}
-controllerBase.prototype.varSelected = function(e){
+controllerBase.prototype.varSelected = function(e, fromURL){
 		d3.select(".svg").selectAll("text").remove();
 		this.view.destroyFocus();
 		this.view.destroyVSelect();
 		this.model.varSelected(e.target.selectedOptions);
 		this.view.varSelected(e.target.selectedOptions);
+
+		if(!fromURL){
+			if(this.fileURL){
+				var newurl = this.fileURL;
+			}else {
+				var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+			}
+			for (var i = 0; i < e.target.selectedOptions.length; i++){
+				newurl += ("&var="+e.target.selectedOptions[i].value);
+			}
+			this.varURL = newurl;
+			window.history.pushState({path:newurl},'', newurl);
+		}
+		
 	}
 controllerBase.prototype.noVisAvail = function(){
 		this.view.noVisAvail();
 	}
-controllerBase.prototype.focusSelected = function(e){
+controllerBase.prototype.focusSelected = function(e, fromURL){
 		var changeTo = e.target.value;
 		//this.model.destroy();
 		this.model.switchFocus(changeTo);
 		this.startVisPreveiw();
+		if(!fromURL){
+			var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.search.split("&focus")[0] + "&focus=" + e.target.value;
+			window.history.pushState({path:newurl},'', newurl);
+		}
 	}
 controllerBase.prototype.backPressed = function(){
 		this.model.destroy();
@@ -85,16 +165,18 @@ controllerBase.prototype.stopPressed = function(){
 controllerBase.prototype.statChanged = function(e){
 		this.model.display.changeStat(e.target.value);
 		this.startVisPreveiw();
+		var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.search.split("&stat")[0] + "&stat=" + e.target.value;;
+		window.history.pushState({path:newurl},'', newurl);
 	}
 controllerBase.prototype.startVisPressed = function(){
 		//this.view.finishSetUp();
-		this.startVisFull();
+		this.startVisFull(this.model.inputData.length);
 		d3.select("#Calculate").attr("disabled", true);
 		d3.select("#Pause").attr("disabled", null);
 	}
-controllerBase.prototype.setUpDataVeiw = function(csv){
+controllerBase.prototype.setUpDataVeiw = function(csv, fromURL){
 		var self = this;
-		this.model.setUpDataVeiw(csv, function(h){self.view.setUpDataVeiw(h)});
+		this.model.setUpDataVeiw(csv, function(h){self.view.setUpDataVeiw(h); if(fromURL){self.parseRestOfURL()}});
 		
 	}
 controllerBase.prototype.setUpStatSelection = function(category){

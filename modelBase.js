@@ -68,7 +68,7 @@ modelBase.prototype.getPresets = function(cB){
 	// })
 	//return ["olympics100m.csv", 'drug data (15)','census at school'];
 }
-modelBase.prototype.loadFromPreset = function(filename){
+modelBase.prototype.loadFromPreset = function(filename, fromURL){
 	var self = this;
 		//this.controller.setUpDataVeiw(this.storedData[filename]);
 	var xhr = createCORSRequest('GET', "https://www.stat.auckland.ac.nz/~wild/VITonline/getFileTest.php"+"?fn=" +filename);
@@ -79,7 +79,7 @@ modelBase.prototype.loadFromPreset = function(filename){
 		  // Response handlers.
 	  xhr.onload = function() {
 	    var text = xhr.responseText;
-	    self.controller.setUpDataVeiw(text);
+	    self.controller.setUpDataVeiw(text, fromURL);
 	  };
 
 	  xhr.onerror = function() {
@@ -148,6 +148,7 @@ modelBase.prototype.loadFromURL = function(url){
 	}
 
 modelBase.prototype.setUpDataVeiw = function(csv, callback){
+		this.dataSplit = [];
 		var self = this;
 		var parsed = d3.csv.parse(csv);
 		if(parsed.length == 0){
@@ -170,9 +171,9 @@ modelBase.prototype.setUpDataVeiw = function(csv, callback){
 		})
 		callback(this.dataHeadings);
 	}
-modelBase.prototype.loadPresetData = function(){
+modelBase.prototype.loadPresetData = function(fromURL){
 		this.fileName = "test data";
-		this.controller.setUpDataVeiw(this.testingData);
+		this.controller.setUpDataVeiw(this.testingData, fromURL);
 	}
 modelBase.prototype.varSelected = function(e){
 		if(this.display){

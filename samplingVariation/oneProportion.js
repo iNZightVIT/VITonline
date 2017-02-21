@@ -22,7 +22,10 @@ function oneProportion(inputData, heading, focus){
 	this.drawnSamples = [];
 			this.implemented = true;
 
-
+	this.changeStat = function(newStatistic){
+		this.statistic = newStatistic;
+		this.destroy();
+	}
 	this.setUpPopulation = function(){
 		this.sampleSize = 40;
 		this.samples.push([]);

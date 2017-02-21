@@ -215,12 +215,12 @@ viewBase.prototype.finishSetUp = function(){
 	}
 viewBase.prototype.setUpDataVeiw = function(dataHeadings){
 
-		d3.select("#file").text("file: " + mainControl.model.fileName +"; ");
+		d3.select("#file").text("file: " + this.controller.model.fileName +"; ");
 		var selectMenu = d3.select("#inputContainer select").attr("size",dataHeadings.length).attr("multiple","multiple");
 		selectMenu.selectAll("*").remove();
 		selectMenu.append("option").attr("value","placeHolder").text("Please Choose a variable").attr("disabled",true).attr("selected",true).attr("hidden",true);
 		dataHeadings.forEach(function(e){
-			selectMenu.append("option").attr("value",e).text(e[0]+" ("+e[1]+")").attr("data");
+			selectMenu.append("option").attr("value",e).text(e[0]+" ("+e[1]+")").attr("data", true);
 		});
 
 		d3.select("#startButton").remove();
@@ -233,10 +233,11 @@ viewBase.prototype.setUpStatSelection = function(category){
 		category.forEach(function(c){
 			var nO = statSelection.append("option").attr("value",c).text(c);
 			if(selectFirst){
-				nO.attr("selected","selected");
+				//nO.attr("selected","selected");
 				selectFirst=false;
 			}
 		});
+		statSelection.attr("value", 'Mean');
 	}
 viewBase.prototype.unPause = function(incDist){
 		if(incDist){

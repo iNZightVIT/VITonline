@@ -3,9 +3,13 @@ function controller(){
 }
 controller.prototype = Object.create(controllerBase.prototype);
 controller.prototype.constructor = controller;
-controller.prototype.startVisFull = function(){
+controller.prototype.startVisFull = function(sampsize){
 		this.model.destroy();
-		var sampleSize = d3.select("#sampsize").property("value");
+		if(!sampsize){
+			var sampleSize = d3.select("#sampsize").property("value");
+		}else{
+			var sampleSize = sampsize;
+		}
 		this.model.display.setUpPopulation();
 		this.model.display.setUpSamples(sampleSize);
 		this.model.display.draw();
