@@ -63,7 +63,6 @@ controllerBase.prototype.parseRestOfURL = function() {
 	this.model.display.changeStat(stat);
 
 
-	var sampleSize = 40;
 	var sampleSize = urlParams.get("samplesize");
 	this.switchTab2();
 	var statSelection = d3.select("#statSelect");
@@ -170,7 +169,7 @@ controllerBase.prototype.statChanged = function(e){
 	}
 controllerBase.prototype.startVisPressed = function(){
 		//this.view.finishSetUp();
-		this.startVisFull(40);
+		this.startVisFull(this.model.display.sampleSize);
 		d3.select("#Calculate").attr("disabled", true);
 		d3.select("#Pause").attr("disabled", null);
 	}
