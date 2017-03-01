@@ -25,7 +25,7 @@ controllerBase.prototype.parseURL = function(url){
 	//alert(url);
 	var file = urlParams.get("file");
 	if(file){
-		if(file == "test"){
+		if(file == "testdata"){
 			this.loadTestData(true);
 		}else{
 			this.loadFromPreset(file, true);
@@ -118,6 +118,11 @@ controllerBase.prototype.loadTestData = function(fromURL){
 		this.view.destroyFocus();
 		this.view.destroyVSelect();
 		this.model.loadPresetData(fromURL);
+		var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?file=testdata';
+		this.fileURL = newurl;
+		if(!fromURL){
+			window.history.pushState({path:newurl},'', newurl);
+		}
 	}
 controllerBase.prototype.varSelected = function(e, fromURL){
 		d3.select(".svg").selectAll("text").remove();
