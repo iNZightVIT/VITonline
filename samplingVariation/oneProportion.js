@@ -1,5 +1,5 @@
 
-function oneProportion(inputData, heading, focus){
+function oneProportion(inputData, heading, focus, unique){
 	this.radius = 5;
 	this.population = [];
 	this.populationStatistic = null;
@@ -21,6 +21,7 @@ function oneProportion(inputData, heading, focus){
 	this.category = heading;
 	this.drawnSamples = [];
 			this.implemented = true;
+			this.unique1 = unique;
 
 	this.changeStat = function(newStatistic){
 		this.statistic = newStatistic;
@@ -32,7 +33,7 @@ function oneProportion(inputData, heading, focus){
 		this.drawnSamples = [];
 		this.secondaryGroup = null;
 		var groups = {};
-		this.unique1 = mainControl.model.dataSplit[heading].filter(onlyUnique);
+		
 		if(this.unique1.length == 2){
 			if(focus != this.unique1[1]){
 				this.order[1] = this.unique1[1];

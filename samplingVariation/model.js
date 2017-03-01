@@ -10,8 +10,8 @@ function model(controller){
 			return test;
 		});
 		modelObj.controller.makeFocusSelector(unique, cat[0]);
-		return new oneProportion(filtered, cat[0], unique[0])}},
-	{name:"twoProportion", numeretical:0,categorical:2,stats:1,setupParams:function(num, cat, modelObj){var unique1 = modelObj.dataSplit[cat[0]].filter(onlyUnique); modelObj.controller.makeFocusSelector(unique1, cat[0]); modelObj.controller.makeVarSelector(cat[0],cat[1]);return new twoProportion(modelObj.inputData, cat[0], cat[1], unique1[0])}},
+		return new oneProportion(filtered, cat[0], unique[0], unique)}},
+	{name:"twoProportion", numeretical:0,categorical:2,stats:1,setupParams:function(num, cat, modelObj){var unique1 = modelObj.dataSplit[cat[0]].filter(onlyUnique); modelObj.controller.makeFocusSelector(unique1, cat[0]); modelObj.controller.makeVarSelector(cat[0],cat[1]);return new twoProportion(modelObj.inputData, cat[0], cat[1], unique1[0], modelObj.dataSplit[cat[0]].filter(onlyUnique), modelObj.dataSplit[cat[1]].filter(onlyUnique))}},
 	{name:"slope", numeretical:2,categorical:0,stats:2,setupParams:function(num, cat, modelObj){return new slope(modelObj.inputData, num[0], num[1])}}];
 
 }

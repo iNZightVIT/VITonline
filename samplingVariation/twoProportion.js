@@ -1,5 +1,5 @@
 
-function twoProportion(inputData, heading, heading2, focus){
+function twoProportion(inputData, heading, heading2, focus, u1, u2){
 	this.radius = 5;
 	this.population = [];
 	this.populationStatistic = null;
@@ -24,14 +24,16 @@ function twoProportion(inputData, heading, heading2, focus){
 			this.implemented = true;
 			this.popGroups = {};
 
-
+	this.changeStat = function(stat) {
+		return;
+	}
 	this.setUpPopulation = function(){
 		this.sampleSize = 40;
 		this.samples.push([]);
 		this.drawnSamples = [];
 		var groups = {};
-		this.unique1 = mainControl.model.dataSplit[heading].filter(onlyUnique);
-		this.unique2 = mainControl.model.dataSplit[heading2].filter(onlyUnique);
+		this.unique1 = u1;
+		this.unique2 = u2;
 		if(this.unique1.length == 2){
 			if(focus != this.unique1[1]){
 				this.order[1] = this.unique1[1];

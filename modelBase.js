@@ -218,13 +218,13 @@ modelBase.prototype.switchFocus = function(newFocus){
 			this.display = new oneProportion(this.inputData.filter(function(d){
 			var test = d[curCategory] != "NA";
 			return test;
-		}), curCategory, newFocus)
+		}), curCategory, newFocus, this.dataSplit[curCategory].filter(onlyUnique))
 		}
 		if(this.currentDisplayType == 3){
 			this.display = new twoProportion(this.inputData.filter(function(d){
 			var test = d[curCategory] != "NA" && d[curCategory2] != "NA";
 			return test;
-		}), curCategory, curCategory2, newFocus)
+		}), curCategory, curCategory2, newFocus, this.dataSplit[curCategory].filter(onlyUnique), this.dataSplit[curCategory2].filter(onlyUnique))
 		}
 	}
 modelBase.prototype.switchVar = function(changeTo){
@@ -238,7 +238,7 @@ modelBase.prototype.switchVar = function(changeTo){
 		var newFocus = unique[0];
 		this.controller.makeFocusSelector(unique, curCategory2);
 		if(this.currentDisplayType == 3){
-			this.display = new twoProportion(this.inputData, curCategory2, changeTo, newFocus);
+			this.display = new twoProportion(this.inputData, curCategory2, changeTo, newFocus, this.dataSplit[curCategory2].filter(onlyUnique), this.dataSplit[changeTo].filter(onlyUnique));
 		}
 
 	}
