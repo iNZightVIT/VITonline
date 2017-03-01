@@ -12,7 +12,7 @@ viewBase.prototype.visPreveiw = function(disp){
 
 viewBase.prototype.leaveVis = function(){
 		d3.select("#visControls1").remove();
-		d3.select("#visControls26").remove();
+		d3.select("#visControls2").remove();
 	}
 viewBase.prototype.setUpTab2 = function(){
 	var self = this;
