@@ -134,14 +134,13 @@ controllerBase.prototype.varSelected = function(e, fromURL){
 		if(!fromURL){
 			if(this.fileURL){
 				var newurl = this.fileURL;
-			}else {
-				var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+				for (var i = 0; i < e.target.selectedOptions.length; i++){
+					newurl += ("&var="+e.target.selectedOptions[i].value);
+				}
+				this.varURL = newurl;
+				window.history.pushState({path:newurl},'', newurl);
 			}
-			for (var i = 0; i < e.target.selectedOptions.length; i++){
-				newurl += ("&var="+e.target.selectedOptions[i].value);
-			}
-			this.varURL = newurl;
-			window.history.pushState({path:newurl},'', newurl);
+
 		}
 		
 	}
