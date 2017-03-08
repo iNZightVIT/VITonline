@@ -67,7 +67,7 @@ controllerBase.prototype.parseRestOfURL = function() {
 	this.switchTab2();
 	var statSelection = d3.select("#statSelect");
 	statSelection.attr("value", stat);
-
+	d3.select("#Calculate").attr("disabled", true);
 	this.startVisFull(sampleSize);
 }
 function getUrlParameter(name) {
@@ -255,6 +255,9 @@ controllerBase.prototype.doneVis = function(){
 	}
 controllerBase.prototype.showCI = function(){
 		this.model.display.showCI("1");
+	}
+controllerBase.prototype.showLargeCI = function(){
+		this.model.display.showLargeCI();
 	}
 controllerBase.prototype.showCITenk = function(){
 		this.model.display.showCI("10");

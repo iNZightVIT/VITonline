@@ -790,7 +790,7 @@ this.drawSample = function(){
 				if(diff != 0) {var arrowHead = diff / Math.abs(diff);} else { var arrowHead = 0;}
 
 		var diff = to - from;
-		var headSize = 20;
+		var headSize = 10;
 
 		var arrow = drawArrow(function(d){
 					return self.xScale(d.s1);

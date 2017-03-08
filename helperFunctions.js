@@ -49,11 +49,14 @@ function drawArrow(to, from, yValue, placement, id, op, color){
 		var from = from(data);
 		var diff = to - from;
 	}
-	var headSize = 20;
+	var headSize = 10;
 	if(Math.abs(diff) < headSize) headSize =Math.abs(diff)*0.5;
 	if(diff != 0) {var arrowHead = diff / Math.abs(diff);} else { var arrowHead = 0;}
+	var direction = diff > 0 ? -1 : 1;
 	var arm1 = group.append("line").attr("x1", to).attr("x2", to - arrowHead*headSize).attr("y1", yValue).attr("y2", yValue + arrowHead*1*headSize/2).style("stroke-width", 2).style("stroke", color).style("opacity", op).attr("id", id+"a1");
 	var arm2 = group.append("line").attr("x1", to).attr("x2", to - arrowHead*headSize).attr("y1", yValue).attr("y2", yValue - arrowHead*1*headSize/2).style("stroke-width", 2).style("stroke", color).style("opacity", op).attr("id", id+"a2");
+	// var arm1 = group.append("line").attr("x1", to).attr("x2", to + (10*direction)).attr("y1", yValue).attr("y2", yValue + 5).style("stroke-width", 2).style("stroke", color).style("opacity", op).attr("id", id+"a1");
+	// var arm2 = group.append("line").attr("x1", to).attr("x2", to + (10*direction)).attr("y1", yValue).attr("y2", yValue - 5).style("stroke-width", 2).style("stroke", color).style("opacity", op).attr("id", id+"a2");
 	return [mainLine, arm1, arm2];
 }
 
