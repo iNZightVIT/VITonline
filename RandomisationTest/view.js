@@ -36,4 +36,8 @@ view.prototype.makeButtons = function(){
 		vs.append("label").attr("for","distThousand").attr("class","repLabel").text("1000");
 		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","distSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(true)")
 			.style("height","15%");
+		tab2.select("#tab2Bot").append("input").attr("type","button").attr("value","Show Tail Proportion").attr("class","bluebutton").classed("CIButton",true).attr("id","CIButton").attr("disabled",true).attr("onClick","mainControl.showCI()")
+			.style("height","15%");
+		tab2.select("#tab2Bot").append("input").attr("type","button").attr("value","Show tail for 10,000 samples").attr("class","bluebutton").classed("CIButton",true).attr("id","CIButtonLarge").attr("disabled",true).attr("onClick","mainControl.showLargeCI()")
+			.style("height","15%");
 }
