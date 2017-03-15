@@ -88,6 +88,27 @@ modelBase.prototype.loadFromPreset = function(filename, fromURL){
 
 	  xhr.send();
 }
+
+modelBase.prototype.loadFromURL = function(filename, fromURL){
+	var self = this;
+		//this.controller.setUpDataVeiw(this.storedData[filename]);
+	//var xhr = createCORSRequest('GET', "https://www.stat.auckland.ac.nz/~wild/VITonline/getFileFromURL.php"+"?fn=" +filename);
+	var xhr = createCORSRequest('GET', "http://localhost:8080/getFileFromURL.php"+"?fn=" +filename);	
+	if (!xhr) {
+  		throw new Error('CORS not supported');
+	}
+		  // Response handlers.
+	  xhr.onload = function() {
+	    var text = xhr.responseText;
+	    self.controller.setUpDataVeiw(text, fromURL);
+	  };
+
+	  xhr.onerror = function() {
+	    alert('Woops, there was an error making the request.');
+	  };
+
+	  xhr.send();
+}
 modelBase.prototype.loadData = function(){
 		this.dataSplit = [];
 		var lines = this.testingData.split('\n');
@@ -136,16 +157,16 @@ modelBase.prototype.getFile = function(inputFile){
 modelBase.prototype.loadFromText = function(text){
 		this.controller.setUpDataVeiw(text);
 	}
-modelBase.prototype.loadFromURL = function(url){
-		var file;
-		$.ajax({
-			type: 'GET',
-			url: url,
-			contentType: 'text/plain',
-			xhrFields: { withCredentials: false},
-			success: function(d){ file = d; this.controller.setUpDataVeiw(file);}
-		});
-	}
+// modelBase.prototype.loadFromURL = function(url){
+// 		var file;
+// 		$.ajax({
+// 			type: 'GET',
+// 			url: url,
+// 			contentType: 'text/plain',
+// 			xhrFields: { withCredentials: false},
+// 			success: function(d){ file = d; this.controller.setUpDataVeiw(file);}
+// 		});
+// 	}
 
 modelBase.prototype.setUpDataVeiw = function(csv, callback){
 		this.dataSplit = [];

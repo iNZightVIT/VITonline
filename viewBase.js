@@ -93,8 +93,8 @@ viewBase.prototype.loadMain = function(dataHeadings){
 		var importFileB = tab1.append("input").attr("name", "importfiles").attr("type", "file").attr("value","import files").attr("id","importButton");
 		var label = tab1.append("label").attr("for", "importButton").text("Choose a Local file").attr("class","bluebutton");
 
-		//var importFromURL = tab1.append("input").attr("name", "importURL").attr("type", "button").attr("value","Data from URL").attr("id","importURL").attr("class","bluebutton").attr("onClick","mainControl.loadFromURL()");
-		//var URLInput = tab1.append("input").attr("name", "URLInput").attr("type", "text").attr("placeholder","import data from...").attr("id","URLInput");
+		var URLInput = tab1.append("input").attr("name", "URLInput").attr("type", "text").attr("placeholder","import data from...").attr("id","URLInput");
+		var importFromURL = tab1.append("input").attr("name", "importURL").attr("type", "button").attr("value","Data from URL").attr("id","importURL").attr("class","bluebutton");
 
 		var textInput = tab1.append("textarea").attr("name", "textInput").attr("type", "text").attr("placeholder","paste csv data here...").attr("id","textInput");
 		var importFromText = tab1.append("input").attr("name", "importText").attr("type", "button").attr("value","Data from Text").attr("id","importText").attr("class","bluebutton").attr("disabled", "true");
@@ -119,9 +119,9 @@ viewBase.prototype.loadMain = function(dataHeadings){
 		// urlButton.onchange = function(e){
 		// 	controller.loadFromURL(document.getElementById("URLInput").value);
 		// }
-		// $("#importURL").click(function(){
-		// 	controller.loadFromURL($("#URLInput").val());
-		// })
+		$("#importURL").click(function(){
+		 	self.controller.loadFromURL($("#URLInput").val());
+		 })
 		$("#importPreset").click(function(){
 			d3.select("#presetSelect").selectAll("*").remove();
 			self.controller.getPresets();

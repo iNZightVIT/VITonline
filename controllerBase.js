@@ -20,6 +20,23 @@ controllerBase.prototype.loadFromPreset = function(filename, fromURL){
 		window.history.pushState({path:newurl},'', newurl);
 	}
 }
+controllerBase.prototype.loadFromURL = function(url, fromURL) {
+	this.model.loadFromURL(url, fromURL);
+	var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?file=' + url;
+	this.fileURL = newurl;
+	if(!fromURL){
+		window.history.pushState({path:newurl},'', newurl);
+	}
+}
+function isURL(str) {
+  var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
+  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+  '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+  return pattern.test(str);
+}
 controllerBase.prototype.parseURL = function(url){
 	var urlParams = new URLSearchParams(window.location.search);
 	//alert(url);
@@ -27,6 +44,8 @@ controllerBase.prototype.parseURL = function(url){
 	if(file){
 		if(file == "testdata"){
 			this.loadTestData(true);
+		}else if(isURL(file)){
+			this.loadFromURL(file, true);
 		}else{
 			this.loadFromPreset(file, true);
 		}
@@ -58,9 +77,11 @@ controllerBase.prototype.parseRestOfURL = function() {
 	}
 
 	var stat = urlParams.get("stat");
-	if(stat != "Mean" && stat != "Median" && stat != "proportion")
-		stat = "Mean";
-	this.model.display.changeStat(stat);
+	if(stat){
+		if(stat != "Mean" && stat != "Median" && stat != "proportion")
+			stat = "Mean";
+		this.model.display.changeStat(stat);
+	}
 
 
 	var sampleSize = urlParams.has("samplesize") ? urlParams.get("samplesize") : this.model.display.sampleSize;
