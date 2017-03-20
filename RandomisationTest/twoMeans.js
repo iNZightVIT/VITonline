@@ -275,18 +275,19 @@ this.drawPop = function(){
 		var fontSize = fS[0];
 		this.fontSize = fontSize;
 		var titleFS = fS[1];
+		this.titleFS = titleFS;
 		var popText = svg.append("svg").attr("id","popText");
 		svg.append("svg").attr("id","sampText");
 		popText.append("rect").attr("width",self.windowHelper.sampleSectionDiv*3).attr("x", self.windowHelper.marginSample).attr("height",self.windowHelper.height - self.windowHelper.marginSample).attr("y", self.windowHelper.marginSample).attr("rx", "20").attr("ry","20").style("fill","#D0D0D0").style("stroke","black");
 		popText.append("rect").attr("width",self.windowHelper.sampleSectionDiv*3).attr("x", self.windowHelper.marginSample*2 + self.windowHelper.sampleSectionDiv*3).attr("height",self.windowHelper.height - self.windowHelper.marginSample).attr("y", self.windowHelper.marginSample).attr("rx", "20").attr("ry","20").style("fill","#D0D0D0").style("stroke","black");
-		svg.append("text").text(headingContinuous).attr("x",self.windowHelper.sampleSectionDiv*0 + self.windowHelper.marginSample).attr("y",self.windowHelper.marginSample*2 + fontSize*2).style("font-size",fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block");
-		svg.append("text").text(headingGroup).attr("x",self.windowHelper.sampleSectionDiv*2).attr("y",self.windowHelper.marginSample*2 + fontSize*2).style("font-size",fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block");
+		svg.append("text").text(headingContinuous).attr("x",self.windowHelper.sampleSectionDiv*0.1 + self.windowHelper.marginSample).attr("y",self.windowHelper.marginSample + titleFS).style("font-size",fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block");
+		svg.append("text").text(headingGroup).attr("x",self.windowHelper.sampleSectionDiv*2).attr("y",self.windowHelper.marginSample + titleFS).style("font-size",fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block");
 		var popTextG = popText.selectAll("g").data(this.allPop).enter().append("g");
-		popTextG.append("text").text(function(d){return d.value}).attr("x",self.windowHelper.sampleSectionDiv*0 +self.windowHelper.marginSample).attr("y",function(d,i){return (fontSize*(i+3)+self.windowHelper.marginSample*(i+2))}).style("font-size",fontSize).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block");
-		popTextG.append("text").text(function(d){return d.group}).attr("x",self.windowHelper.sampleSectionDiv*2 -self.windowHelper.marginSample).attr("y",function(d,i){return (fontSize*(i+3)+self.windowHelper.marginSample*(i+2))}).style("font-size",fontSize).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").style("stroke", function(d){return colorByIndex[self.groups.indexOf(d.group)]});
+		popTextG.append("text").text(function(d){return d.value}).attr("x",self.windowHelper.sampleSectionDiv*0.1 +self.windowHelper.marginSample).attr("y",function(d,i){return i < 59 ? (self.windowHelper.marginSample + titleFS + (fontSize+2)*(i+1)) : -10}).style("font-size",fontSize).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block");
+		popTextG.append("text").text(function(d){return d.group}).attr("x",self.windowHelper.sampleSectionDiv*2 -self.windowHelper.marginSample).attr("y",function(d,i){return i < 59 ? (self.windowHelper.marginSample + titleFS + (fontSize+2)*(i+1)) : -10}).style("font-size",fontSize).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").style("stroke", function(d){return colorByIndex[self.groups.indexOf(d.group)]});
 
 		svg.append("svg").attr("id","redTContainer");
-		svg.append("text").text("Re-randomised").attr("x",self.windowHelper.sampleSectionDiv*3 + self.windowHelper.marginSample*3).attr("y",self.windowHelper.marginSample*2 + fontSize*2).style("font-size",fontSize*1.1).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block");
+		svg.append("text").text("Re-randomised").attr("x",self.windowHelper.sampleSectionDiv*3 + self.windowHelper.marginSample*5).attr("y",self.windowHelper.marginSample + titleFS).style("font-size",fontSize*1.1).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block");
 
 }
 
@@ -547,7 +548,7 @@ this.drawSample = function(){
 			var popTextG =popText.enter().append("g");
 			popTextG.append("text").text(function(d){
 				return d.group;
-			}).attr("x",self.windowHelper.marginSample*-5 + self.windowHelper.sampleSectionDiv*5).attr("y",function(d,i){return (self.fontSize*(i+3)+self.windowHelper.marginSample*(i+2))}).style("font-size",self.fontSize).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").style("stroke", function(d){return colorByIndex[self.groups.indexOf(d.group)]});
+			}).attr("x",self.windowHelper.marginSample*-5 + self.windowHelper.sampleSectionDiv*5).attr("y",function(d,i){return i < 59 ? (self.windowHelper.marginSample + self.titleFS + (self.fontSize+2)*(i+1)) : -10}).style("font-size",self.fontSize).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").style("stroke", function(d){return colorByIndex[self.groups.indexOf(d.group)]});
 
 			this.splitIntoRandCategories(settings);
 		//}

@@ -267,8 +267,8 @@ function makeBoxplot(x,y,width,height,population,xScale,lq,med,uq){
 
 }
 function getFontSize(wH, leng){
-
-		var fontSize = (wH.height - (leng+2)*wH.marginSample) / (leng+2);
+	if (leng > 60) leng = 60;
+		var fontSize = (wH.height - (leng*2)) / (leng+2);
 		if(fontSize>wH.sampleSection*0.05)fontSize=wH.sampleSection*0.05;
 		var titleFS = wH.width * wH.height / 50000;
 		return [fontSize, titleFS];
