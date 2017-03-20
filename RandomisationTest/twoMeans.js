@@ -30,6 +30,7 @@ function twoMeans(inputData, headingGroup, headingContinuous, statistic){
 		this.destroy();
 	}
 	this.setUpPopulation = function(){
+		var self = this;
 		this.sampleSize = 40;
 
 		// Creates a helper for placing items; basically gives easy access to 
@@ -66,6 +67,11 @@ function twoMeans(inputData, headingGroup, headingContinuous, statistic){
 		this.xScale.domain([min,max]);
 		var s = [];
 
+		// we want the groups in order of lowest to highest statistic
+		// mainly so the arrow always points right (i think)
+		this.groups.sort(function(a,b){
+			return getStatistic(self.statistic,self.populations[a]) - getStatistic(self.statistic,self.populations[b]);
+		})
 		// Sets up a section for each of the categorical variable possibilities.
 		for(var j =0; j <this.groups.length;j++){
 			var top = (this.windowHelper.section1.top +(this.windowHelper.section1.height/this.groups.length) * j);
