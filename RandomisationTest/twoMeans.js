@@ -497,6 +497,7 @@ this.drawSample = function(){
 			circles.style("fill",function(d){return colorByIndex[d.groupIndex]})
 			.attr("fill-opacity", 1)
 			.transition().duration(self.transitionSpeed)
+			.transition().duration(self.transitionSpeed)
 			    .attr("cy", function(d) {
 			    	return d.yPerSample[settings.indexUpTo+1];
 		    	}).style("fill",function(d){return colorByIndex[d.groupIndex]})
