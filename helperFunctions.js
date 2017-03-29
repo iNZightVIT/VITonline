@@ -141,20 +141,45 @@ function getStatistic(stat, origItems){
 		return med;
 	}
 	if(stat =="Lq"){
+		// Find median
 		if(items.length == 1) return items[0].value;
 		items.sort(function(a,b){return a.value - b.value});
-		var lQIndexLow = Math.floor(items.length*0.25);
-		var lQIndexHigh = Math.ceil(items.length*0.25);
+		var itemLow = items[Math.floor((items.length-1)/2)];
+		var itemHigh = items[Math.ceil((items.length-1)/2)];
 
-		return (items[lQIndexLow].value+items[lQIndexHigh].value)/2;
+		// If Median is a single value, return median of items below.
+		if(itemLow == itemHigh){
+			return getStatistic("Median", items.slice(0,Math.floor((items.length-1)/2)));
+		}else{
+			return getStatistic("Median", items.slice(0,Math.ceil((items.length-1)/2)));
+		}
+
+		// if(items.length == 1) return items[0].value;
+		// items.sort(function(a,b){return a.value - b.value});
+		// var lQIndexLow = Math.floor(items.length*0.25);
+		// var lQIndexHigh = Math.ceil(items.length*0.25);
+
+		// return (items[lQIndexLow].value+items[lQIndexHigh].value)/2;
 	}
 	if(stat =="Uq"){
+		// Find median
 		if(items.length == 1) return items[0].value;
 		items.sort(function(a,b){return a.value - b.value});
-		var lQIndexLow = Math.floor(items.length*0.75);
-		var lQIndexHigh = Math.ceil(items.length*0.75);
+		var itemLow = items[Math.floor((items.length-1)/2)];
+		var itemHigh = items[Math.ceil((items.length-1)/2)];
 
-		return (items[lQIndexLow].value+items[lQIndexHigh].value)/2;
+		// If Median is a single value, return median of items above.
+		if(itemLow == itemHigh){
+			return getStatistic("Median", items.slice(Math.ceil((items.length-1)/2) + 1));
+		}else{
+			return getStatistic("Median", items.slice(Math.ceil((items.length-1)/2)));
+		}
+		// if(items.length == 1) return items[0].value;
+		// items.sort(function(a,b){return a.value - b.value});
+		// var lQIndexLow = Math.floor(items.length*0.75);
+		// var lQIndexHigh = Math.ceil(items.length*0.75);
+
+		// return (items[lQIndexLow].value+items[lQIndexHigh].value)/2;
 	}
 }
 
