@@ -30,6 +30,7 @@ function twoMeans(inputData, headingGroup, headingContinuous, statistic){
 		this.destroy();
 	}
 	this.setUpPopulation = function(){
+		var self = this;
 		this.sampleSize = 40;
 		this.thirds = this.windowHelper.section2.height/4;
 		var max = null;
@@ -52,6 +53,11 @@ function twoMeans(inputData, headingGroup, headingContinuous, statistic){
 			this.populations[thisItem.group].push(thisItem)
 
 		}
+		// we want the groups in order of lowest to highest statistic
+		// mainly so the arrow always points right (i think)
+		this.groups.sort(function(a,b){
+			return getStatistic(self.statistic,self.populations[a]) - getStatistic(self.statistic,self.populations[b]);
+		})
 		this.xScale = d3.scale.linear().range([this.windowHelper.sampleSection,this.windowHelper.innerWidth]);
 		this.xScale.domain([min,max]);
 		var s = [];
