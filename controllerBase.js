@@ -13,8 +13,11 @@ controllerBase.prototype.getPresets = function(){
 		this.model.getPresets(this.view.setupPresets);
 	}
 controllerBase.prototype.loadFromPreset = function(filename, fromURL){
+	if(filename.split(':')[0]=="preset"){
+		filename = filename.split(':')[1];
+	}
 	this.model.loadFromPreset(filename, fromURL);
-	var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?file=' + filename;
+	var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?file=preset:' + filename;
 	this.fileURL = newurl;
 	if(!fromURL){
 		window.history.pushState({path:newurl},'', newurl);

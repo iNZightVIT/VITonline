@@ -171,9 +171,16 @@ this.makeSample = function(populations, numSamples, sampleSize, statistic){
 	// Set of original counts for each category. 
 	// Each sample should have the same number of counts.
 	var initialGroupCounts = [];
+	var orderingArray = [];
+	var totalIndex = 0;
 	for(var g = 0; g < this.groups.length; g++){
 		initialGroupCounts.push(populations[this.groups[g]].length);
+		for(var ind = 0; ind < populations[this.groups[g]].length; ind++){
+			orderingArray.push(totalIndex);
+			totalIndex++;
+		}
 	}
+
 
 	for(var i = 0; i<numSamples;i++){
 		this.samples[0].push([]);
@@ -186,8 +193,25 @@ this.makeSample = function(populations, numSamples, sampleSize, statistic){
 
 		var sampleOrder = 0;
 
+		var oneSampleOrderingArray = orderingArray.slice();
+		d3.shuffle(oneSampleOrderingArray);
+		var indexToGroupMap = {};
+		for(var n = 0; n < oneSampleOrderingArray.length; n++){
+			var sum = 0;
+			var group = null;
+			for(var g = 0; g < this.groups.length; g++){
+				sum += initialGroupCounts[g];
+				if(n<sum){
+					group = g;
+					break;
+				}
+			}
+			indexToGroupMap[oneSampleOrderingArray[n]] = group;
+		}
+
 		// For this visualisation, each sample is the same (and in the same order) as the population.
 		// The only difference is the group is randomised.
+		var thisIndex = 0;
 		for(var group = 0; group < this.groups.length; group++){
 			for(var itemIndex = 0; itemIndex < populations[this.groups[group]].length; itemIndex++){
 				var nI = new item (populations[this.groups[group]][itemIndex].value, itemIndex);
@@ -202,15 +226,17 @@ this.makeSample = function(populations, numSamples, sampleSize, statistic){
 				// For Randomisation Tests, we want the group to be randomly selected but with the same proportions 
 				// as the original.
 				// Pick from the availiable groups, if count is 0 repick else subract 1 from count.
-				var newGroup;
-				do {
-					newGroup = Math.ceil(Math.random()*sampleCategoryCounts.length) - 1;
-				} while	(sampleCategoryCounts[newGroup] == 0);
+				var newGroup = indexToGroupMap[thisIndex];
+				// do {
+				// 	newGroup = Math.ceil(Math.random()*sampleCategoryCounts.length) - 1;
+				// } while	(sampleCategoryCounts[newGroup] == 0);
 
-				sampleCategoryCounts[newGroup]--;
+				// sampleCategoryCounts[newGroup]--;
+				
 				nI.group =	this.groups[newGroup];
 				nI.groupIndex = newGroup;
 				this.samples[newGroup][i].push(nI);
+				thisIndex++;
 			}
 		}
 		var s = getStatistic(statistic, this.samples[0][i]);	
