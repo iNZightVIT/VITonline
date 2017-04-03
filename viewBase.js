@@ -130,6 +130,8 @@ viewBase.prototype.loadMain = function(dataHeadings){
 		})
 		$("#presetSelect").on('click', '.presetItems', function(){
 			var data = this.innerText;
+			$(".presetItems").css("background-color","white");
+			$(this).css("background-color", "steelblue");
 			self.controller.loadFromPreset(data);
 		})
 		$("#importText").click(function(){
