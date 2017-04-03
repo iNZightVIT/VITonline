@@ -37,7 +37,98 @@ function setUpWindow(radius){
 	windowHelper.lineHeight = windowHelper.section1.height /5;
 	return windowHelper;
 }
+function setUpWindow2(margins){
+	var windowHelper = new Object();
+	windowHelper.width = window.innerWidth*0.8;
+	windowHelper.height = window.innerHeight*0.92*0.99;
+	windowHelper.fontSize = windowHelper.width/80;
+	windowHelper.realWidth = windowHelper.width - margins.left - margins.right;
+	windowHelper.realHeight = windowHelper.height - margins.top - margins.bottom;
 
+	windowHelper.radius = windowHelper.realWidth/300;
+	windowHelper.lineHeight = windowHelper.realHeight/50;
+
+	windowHelper.sampleSection = new Object();
+	windowHelper.sampleSection.x = 0;
+	windowHelper.sampleSection.y = 0;
+	windowHelper.sampleSection.width = windowHelper.realWidth/3;
+	windowHelper.sampleSection.height = windowHelper.realHeight;
+
+	windowHelper.sampleSection.S1 = new Object();
+	windowHelper.sampleSection.S1.x = windowHelper.sampleSection.x;
+	windowHelper.sampleSection.S1.y = windowHelper.sampleSection.y;
+	windowHelper.sampleSection.S1.width = (windowHelper.sampleSection.width - margins.left)/2;
+	windowHelper.sampleSection.S1.height = windowHelper.sampleSection.height;
+
+	windowHelper.sampleSection.S2 = new Object();
+	windowHelper.sampleSection.S2.x = windowHelper.sampleSection.x + windowHelper.sampleSection.S1.width + margins.left;
+	windowHelper.sampleSection.S2.y = windowHelper.sampleSection.y;
+	windowHelper.sampleSection.S2.width = (windowHelper.sampleSection.width - margins.left)/2;
+	windowHelper.sampleSection.S2.height = windowHelper.sampleSection.height;
+
+	windowHelper.graphSection = new Object();
+	windowHelper.graphSection.x = windowHelper.sampleSection.x+windowHelper.sampleSection.width + margins.left;
+	windowHelper.graphSection.y = 0;
+	windowHelper.graphSection.width = windowHelper.realWidth - windowHelper.graphSection.x;
+	windowHelper.graphSection.height = windowHelper.realHeight;
+
+	windowHelper.graphSection.S1 = new Object();
+	windowHelper.graphSection.S1.x = windowHelper.graphSection.x;
+	windowHelper.graphSection.S1.y = windowHelper.graphSection.y;
+	windowHelper.graphSection.S1.width = windowHelper.graphSection.width;
+	windowHelper.graphSection.S1.height = windowHelper.graphSection.height/3;
+	windowHelper.graphSection.S1.titleArea = new Object();
+	windowHelper.graphSection.S1.titleArea.y = windowHelper.graphSection.S1.y;
+	windowHelper.graphSection.S1.titleArea.height = windowHelper.graphSection.S1.height*0.05;
+	windowHelper.graphSection.S1.displayArea = new Object();
+	windowHelper.graphSection.S1.displayArea.y = windowHelper.graphSection.S1.y + windowHelper.graphSection.S1.titleArea.height;
+	windowHelper.graphSection.S1.displayArea.height = windowHelper.graphSection.S1.height*0.9;
+	windowHelper.graphSection.S1.displayArea.middle = windowHelper.graphSection.S1.displayArea.y + (windowHelper.graphSection.S1.displayArea.height/2);
+	windowHelper.graphSection.S1.displayArea.q1 = windowHelper.graphSection.S1.displayArea.y + (windowHelper.graphSection.S1.displayArea.height/4)
+	windowHelper.graphSection.S1.displayArea.q3 = windowHelper.graphSection.S1.displayArea.middle + (windowHelper.graphSection.S1.displayArea.height/4)
+	windowHelper.graphSection.S1.axisArea = new Object();
+	windowHelper.graphSection.S1.axisArea.y = windowHelper.graphSection.S1.y + windowHelper.graphSection.S1.titleArea.height + windowHelper.graphSection.S1.displayArea.height;
+	windowHelper.graphSection.S1.axisArea.height = windowHelper.graphSection.S1.height*0.05;
+
+	windowHelper.graphSection.S2 = new Object();
+	windowHelper.graphSection.S2.x = windowHelper.graphSection.x;
+	windowHelper.graphSection.S2.y = windowHelper.graphSection.y + windowHelper.graphSection.S1.height;
+	windowHelper.graphSection.S2.width = windowHelper.graphSection.width;
+	windowHelper.graphSection.S2.height = windowHelper.graphSection.height/3;
+	windowHelper.graphSection.S2.titleArea = new Object();
+	windowHelper.graphSection.S2.titleArea.y = windowHelper.graphSection.S2.y;
+	windowHelper.graphSection.S2.titleArea.height = windowHelper.graphSection.S2.height*0.05;
+	windowHelper.graphSection.S2.displayArea = new Object();
+	windowHelper.graphSection.S2.displayArea.y = windowHelper.graphSection.S2.y + windowHelper.graphSection.S2.titleArea.height;
+	windowHelper.graphSection.S2.displayArea.height = windowHelper.graphSection.S2.height*0.9;
+	windowHelper.graphSection.S2.displayArea.middle = windowHelper.graphSection.S2.displayArea.y + (windowHelper.graphSection.S2.displayArea.height/2);
+	windowHelper.graphSection.S2.displayArea.q1 = windowHelper.graphSection.S2.displayArea.y + (windowHelper.graphSection.S2.displayArea.height/4)
+	windowHelper.graphSection.S2.displayArea.q3 = windowHelper.graphSection.S2.displayArea.middle + (windowHelper.graphSection.S2.displayArea.height/4)
+	windowHelper.graphSection.S2.axisArea = new Object();
+	windowHelper.graphSection.S2.axisArea.y = windowHelper.graphSection.S2.y + windowHelper.graphSection.S2.titleArea.height + windowHelper.graphSection.S2.displayArea.height;
+	windowHelper.graphSection.S2.axisArea.height = windowHelper.graphSection.S2.height*0.05;
+
+	windowHelper.graphSection.S3 = new Object();
+	windowHelper.graphSection.S3.x = windowHelper.graphSection.x;
+	windowHelper.graphSection.S3.y = windowHelper.graphSection.S2.y + windowHelper.graphSection.S2.height;
+	windowHelper.graphSection.S3.width = windowHelper.graphSection.width;
+	windowHelper.graphSection.S3.height = windowHelper.graphSection.height/3;
+	windowHelper.graphSection.S3.titleArea = new Object();
+	windowHelper.graphSection.S3.titleArea.y = windowHelper.graphSection.S3.y;
+	windowHelper.graphSection.S3.titleArea.height = windowHelper.graphSection.S3.height*0.05;
+	windowHelper.graphSection.S3.displayArea = new Object();
+	windowHelper.graphSection.S3.displayArea.y = windowHelper.graphSection.S3.y + windowHelper.graphSection.S3.titleArea.height;
+	windowHelper.graphSection.S3.displayArea.height = windowHelper.graphSection.S3.height*0.9;
+	windowHelper.graphSection.S3.displayArea.middle = windowHelper.graphSection.S3.displayArea.y + (windowHelper.graphSection.S3.displayArea.height/2);
+	windowHelper.graphSection.S3.displayArea.q1 = windowHelper.graphSection.S3.displayArea.y + (windowHelper.graphSection.S3.displayArea.height/4)
+	windowHelper.graphSection.S3.displayArea.q3 = windowHelper.graphSection.S3.displayArea.middle + (windowHelper.graphSection.S3.displayArea.height/4)
+	windowHelper.graphSection.S3.axisArea = new Object();
+	windowHelper.graphSection.S3.axisArea.y = windowHelper.graphSection.S3.y + windowHelper.graphSection.S3.titleArea.height + windowHelper.graphSection.S3.displayArea.height;
+	windowHelper.graphSection.S3.axisArea.height = windowHelper.graphSection.S3.height*0.05;
+
+	return windowHelper;
+
+}
 function drawArrow(to, from, yValue, placement, id, op, color){
 	var group = placement.append("svg").attr("id",id);
 	var mainLine = group.append("line").attr("x1", from).attr("x2", to).attr("y1", yValue).attr("y2", yValue).style("stroke-width", 2).style("stroke", color).style("opacity", op).attr("id", id+"main");
@@ -297,4 +388,8 @@ function getFontSize(wH, leng){
 		if(fontSize>wH.sampleSection*0.05)fontSize=wH.sampleSection*0.05;
 		var titleFS = wH.width * wH.height / 50000;
 		return [fontSize, titleFS];
+}
+
+function getMiddle(a,b){
+	return (a + (b-a)/2);
 }
