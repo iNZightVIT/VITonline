@@ -1,5 +1,5 @@
 
-class twoNC extends visBase {
+class randTest_oneNum_oneCat extends visBase {
 	constructor(inputData, headingGroup, headingContinuous, statistic) {
 		super(inputData, headingGroup, headingContinuous, statistic);
 		this.windowHelper = setUpWindow3({'left':5, 'right':5, 'top':5, 'bottom':5}, true);

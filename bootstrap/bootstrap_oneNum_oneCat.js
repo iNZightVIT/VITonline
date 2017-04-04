@@ -1,10 +1,10 @@
 
-class twoNC extends visBase {
+class bootstrap_oneNum_oneCat extends visBase {
 	constructor(inputData, headingGroup, headingContinuous, statistic) {
 		super(inputData, headingGroup, headingContinuous, statistic);
 		this.windowHelper = setUpWindow3({'left':5, 'right':5, 'top':5, 'bottom':5}, true);
 		// text labels for each section.
-		this.sectionLabels = ['Data','Re-Randomised Data','Re-Randomisation Distribution'];
+		this.sectionLabels = ['Data','Resampled','Resample Distribution'];
 		//this.animationList = [this.populationDropDown,this.buildList, this.fadeIn, this.endNoDist, this.distDrop, this.endDist ];
 		this.animationList = [this.populationDropDown.bind(this),
 						this.buildList.bind(this), 

@@ -1,12 +1,12 @@
 
-class oneNC extends visBase {
+class randVar_oneNum extends visBase {
 	constructor(inputData, headingGroup, headingContinuous, statistic) {
 		super(inputData, headingGroup, headingContinuous, statistic);
 		this.sampleStatType = "stat";
 		this.colorIndex = ["red", "blue"];
 		this.windowHelper = setUpWindow3({'left':5, 'right':5, 'top':5, 'bottom':5}, true);
 		// text labels for each section.
-		this.sectionLabels = ['Data','Re-Randomised Data','Re-Randomisation Distribution'];
+		this.sectionLabels = ['Data','Randomly grouped data','Randomisation Distribution'];
 		//this.animationList = [this.populationDropDown,this.buildList, this.splitIntoRandCategories, this.fadeIn, this.endNoDist, this.distDrop, this.endDist ];
 		this.animationList = [this.dropDown.bind(this),
 						this.splitUp.bind(this), 
@@ -147,7 +147,7 @@ class oneNC extends visBase {
 		}
 
 		sharedFadeInNoExit.apply(this, [settings, currentAnimation]);
-		
+
 		if(settings.goSlow){
 		splitCircle.style("stroke", function(d){
 			var test = self.colorIndex[d.group];
