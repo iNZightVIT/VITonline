@@ -295,52 +295,7 @@ class twoNC extends visBase {
 
 
 	fadeIn(settings, currentAnimation){
-		var self = this;
-		if(!this.settings.restarting){
-			var allInSample = settings.sample.slice();
-			var powScale = d3.scale.pow();
-			powScale.exponent(4);
-			powScale.domain([0,settings.delay*2]);
-		}else{
-			var powScale = this.settings.powScale;
-			var self = this;
-		    var fillInTime = this.transitionSpeed/this.baseTransitionSpeed;
-		    this.settings.restarting = false;
-		}
-		var sampMean = this.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
-		if(!sampMean) {
-			this.animationController(settings, currentAnimation);
-			return;
-		}
-		for(var k = 0;k<sampMean.length-1;k++){
-			this.drawnMeans.push(sampMean[k]);
-		}
-		var middle = this.windowHelper.graphSection.S2.displayArea.getMiddleHeight();
-		if(this.drawnMeans.length > 0){
-			var mLines = d3.select(".sampleLines").selectAll("g").data(this.drawnMeans);
-			var meanLineG = mLines.enter().append("g");
-			meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.stats[0]);}).attr("x2", function(d){return self.xScale(d.stats[0]);}).attr("y1", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][0] + this.windowHelper.lineHeight*3).attr("y2", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][0] - this.windowHelper.lineHeight).style("stroke-width", 3).style("stroke", "black").style("opacity",1);
-			meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.stats[1]);}).attr("x2", function(d){return self.xScale(d.stats[1]);}).attr("y1", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][2] + this.windowHelper.lineHeight*3).attr("y2", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][2] - this.windowHelper.lineHeight).style("stroke-width", 3).style("stroke", "black").style("opacity",1);
-		
-			d3.selectAll(".memLine").style("opacity",0.2).style("stroke","steelblue").attr("y2",function(){ return d3.select(this).attr("y1")-self.windowHelper.lineHeight*2});;
-			d3.selectAll("#diffLine").remove();
-		}
-		this.drawnMeans.push(sampMean[sampMean.length-1]);
-		mLines = d3.select(".sampleLines").selectAll("g").data(this.drawnMeans);
-		meanLineG = mLines.enter().append("g");
-		meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.stats[0]);}).attr("x2", function(d){return self.xScale(d.stats[0]);}).attr("y1", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][0] + this.windowHelper.lineHeight*3).attr("y2", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][0] - this.windowHelper.lineHeight).style("stroke-width", 3).style("stroke", "black").style("opacity",1);
-		meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.stats[1]);}).attr("x2", function(d){return self.xScale(d.stats[1]);}).attr("y1", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][2] + this.windowHelper.lineHeight*3).attr("y2", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][2] - this.windowHelper.lineHeight).style("stroke-width", 3).style("stroke", "black").style("opacity",1);
-		drawArrow(function(d){return self.xScale(d.stats[1]);},function(d){return self.xScale(d.stats[0]);},middle, meanLineG, "diffLine", 1, "red");
-		var circleOverlay = d3.select("#circleOverlay").selectAll("circle").transition().duration(this.transitionSpeed/2).each('end', function(d, i){
-			if(d == settings.sample[0]){
-				if(settings.incDist){
-					self.animationController(settings, currentAnimation);
-				}else{
-					d3.select("#differenceLine").remove();
-					self.animationController(settings, currentAnimation);
-				}
-			}
-		});
+		sharedFadeIn.apply(this, [settings, currentAnimation]);
 
 	}
 

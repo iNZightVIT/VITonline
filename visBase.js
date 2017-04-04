@@ -158,7 +158,7 @@ class visBase {
 		}
 	}
 
-	setUpCI(){
+	setUpCI(statList){
 		this.tailCount = 0;
 		this.CISplit = this.populationStatistic;
 		for(var k = 0; k < this.numSamples;k++){
@@ -253,12 +253,12 @@ class visBase {
 		}
 
 		var statlist = this.sampleStatType == 'diff' ? this.sampleStatistics.map(function(statObj){ return statObj.diff}) : this.sampleStatistics.map(function(statObj){ return statObj.stats[0]});
-		statList.sort(function(a,b){
+		statlist.sort(function(a,b){
 			if(Math.abs(self.populationStatistic - a ) < Math.abs(self.populationStatistic - b)) return -1;
 			if(Math.abs(self.populationStatistic - a ) > Math.abs(self.populationStatistic - b)) return 1;
 			return 0;
 		});
-		this.setUpCI();
+		this.setUpCI(statlist);
 
 		heapYValues3(this.sampleStatistics,this.sampleStatScale,this.windowHelper.radius,0,this.windowHelper.graphSection.S3.displayArea.y1,this.windowHelper.graphSection.S3.displayArea.y2 - this.windowHelper.radius*2);
 		
