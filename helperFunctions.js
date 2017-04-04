@@ -172,9 +172,9 @@ function setUpWindow3(margins, includeSampleSection){
 	windowHelper.realWidth = windowHelper.width - margins.left - margins.right;
 	windowHelper.realHeight = windowHelper.height - margins.top - margins.bottom;
 
-	windowHelper.radius = windowHelper.realWidth/300;
+	windowHelper.radius = windowHelper.realWidth/275;
 	windowHelper.lineHeight = windowHelper.realHeight/50;
-	windowHelper.fontSize = windowHelper.width/80;
+	windowHelper.fontSize = windowHelper.width/70;
 
 	windowHelper.sampleSection = new WindowSection(0,0, includeSampleSection ? windowHelper.realWidth/3 : 0,windowHelper.realHeight);
 
