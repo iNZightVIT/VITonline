@@ -20,8 +20,6 @@ view.prototype.makeButtons = function(){
 		vs.append("label").attr("for","sampTwenty").attr("class","repLabel").text("20");
 		vs.append("input").attr("type","radio").attr("name","Sampling").attr("value","1000").attr("id","sampThousand").attr("class","repSelect").text("1000").attr("onClick","mainControl.view.tSDisable()");
 		vs.append("label").attr("for","sampThousand").attr("class","repLabel").text("1000");
-		vs.append("label").attr("for","trackCBox").attr("id","cBoxLabel").text("Track sample").classed("disabled",null);
-		vs.append("input").attr("type", "checkbox").attr("id","trackCBox").attr("value","trackCBox").attr("disabled",null);
 
 		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","startSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(false)")
 			.style("height","15%");

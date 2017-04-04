@@ -51,7 +51,10 @@ class visBase {
 		// List of the categories for grouping on. E.g ['male', 'female'] for grouping on gender. 
 		// Is ordered, so changing the order changes the order show in the vis.
 		this.groups = [];
-
+		if(this.headingGroup == null) {
+			this.groups = [""];
+			this.populations[""] = [];
+		}
 		// The statistic for each of the groups, ordered in the same way.
 		this.groupStats = [];
 
@@ -65,12 +68,14 @@ class visBase {
 			var thisItem = new Object();
 			var inputItem = this.inputData[i];
 
-			// If we havent already encountered a value for this group, make a new one in this.populations.
-			if(!(inputItem[this.headingGroup] in this.populations)) {
-				this.populations[inputItem[this.headingGroup]] = [];
-				this.groups.push(inputItem[this.headingGroup]);
+			if(this.headingGroup != null){
+				// If we havent already encountered a value for this group, make a new one in this.populations.
+				if(!(inputItem[this.headingGroup] in this.populations)) {
+					this.populations[inputItem[this.headingGroup]] = [];
+					this.groups.push(inputItem[this.headingGroup]);
+				}
 			}
-			thisItem.group = inputItem[this.headingGroup];
+			thisItem.group = this.headingGroup != null ? inputItem[this.headingGroup] : "";
 			thisItem.value = +inputItem[this.headingContinuous];
 			if(isNaN(thisItem.value)) continue;
 			if(max == null | thisItem.value > max) max = thisItem.value;
@@ -117,16 +122,19 @@ class visBase {
 			var newItem = new item(s[1]-s[0], i);
 			newItem.s0 = s[0];
 			newItem.s1 = s[1];
-			this.popSetup = true;
+			
 
 			if(this.groups.length != 2){
 				this.implemented = false;
 			}
 			this.populationDiff = newItem.value;
 			this.allPop = this.populations[this.groups[0]].concat(this.populations[this.groups[1]]);
+		}else{
+			this.allPop = this.populations[this.groups[0]];
 		}
 
-		this.populationStatistic = this.sampleStatType == 'diff' ? this.populationDiff : this.groupStats[0];
+		this.populationStatistic = this.sampleStatType == 'diff' ? this.populationDiff : this.groupStats[this.groups[0]];
+		this.popSetup = true;
 	}
 
 	getSampleSize(){
@@ -233,10 +241,10 @@ class visBase {
 		this.sampleStatScale.domain([0-halfDiff, 0+halfDiff]);
 
 		// setup the sample displays in section 2.
-		var divisions = this.windowHelper.graphSection.S2.displayArea.getDivisions(this.groups.length, 'height');
+		var divisions = this.windowHelper.graphSection.S2.displayArea.getDivisions(this.samples[0].length, 'height');
 		var divSections = divisions[0];
 		var divHeight = divisions[1];
-		for(var j =0; j <this.groups.length;j++){
+		for(var j =0; j <this.samples[0].length;j++){
 			var top = divSections[j] - divHeight;
 			var bottom = divSections[j] - this.windowHelper.radius*2 - divHeight/2;		
 			for(var k = 0;k<this.numSamples;k++){
@@ -429,6 +437,7 @@ class visBase {
 	startAnim(repititions, goSlow, incDist){
 		this.drawnMeans = [];
 		d3.select(".sampleLines").selectAll("*").remove();
+		this.cleanUpRepitition();
 		if(repititions >900) this.resetLines();
 		if(this.animationState == 0){
 			if(repititions == 1) this.transitionSpeed = 1000;
