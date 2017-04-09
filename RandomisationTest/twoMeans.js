@@ -21,10 +21,10 @@ function twoMeans(inputData, headingGroup, headingContinuous, statistic){
 	this.windowHelper = setUpWindow3({'left':5, 'right':5, 'top':5, 'bottom':5}, true);
 	this.populations = {};
 	this.statistic = statistic;
-		this.popSetup = false;
+	this.popSetup = false;
 	this.sampSetup = false;
-		this.drawnMeans = [];
-		this.implemented = true;
+	this.drawnMeans = [];
+	this.implemented = true;
 
 	this.changeStat = function(newStatistic){
 		this.statistic = newStatistic;
@@ -253,7 +253,7 @@ function twoMeans(inputData, headingGroup, headingContinuous, statistic){
 		return [smallestDiff, largestDiff, statList];
 	}
 	this.draw = function(){
-			var self = this;
+		var self = this;
 		if(!this.statsDone) return;
 		this.drawPop();
 		this.drawSample();
@@ -358,7 +358,7 @@ function twoMeans(inputData, headingGroup, headingContinuous, statistic){
 		d3.select(".sampleLines").selectAll("*").remove();
 		d3.select("#sampText").selectAll("*").remove();
 		d3.select("#circleOverlay").selectAll("circle").data([]).exit().remove();
-				this.drawnMeans = [];
+		this.drawnMeans = [];
 		if(repititions >900) this.resetLines();
 		if(this.animationState == 0){
 			if(repititions == 1) this.transitionSpeed = 1000;
