@@ -90,7 +90,11 @@ controllerBase.prototype.parseRestOfURL = function() {
 
 
 	var sampleSize = urlParams.has("samplesize") ? urlParams.get("samplesize") : this.model.display.sampleSize;
+
 	this.switchTab2();
+	if(urlParams.has("samplesize")){
+		d3.select("#sampsize").property("value", sampleSize);
+	}
 	var statSelection = d3.select("#statSelect");
 	statSelection.attr("value", stat);
 	d3.select("#Calculate").attr("disabled", true);

@@ -50,12 +50,13 @@ function oneMean(inputData, heading, statistic){
 	}
 
 	this.setUpSamples = function(sSize){
-		this.sampleSize = sSize;
-		if(sSize >= this.population.length){
+
+		this.sampleSize = d3.select("#sampsize").property("value");
+		if(this.sampleSize >= this.population.length){
 			alert("Sample size is too large for the poplation");
 			return;
 		}
-		this.samples = this.makeSamples(this.population, this.numSamples, sSize);
+		this.samples = this.makeSamples(this.population, this.numSamples, this.sampleSize);
 		for(var k = 0; k < this.numSamples;k++){
 			var stat = getStatistic(this.statistic, this.samples[k])
 			heapYValues3(this.samples[k], this.xScale,this.radius, k+1, this.windowHelper.section2.top, this.windowHelper.section2.twoThird);

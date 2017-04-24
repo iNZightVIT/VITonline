@@ -64,8 +64,8 @@ function oneProportion(inputData, heading, focus, unique){
 	}
 
 	this.setUpSamples = function(sSize){
-		this.sampleSize = sSize;
-		if(sSize >= this.population.length){
+		this.sampleSize = d3.select("#sampsize").property("value");
+		if(this.sampleSize >= this.population.length){
 			alert("Sample size is too large for the poplation");
 			return;
 		}
@@ -73,7 +73,7 @@ function oneProportion(inputData, heading, focus, unique){
 		this.total = lastElement[0] + lastElement[1];
 		this.populationStatistic = 0;
 		this.populationStatistic =	this.xScale(lastElement[0]/ (lastElement[1]+lastElement[0]));
-		this.samples = this.samples.concat(this.makeSamples(this.population, this.numSamples, sSize));
+		this.samples = this.samples.concat(this.makeSamples(this.population, this.numSamples, this.sampleSize));
 		for(var k = 0; k < this.numSamples;k++){
 			lastElement = this.samples[k+1][this.samples[0].length -1];
 			var stat = lastElement[0]/ (lastElement[1]+lastElement[0]);
