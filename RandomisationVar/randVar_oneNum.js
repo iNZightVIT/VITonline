@@ -20,7 +20,10 @@ class randVar_oneNum extends visBase {
 		heapYValues3(items, scale, radius, 0, top,bottom);
 	}
 	drawPopulationCategories(placeInto){
-		this.drawNonProportional(placeInto);
+		var popDrawFunctions = [this.drawContinuous.bind(this), this.drawProportional.bind(this)];
+		var popDrawFunction = popDrawFunctions[this.popDrawType];
+		popDrawFunction(placeInto);
+		
 		d3.select("#population").select(".pop").selectAll("circle").style("fill-opacity", 0);
 	}
 	drawPopulationStatistic(placeInto){

@@ -1,5 +1,5 @@
 class visBase {
-	constructor(inputData, headingGroup, headingContinuous, statistic){
+	constructor(inputData, headingGroup, headingContinuous, statistic, focus){
 
 		// This is the raw input data
 		this.inputData = inputData;
@@ -12,6 +12,10 @@ class visBase {
 
 		// This is the statistic to use for showing differences between groups, I.E mean or median.
 		this.statistic = statistic;
+
+		// This is the named prroportion to display on proportion visualisations, I.E for Ethnicity is
+		// chosen and European is chosen as the focus, it will show European vs Other. 
+		this.focus = focus;
 
 		// whether or not to calculate the large CI numbers
 		this.calcLargeCI = true;
@@ -29,6 +33,11 @@ class visBase {
 		this.sampSetup = false;
 		this.animationIndex = 0;
 		this.animationState = 0;
+
+		// Type of visualisation for the population.
+		// Continuous  = 0;
+		// Proportional = 1;
+		this.popDrawType = 0;
 	}
 
 	changeStat(newStatistic){
@@ -43,10 +52,11 @@ class visBase {
 		var self = this;
 		var max = null;
 		var min = null;
-
+		var populationSize = this.inputData.length;
 		// This is the input data filtered to just the continuous and group data selected.
 		// It is split by the group values. 
 		this.populations = [];
+		this.allPop = [];
 
 		// List of the categories for grouping on. E.g ['male', 'female'] for grouping on gender. 
 		// Is ordered, so changing the order changes the order show in the vis.
@@ -64,7 +74,7 @@ class visBase {
 		// These item stubs are stored in this.population.
 		// 
 		// Min and Max for the population is also calculated here.
-		for(var i = 0; i < this.inputData.length;i++){
+		for(var i = 0; i < populationSize;i++){
 			var thisItem = new Object();
 			var inputItem = this.inputData[i];
 
@@ -76,7 +86,7 @@ class visBase {
 				}
 			}
 			thisItem.group = this.headingGroup != null ? inputItem[this.headingGroup] : "";
-			thisItem.value = +inputItem[this.headingContinuous];
+			thisItem.value = this.headingContinuous != null ? +inputItem[this.headingContinuous] : +(thisItem.group == this.focus);
 			if(isNaN(thisItem.value)) continue;
 			if(max == null | thisItem.value > max) max = thisItem.value;
 			if(min == null | thisItem.value < min) min = thisItem.value;
@@ -84,6 +94,7 @@ class visBase {
 			thisItem.yPerSample = {};
 			thisItem.id = i;
 			this.populations[thisItem.group].push(thisItem)
+			this.allPop.push(thisItem);
 
 		}
 
@@ -92,18 +103,30 @@ class visBase {
 		this.xScale.domain([min,max]);
 		var s = [];
 
-		// we want the groups in order of lowest to highest statistic
+		// we want the groups in order of lowest to highest statistic, (unless a focus is set, in which case it is first)
 		// mainly so the arrow always points right (i think)
 		this.groups.sort(function(a,b){
-			return getStatistic(self.statistic,self.populations[a]) - getStatistic(self.statistic,self.populations[b]);
+			return getStatistic(self.statistic,self.populations[a], populationSize) - getStatistic(self.statistic,self.populations[b], populationSize);
 		})
 
-		// Sets up a section for each of the categorical variable possibilities.
+		// If focus is set, make it the first item in this.groups
+		if(this.focus){
+			for(var g = 0; g < this.groups.length; g++){
+				if(this.groups[g] == this.focus){
+					var temp = this.groups[0];
+					this.groups[0] = this.groups[g];
+					this.groups[g] = temp;
+					break;
+				}
+			}
+		}
 
-		var divisions = this.windowHelper.graphSection.S1.displayArea.getDivisions(this.groups.length, 'height');
+		// Sets up a section for each of the categorical variable possibilities. (If visualising proportion, split on second categorical, *NOT IMPLEMENTED YET*)
+		var numDivisions = this.groups.length;
+		var divisions = this.windowHelper.graphSection.S1.displayArea.getDivisions(numDivisions, 'height');
 		var divSections = divisions[0];
 		var divHeight = divisions[1];
-		for(var j =0; j <this.groups.length;j++){
+		for(var j =0; j <numDivisions; j++){
 			var top = divSections[j] - divHeight;
 			var bottom = divSections[j] - this.windowHelper.radius*2 - divHeight/2;
 
@@ -111,14 +134,14 @@ class visBase {
 			this.setUpPopCategory(this.populations[this.groups[j]], this.xScale, this.windowHelper.radius, top, bottom);
 
 			// gets the selected statistic for category.
-			var stat = getStatistic(this.statistic,this.populations[this.groups[j]]);
+			var stat = getStatistic(this.statistic, this.populations[this.groups[j]], populationSize);
 			this.groupStats[this.groups[j]] = stat;
 			s.push(stat);
 		}
 
 		// NOTE: THIS BIT IS HARDCODED FOR 2 CATEGORIES!!! PROBABLY SHOULD CHANGE AT SOME POINT.
 		// Addes the difference in group means to preCalculatedTStat list.
-		if(this.groups.length >= 2){
+		if(numDivisions >= 2){
 			var newItem = new item(s[1]-s[0], i);
 			newItem.s0 = s[0];
 			newItem.s1 = s[1];
@@ -128,9 +151,6 @@ class visBase {
 				this.implemented = false;
 			}
 			this.populationDiff = newItem.value;
-			this.allPop = this.populations[this.groups[0]].concat(this.populations[this.groups[1]]);
-		}else{
-			this.allPop = this.populations[this.groups[0]];
 		}
 
 		this.populationStatistic = this.sampleStatType == 'diff' ? this.populationDiff : this.groupStats[this.groups[0]];
@@ -178,6 +198,8 @@ class visBase {
 		this.sampleStatistics = [];
 		this.largestDiff = null;
 		this.smallestDiff = null;
+		var populationSize = this.inputData.length;
+
 		for(var i = 0; i < this.samples.length; i++){
 			var catagoryStatistics = [];
 			this.largestStat = null;
@@ -185,7 +207,7 @@ class visBase {
 			for(var g = 0; g < this.samples[i].length; g++){
 
 				// statistic for sample i, catagory g;
-				var stat = getStatistic(this.statistic, this.samples[i][g]);
+				var stat = getStatistic(this.statistic, this.samples[i][g], populationSize);
 				catagoryStatistics.push(stat);
 
 				if(this.largestStat == null || stat > this.largestStat){
@@ -237,8 +259,13 @@ class visBase {
 		var populationRange = this.xScale.domain();
 		var halfDiff = (populationRange[1]-populationRange[0])/2;
 
+		// For Differences
 		// has the same range as the population scale, but centered around 0.
-		this.sampleStatScale.domain([0-halfDiff, 0+halfDiff]);
+		if(this.sampleStatType == "diff") {
+			this.sampleStatScale.domain([0-halfDiff, 0+halfDiff]);
+		}else{
+			this.sampleStatScale.domain(populationRange);
+		}
 
 		// setup the sample displays in section 2.
 		var divisions = this.windowHelper.graphSection.S2.displayArea.getDivisions(this.samples[0].length, 'height');
@@ -283,7 +310,7 @@ class visBase {
 		this.drawSample();
 	}
 
-	drawNonProportional(placeInto){
+	drawContinuous(placeInto){
 		var self = this;
 		var divisions = this.windowHelper.graphSection.S1.displayArea.getDivisions(this.groups.length, 'height');
 		var divSections = divisions[0];
@@ -307,8 +334,53 @@ class visBase {
 			catSVG.append("text").attr("y", pos - divHeight/4 + this.windowHelper.graphSection.S1.height).attr("x", this.windowHelper.graphSection.x2).text(this.groups[i]).attr("fill",colorByIndex[i]).attr("text-anchor","end").style("opacity",1).style("font-size",this.windowHelper.fontSize).attr("alignment-baseline","middle");
 		}
 	}
+
+	drawProportional(placeInto){
+		var self = this;
+
+		// Should make a division for each secondary categorical variable. Not Implemented yet, so only 1.
+		var numDivisions = 1;
+		var divisions = this.windowHelper.graphSection.S1.displayArea.getDivisions(numDivisions, 'height');
+		var divSections = divisions[0];
+		var divHeight = divisions[1];
+		for(var i = 0;i<numDivisions;i++){
+			var pos = divSections[i] - divHeight/2 - this.windowHelper.radius*2;
+			var catSVG = placeInto.append("g").attr("id","pop"+i);
+
+			// Now split on main categories. We want a category for the focus and one for other.
+			var focusGroup = self.allPop.filter(function(x){return x.value == 1});
+			var otherGroup = self.allPop.filter(function(x){return x.value != 1});
+
+			this.drawProportionBars(catSVG, divHeight, pos, self.xScale, focusGroup, otherGroup, "pop", i);
+		}
+	}
+
+	drawProportionBars(svg, divHeight, pos, xScale, fG, oG, name, i){
+		var self = this;
+		// Each bar has its start in units, its end in units, the total amouint of units and its name.
+		var bars = [[0, fG.length, fG.length + oG.length, self.focus], [fG.length, oG.length, fG.length + oG.length, this.groups.length == 2 ? this.groups[1] : "Other"]];
+		svg = svg.selectAll("g").data(bars);
+		var barsSVG = svg.enter().append("g").attr("id", function(d){return name + i + d[3]});
+		barsSVG.append("rect")
+			.attr("height", divHeight/2)
+			.attr("y", pos - divHeight/4)
+			.attr("width", function(d){ return xScale((d[1]+ d[0])/d[2]) - xScale((d[0])/d[2]) })
+			.attr("x", function(d){return xScale(d[0]/d[2])})
+			.attr("fill",function(d,i){return colorByIndex[i]})
+			.attr("fill-opacity","0.5");
+
+		barsSVG.append("text").text(function(d){return d[3]})
+		.attr("x", function(d){return xScale(d[0]/d[2])})
+		.attr("y", pos - divHeight/4)
+		.attr("text-anchor", "start")
+		.attr("fill",function(d,i){return colorByIndex[i]})
+		.style("font-size", this.windowHelper.fontSize);	
+	}
+
 	drawPopulationCategories(placeInto){
-		this.drawNonProportional(placeInto);
+		var popDrawFunctions = [this.drawContinuous.bind(this), this.drawProportional.bind(this)];
+		var popDrawFunction = popDrawFunctions[this.popDrawType];
+		popDrawFunction(placeInto);
 	}
 
 	labelSections(placeInto){
@@ -375,7 +447,7 @@ class visBase {
 		// we want 0 to be bolded
 		d3.selectAll(".axis text").filter(function(d){
 			return d == 0;
-		}).style("font-size",20).style("font-weight",700);
+		}).style("font-size",14).style("font-weight",700);
 	}
 
 	drawPopulationStatistic(placeInto){
@@ -555,9 +627,6 @@ class visBase {
 
 		// whether or not to calculate the large CI numbers
 		this.calcLargeCI = true;
-
-		// what the type of value the last section shows, straight statistic for 1 category or difference for 2.
-		this.sampleStatType = 'diff';
 
 		// max number of samples to take
 		this.numSamples = 1100;

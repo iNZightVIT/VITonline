@@ -30,7 +30,7 @@ var modelBase = function(controller){
 	this.inputData = [];
 	this.dataHeadings = ["test","test","test","test","test"];
 	this.display = null;
-	this.stats = [["Mean","Median"],["proportion"],["slope"]];
+	this.stats = [["Mean","Median"],["Proportion"],["slope"]];
 	this.controller = controller;
 	this.currentCategory = null;
 	this.currentDisplayType =0;
@@ -196,6 +196,10 @@ modelBase.prototype.loadPresetData = function(fromURL){
 		this.fileName = "test data";
 		this.controller.setUpDataVeiw(this.testingData, fromURL);
 	}
+modelBase.prototype.handleFocusSelector = function(num, cat){
+	var unique = this.dataSplit[cat[0]].filter(onlyUnique);
+	this.controller.makeFocusSelector(unique, cat[0]);
+}
 modelBase.prototype.varSelected = function(e){
 		if(this.display){
 			this.display.destroy();
@@ -214,10 +218,13 @@ modelBase.prototype.varSelected = function(e){
 				categorical.push(val[0])
 			}
 		}
+		this.num = numeretical;
+		this.cat = categorical;
 		for(var n =0; n<this.visualisations.length;n++){
 			var vis = this.visualisations[n];
 			if(vis.numeretical == numeretical.length && vis.categorical == categorical.length){
 				this.currentDisplayType = n;
+				if(vis.needsFocus) this.handleFocusSelector(numeretical, categorical);
 				this.display = vis.setupParams(numeretical,categorical,this);
 				this.controller.startVisPreveiw();
 				this.currentCategory = vis.stats;
@@ -232,14 +239,11 @@ modelBase.prototype.destroy = function(){
 		this.display.destroy();
 	}
 modelBase.prototype.switchFocus = function(newFocus){
-		var curCategory = this.display.category;
+		var curCategory = this.display.headingGroup;
 		var curCategory2 = this.display.category2;
 		this.display.destroy();
 		if(this.currentDisplayType == 2){
-			this.display = new oneProportion(this.inputData.filter(function(d){
-			var test = d[curCategory] != "NA";
-			return test;
-		}), curCategory, newFocus, this.dataSplit[curCategory].filter(onlyUnique))
+			this.display = this.visualisations[2].setupParams(this.num,this.cat,this, newFocus);
 		}
 		if(this.currentDisplayType == 3){
 			this.display = new twoProportion(this.inputData.filter(function(d){

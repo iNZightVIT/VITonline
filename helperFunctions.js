@@ -340,7 +340,7 @@ function heapYValues3(itemsToHeap, xScale, radius, sampleIndex, areaTopY, areaBo
 	}
 }
 
-function getStatistic(stat, origItems){
+function getStatistic(stat, origItems, total){
 	var items = origItems.slice(0);
 	if(stat =="Mean"){
 		var mean = 0;
@@ -403,6 +403,9 @@ function getStatistic(stat, origItems){
 		// var lQIndexHigh = Math.ceil(items.length*0.75);
 
 		// return (items[lQIndexLow].value+items[lQIndexHigh].value)/2;
+	}
+	if(stat = "Proportion"){
+		return items.length/total;
 	}
 }
 

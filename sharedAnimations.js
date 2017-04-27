@@ -85,7 +85,7 @@
 			this.animationController(settings, currentAnimation);
 			return;
 		}
-		for(var k = 0;k<sampMean.length-1;k++){
+		for(var k = 1;k<sampMean.length;k++){
 			this.drawnMeans.push(sampMean[k]);
 		}
 		var middle = this.windowHelper.graphSection.S2.displayArea.getMiddleHeight();
@@ -98,7 +98,7 @@
 			d3.selectAll(".memLine").style("opacity",0.2).style("stroke","steelblue").attr("y2",function(){ return d3.select(this).attr("y1")-self.windowHelper.lineHeight*2});;
 			d3.selectAll("#diffLine").remove();
 		}
-		this.drawnMeans.push(sampMean[sampMean.length-1]);
+		this.drawnMeans.push(sampMean[0]);
 		mLines = d3.select(".sampleLines").selectAll("g").data(this.drawnMeans);
 		meanLineG = mLines.enter().append("g");
 		meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.stats[0]);}).attr("x2", function(d){return self.xScale(d.stats[0]);}).attr("y1", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][0] + this.windowHelper.lineHeight*3).attr("y2", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][0] - this.windowHelper.lineHeight).style("stroke-width", 3).style("stroke", "black").style("opacity",1);

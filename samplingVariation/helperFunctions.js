@@ -77,7 +77,7 @@ function heapYValues3(itemsToHeap, xScale, radius, sampleIndex, areaTopY, areaBo
 	}
 }
 
-function getStatistic(stat, items){
+function getStatistic(stat, items, total){
 	if(stat =="Mean"){
 		var mean = 0;
 		for(var i =0;i<items.length;i++){
@@ -97,6 +97,9 @@ function getStatistic(stat, items){
 		}
 		var med = item.value;
 		return med;
+	}
+	if(stat = "Proportion"){
+		return items.length/total;
 	}
 }
 
