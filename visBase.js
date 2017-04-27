@@ -246,6 +246,9 @@ class visBase {
 		var self = this;
 
 		var sSize = this.getSampleSize();
+		if(sSize == null){
+			return;
+		}
 		var statList = [];
 
 		if(this.calcLargeCI){
@@ -368,6 +371,20 @@ class visBase {
 			.attr("x", function(d){return xScale(d[0]/d[2])})
 			.attr("fill",function(d,i){return colorByIndex[i]})
 			.attr("fill-opacity","0.5");
+
+		barsSVG.append("text").text(function(d){return d[1]})
+		.attr("x", function(d){return xScale(d[0]/d[2]) + (xScale((d[1]+ d[0])/d[2]) - xScale((d[0])/d[2])) /2 })
+		.attr("y", pos)
+		.attr("text-anchor", "middle")
+		.attr("dominant-baseline", "central")
+		.attr("fill","white")
+		.style("font-size", this.windowHelper.fontSize*10).style("opacity", 0.6);
+
+		// barsSVG.append("line")
+		// .attr("x1", function(d){return xScale(d[0]/d[2]) })
+		// .attr("x2", function(d){return xScale(d[0]/d[2]) + (xScale((d[1]+ d[0])/d[2]) - xScale((d[0])/d[2])) })
+		// .attr("y1", pos)
+		// .attr("y2", pos);	
 
 		barsSVG.append("text").text(function(d){return d[3]})
 		.attr("x", function(d){return xScale(d[0]/d[2])})
