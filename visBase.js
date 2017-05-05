@@ -148,8 +148,8 @@ class visBase {
 			newItem.s1 = s[1];
 			
 
-			if(this.groups.length != 2){
-				//this.implemented = false;
+			if(this.groups.length != 2 && !this.focus){
+				this.implemented = false;
 			}
 			this.populationDiff = newItem.value;
 		}
