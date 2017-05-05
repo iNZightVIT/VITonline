@@ -111,6 +111,7 @@ class visBase {
 
 		// If focus is set, make it the first item in this.groups
 		if(this.focus){
+			this.propGroups = [];
 			for(var g = 0; g < this.groups.length; g++){
 				if(this.groups[g] == this.focus){
 					var temp = this.groups[0];
@@ -148,7 +149,7 @@ class visBase {
 			
 
 			if(this.groups.length != 2){
-				this.implemented = false;
+				//this.implemented = false;
 			}
 			this.populationDiff = newItem.value;
 		}
