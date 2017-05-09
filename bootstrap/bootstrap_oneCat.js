@@ -5,6 +5,7 @@ class bootstrap_oneCat extends visBase {
 		this.windowHelper = setUpWindow3({'left':5, 'right':5, 'top':5, 'bottom':5}, true);
 		this.sampleStatType = "stat";
 		this.popDrawType = 1;
+		this.calcLargeCI = true;
 		// text labels for each section.
 		this.sectionLabels = ['Data','Resampled','Resample Distribution'];
 		//this.animationList = [this.populationDropDown,this.buildList, this.fadeIn, this.endNoDist, this.distDrop, this.endDist ];
@@ -80,6 +81,21 @@ class bootstrap_oneCat extends visBase {
 		d3.selectAll("#diffLine").remove();
 		d3.selectAll("#samp").remove();
 	}
+	setUpLargeCI(sSize){
+		var self = this;
+		// Get the tail proportion info for 10,000 samples.
+		this.makeSample(this.populations, 10000, sSize, this.statistic);
+		this.setUpSampleStatistics();
+		this.largeTailSize = 0;
+		var statlist = this.sampleStatType == 'diff' ? this.sampleStatistics.map(function(statObj){ return statObj.diff}) : this.sampleStatistics.map(function(statObj){ return statObj.stats[0]});
+		statlist.sort(function(a,b){
+			if(Math.abs(self.populationStatistic - a ) < Math.abs(self.populationStatistic - b)) return -1;
+			if(Math.abs(self.populationStatistic - a ) > Math.abs(self.populationStatistic - b)) return 1;
+			return 0;
+		});
+
+		this.largeCISplit = Math.abs(this.populationStatistic - statlist[10000*0.95]);
+	}
 	setUpCI(statList){
 			var CISplit = Math.abs(this.populationStatistic - statList[this.numSamples*0.95]);
 			for(var k = 0; k < this.numSamples;k++){
@@ -95,10 +111,10 @@ class bootstrap_oneCat extends visBase {
 		var self = this;
 		var CIVar = this.CISplit;
 		var svg = d3.select(".svg");
-		if(num == "10000"){
-			CIVar = this.LargeCISplit;
+		if(num == "10000" || large || true){
+			CIVar = this.largeCISplit;
 		}
-		var container = svg.append("svg").attr("id","CISplitContainer");
+		var container = !svg.select("#CISplitContainer").empty() ? svg.select("CISplitContainer") : svg.append("svg").attr("id","CISplitContainer");
 				var visibleCircles = d3.selectAll(".notInCI").filter(function(){
 					return this.attributes["fill-opacity"].value == "1";
 				});
@@ -108,11 +124,29 @@ class bootstrap_oneCat extends visBase {
 					drawArrowDown(self.windowHelper.graphSection.S3.displayArea.y2, self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.displayArea.height/2, self.sampleStatScale(self.populationStatistic+CIVar), container, "ciDownArrow", 1, "red",0.75);
 					//d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(self.populationStatistic-self.CISplit)).attr("x2",self.xScale2(self.populationStatistic-self.CISplit)).style("stroke","red");
 					//d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(self.populationStatistic+self.CISplit)).attr("x2",self.xScale2(self.populationStatistic+self.CISplit)).style("stroke","red");
-					container.append("text").attr("y",self.windowHelper.graphSection.S3.displayArea.y2).attr("x",self.sampleStatScale(self.populationStatistic+CIVar)).text(Math.round((self.populationStatistic+self.CISplit)*100)/100).style("stroke","black").style("fill", "red").style("font-size", 12);
-					container.append("text").attr("y",self.windowHelper.graphSection.S3.displayArea.y2).attr("x",self.sampleStatScale(self.populationStatistic-CIVar)).text(Math.round((self.populationStatistic-self.CISplit)*100)/100).style("stroke","black").style("fill", "red").style("font-size", 12)
-						.transition().duration(500).each("end",function(){
-							container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(self.populationStatistic-self.CISplit)).attr("x2",self.sampleStatScale(self.populationStatistic+self.CISplit)).style("stroke","red").style("stroke-width",5);
+										// proportion above sample
+					
+					var ciTextLabel = Math.round((self.populationStatistic+self.CISplit)*100)/100;
+					if(large){
+						ciTextLabel = Math.round((self.populationStatistic+self.largeCISplit)*100)/100;
+						
+					}
 
+					container.append("text").attr("y",self.windowHelper.graphSection.S3.displayArea.y2).attr("x",self.sampleStatScale(self.populationStatistic+CIVar)).text(Math.round((self.populationStatistic+CIVar)*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12);
+					container.append("text").attr("y",self.windowHelper.graphSection.S3.displayArea.y2).attr("x",self.sampleStatScale(self.populationStatistic-CIVar)).text(Math.round((self.populationStatistic-CIVar)*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12)
+						.transition().duration(500).each("end",function(){
+							container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(self.populationStatistic-CIVar)).attr("x2",self.sampleStatScale(self.populationStatistic+CIVar)).style("stroke","red").style("stroke-width",5)
+								.transition().duration(500).each("end",function(){
+									var midline = container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(self.populationStatistic-CIVar)).attr("x2",self.sampleStatScale(self.populationStatistic+CIVar)).style("stroke","red").style("stroke-width",5);
+									var topline = container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(self.populationStatistic-CIVar)).attr("x2",self.sampleStatScale(self.populationStatistic+CIVar)).style("stroke","red").style("stroke-width",5);
+									midline.transition().duration(500).attr("y1",self.windowHelper.graphSection.S2.displayArea.y2 - self.windowHelper.graphSection.S2.displayArea.height/8).attr("y2",self.windowHelper.graphSection.S2.displayArea.y2 - self.windowHelper.graphSection.S2.displayArea.height/8);
+									topline.transition().delay(500).duration(500).attr("y1",self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8).attr("y2",self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8)
+									.transition().duration(500).each("end",function(){
+										drawArrowDown(self.windowHelper.graphSection.S1.displayArea.y2, self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8, self.sampleStatScale(self.populationStatistic-CIVar), container, "ciDownArrow", 1, "red",0.75);
+										drawArrowDown(self.windowHelper.graphSection.S1.displayArea.y2, self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8, self.sampleStatScale(self.populationStatistic+CIVar), container, "ciDownArrow", 1, "red",0.75);
+
+									});
+								});
 						});
 					}
 				});
