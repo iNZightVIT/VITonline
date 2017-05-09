@@ -33,15 +33,18 @@ class bootstrap_oneCat extends visBase {
 			}
 			var stats = [];
 			for(var j = 0; j < sampleSize;j++){
-					var group = Math.ceil(Math.random()*this.groups.length) - 1;
-					var index =	Math.ceil(Math.random()*populations[this.groups[group]].length) - 1;
-					var nI = new item (populations[this.groups[group]][index].value, j);
-					nI.popId = populations[this.groups[group]][index].id;
-					nI.popGroup = group;
-					nI.group =	populations[this.groups[group]][index].group;
+				var index = Math.ceil(Math.random()*this.allPop.length) - 1;
+				var group = this.allPop[index].group;
+				var groupIndex = this.groups.indexOf(group);
+					var nI = new item (this.allPop[index].value, j);
+					nI.popId = this.allPop[index].id;
+					nI.popGroup = groupIndex;
+					nI.xPerSample[0] =this.allPop[index].xPerSample[0];
+					nI.yPerSample[0] =this.allPop[index].yPerSample[0];
+					nI.group =	group;
 					nI.order = j;
-					nI.groupIndex = group;
-					this.samples[i][group].push(nI);
+					nI.groupIndex = groupIndex;
+					this.samples[i][groupIndex].push(nI);
 			}
 		}
 	}
