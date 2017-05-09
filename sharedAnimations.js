@@ -169,7 +169,7 @@
 	sharedFadeIn = function(settings, currentAnimation){
 		var self = this;
 		sharedFadeInNoExit.apply(this, [settings, currentAnimation]);
-		var circleOverlay = d3.select("#circleOverlay").selectAll("circle").transition().duration(this.transitionSpeed/2).each('end', function(d, i){
+		var circleOverlay = d3.select("#circleOverlay").selectAll("circle").transition().duration(this.transitionSpeed).each('end', function(d, i){
 			if(d == settings.sample[0]){
 				if(settings.incDist){
 					self.animationController(settings, currentAnimation);
@@ -251,7 +251,7 @@
 	sharedProportionBarFadeIn = function(settings, currentAnimation){
 		var self = this;
 		sharedProportionBarFadeInNoExit.apply(this, [settings, currentAnimation]);
-		var circleOverlay = d3.select(".memLine").transition().duration(this.transitionSpeed/2).each('end', function(d, i){
+		var circleOverlay = d3.select(".memLine").transition().duration(this.transitionSpeed*2).each('end', function(d, i){
 			if(settings.incDist){
 				self.animationController(settings, currentAnimation);
 			}else{

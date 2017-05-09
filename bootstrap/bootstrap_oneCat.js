@@ -204,9 +204,10 @@ class bootstrap_oneCat extends visBase {
 			popText = d3.select("#sampleReRandomised").selectAll("g").data(settings.sample);
 
 			var popTextG =popText.enter().append("g");
-			popTextG.append("text").text(function(d){
-				return d.group;
-			}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(2/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[self.groups.indexOf(d.group)]}).attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
+			popTextG.append("text").text(
+				function(d){
+					return (d.value == 1 || self.groups.length == 2) ? d.group : "Other"
+				}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(2/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[1- d.value]}).attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
 
 			if(goSlow){
 				this.buildUpSlow(settings, currentAnimation, 0, popText, self.allPop.length, self);
