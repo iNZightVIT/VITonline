@@ -306,7 +306,7 @@ function drawArrowDown(to, from, xValue, placement, id, op, color, width){
 		var from = from(data);
 		var diff = to - from;
 	}
-	var headSize = 20;
+	var headSize = 10;
 	if(Math.abs(diff) < headSize) headSize =Math.abs(diff)*0.5;
 	if(diff != 0) {var arrowHead = diff / Math.abs(diff);} else { var arrowHead = 0;}
 	group.append("line").attr("y1", to).attr("y2", to - arrowHead*headSize).attr("x1", xValue).attr("x2", xValue + arrowHead*1*headSize/2).style("stroke-width", 2).style("stroke", color).style("opacity", op).style("stroke-width",width);
@@ -496,7 +496,8 @@ function leastSquares(xSeries, ySeries){
 	var intercept = (sumY - slope*sumX)/N;
 	return [slope, intercept];
 }
-var colorByIndex = [d3.rgb("blue"),d3.rgb("red")];
+//var colorByIndex = [d3.rgb("blue"),d3.rgb("red")];
+var colorByIndex = ['#377eb8','#e41a1c','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf']
 //alert(leastSquares([60,61,62,63,65],[3.1,3.6,3.8,4,4.1]));
 function onlyUnique(value, index, self) { 
     return self.indexOf(value) === index;

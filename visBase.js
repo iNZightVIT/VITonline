@@ -371,7 +371,7 @@ class visBase {
 			.attr("width", function(d){ return xScale((d[1]+ d[0])/d[2]) - xScale((d[0])/d[2]) })
 			.attr("x", function(d){return xScale(d[0]/d[2])})
 			.attr("fill",function(d,i){return colorByIndex[i]})
-			.attr("fill-opacity","0.5");
+			.attr("fill-opacity","0.8");
 
 		barsSVG.append("text").text(function(d){return d[1]})
 		.attr("x", function(d){return xScale(d[0]/d[2]) + (xScale((d[1]+ d[0])/d[2]) - xScale((d[0])/d[2])) /2 })
@@ -389,7 +389,7 @@ class visBase {
 
 		barsSVG.append("text").text(function(d){return d[3]})
 		.attr("x", function(d){return xScale(d[0]/d[2])})
-		.attr("y", pos - divHeight/4)
+		.attr("y", pos - divHeight/4 - 2)
 		.attr("text-anchor", "start")
 		.attr("fill",function(d,i){return colorByIndex[i]})
 		.style("font-size", this.windowHelper.fontSize);	
@@ -402,9 +402,9 @@ class visBase {
 	}
 
 	labelSections(placeInto){
-		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S1.titleArea.y).text(this.sectionLabels[0]).style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold").attr("alignment-baseline","hanging");
-		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S2.titleArea.y).text(this.sectionLabels[1]).style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold").attr("alignment-baseline","hanging");
-		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S3.titleArea.y).text(this.sectionLabels[2]).style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold").attr("alignment-baseline","hanging");
+		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S1.titleArea.y+2).text(this.sectionLabels[0]).style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold").attr("alignment-baseline","hanging");
+		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S2.titleArea.y+2).text(this.sectionLabels[1]).style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold").attr("alignment-baseline","hanging");
+		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S3.titleArea.y+2).text(this.sectionLabels[2]).style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold").attr("alignment-baseline","hanging");
 	}
 
 	drawPopAxis(placeInto){
