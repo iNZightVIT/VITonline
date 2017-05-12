@@ -379,7 +379,7 @@ class visBase {
 		.attr("text-anchor", "middle")
 		.attr("dominant-baseline", "central")
 		.attr("fill","white")
-		.style("font-size", this.windowHelper.fontSize*10).style("opacity", 0.6);
+		.style("font-size", this.windowHelper.fontSize*6).style("opacity", 0.6);
 
 		// barsSVG.append("line")
 		// .attr("x1", function(d){return xScale(d[0]/d[2]) })
@@ -402,9 +402,9 @@ class visBase {
 	}
 
 	labelSections(placeInto){
-		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S1.titleArea.y+2).text(this.sectionLabels[0]).style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold").attr("alignment-baseline","hanging");
-		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S2.titleArea.y+2).text(this.sectionLabels[1]).style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold").attr("alignment-baseline","hanging");
-		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S3.titleArea.y+2).text(this.sectionLabels[2]).style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold").attr("alignment-baseline","hanging");
+		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S1.titleArea.y2+2).text(this.sectionLabels[0]).style("opacity", 1).style("font-size",this.windowHelper.fontSize).style("fill","black").style("font-weight","bold");
+		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S2.titleArea.y2+2).text(this.sectionLabels[1]).style("opacity", 1).style("font-size",this.windowHelper.fontSize).style("fill","black").style("font-weight","bold");
+		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S3.titleArea.y2+2).text(this.sectionLabels[2]).style("opacity", 1).style("font-size",this.windowHelper.fontSize).style("fill","black").style("font-weight","bold");
 	}
 
 	drawPopAxis(placeInto){
@@ -465,7 +465,7 @@ class visBase {
 		// we want 0 to be bolded
 		d3.selectAll(".axis text").filter(function(d){
 			return d == 0;
-		}).style("font-size",14).style("font-weight",700);
+		}).style("font-weight",700);
 	}
 
 	drawPopulationStatistic(placeInto){

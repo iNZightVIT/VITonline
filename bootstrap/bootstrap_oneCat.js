@@ -7,13 +7,14 @@ class bootstrap_oneCat extends visBase {
 		this.popDrawType = 1;
 		this.calcLargeCI = true;
 		// text labels for each section.
-		this.sectionLabels = ['Data','Resampled','Resample Distribution'];
+		this.sectionLabels = ['Data','Re-Sample','Bootstrap Distribution'];
 		//this.animationList = [this.populationDropDown,this.buildList, this.fadeIn, this.endNoDist, this.distDrop, this.endDist ];
 		this.animationList = [this.populationDropDown.bind(this),
 						this.buildList.bind(this), 
 						this.fadeIn.bind(this), 
 						this.endNoDist.bind(this), 
 						this.distDrop.bind(this),
+						this.removeBar.bind(this),
 						this.endDist.bind(this)];
 	}
 
@@ -233,6 +234,12 @@ class bootstrap_oneCat extends visBase {
 
 	distDrop(settings, currentAnimation){
 		sharedSingleStatDistDrop.apply(this, [settings, currentAnimation]);
-	}	
+	}
+	removeBar(settings, currentAnimation){
+		if(settings.repititions > 500){
+			d3.select("#samp").remove();
+		}
+		this.animationController(settings, currentAnimation);
+	}
 }
 

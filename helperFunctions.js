@@ -202,17 +202,17 @@ function setUpWindow3(margins, includeSampleSection){
 	windowHelper.graphSection.S1.titleArea = new WindowSection(windowHelper.graphSection.S1.x1,
 												windowHelper.graphSection.S1.y1,
 												windowHelper.graphSection.S1.x2,
-												windowHelper.graphSection.S1.y1 + windowHelper.graphSection.S1.height * 0.05);
+												windowHelper.graphSection.S1.y1 + windowHelper.graphSection.S1.height * 0.1);
 
 	windowHelper.graphSection.S1.displayArea = new WindowSection(windowHelper.graphSection.S1.x1,
 												windowHelper.graphSection.S1.titleArea.y2,
 												windowHelper.graphSection.S1.x2,
-												windowHelper.graphSection.S1.titleArea.y2 + windowHelper.graphSection.S1.height * 0.9);
+												windowHelper.graphSection.S1.titleArea.y2 + windowHelper.graphSection.S1.height * 0.8);
 
 	windowHelper.graphSection.S1.axisArea = new WindowSection(windowHelper.graphSection.S1.x1,
 												windowHelper.graphSection.S1.displayArea.y2,
 												windowHelper.graphSection.S1.x2,
-												windowHelper.graphSection.S1.displayArea.y2 + windowHelper.graphSection.S1.height * 0.05);
+												windowHelper.graphSection.S1.displayArea.y2 + windowHelper.graphSection.S1.height * 0.1);
 
 
 	// Section 2
@@ -224,17 +224,17 @@ function setUpWindow3(margins, includeSampleSection){
 	windowHelper.graphSection.S2.titleArea = new WindowSection(windowHelper.graphSection.S2.x1,
 												windowHelper.graphSection.S2.y1,
 												windowHelper.graphSection.S2.x2,
-												windowHelper.graphSection.S2.y1 + windowHelper.graphSection.S2.height * 0.05);
+												windowHelper.graphSection.S2.y1 + windowHelper.graphSection.S2.height * 0.1);
 
 	windowHelper.graphSection.S2.displayArea = new WindowSection(windowHelper.graphSection.S2.x1,
 												windowHelper.graphSection.S2.titleArea.y2,
 												windowHelper.graphSection.S2.x2,
-												windowHelper.graphSection.S2.titleArea.y2 + windowHelper.graphSection.S2.height * 0.9);
+												windowHelper.graphSection.S2.titleArea.y2 + windowHelper.graphSection.S2.height * 0.8);
 
 	windowHelper.graphSection.S2.axisArea = new WindowSection(windowHelper.graphSection.S2.x1,
 												windowHelper.graphSection.S2.displayArea.y2,
 												windowHelper.graphSection.S2.x2,
-												windowHelper.graphSection.S2.displayArea.y2 + windowHelper.graphSection.S2.height * 0.05);
+												windowHelper.graphSection.S2.displayArea.y2 + windowHelper.graphSection.S2.height * 0.1);
 
 	// Section 3
 	windowHelper.graphSection.S3 = new WindowSection(windowHelper.graphSection.x1,
@@ -245,17 +245,17 @@ function setUpWindow3(margins, includeSampleSection){
 	windowHelper.graphSection.S3.titleArea = new WindowSection(windowHelper.graphSection.S3.x1,
 												windowHelper.graphSection.S3.y1,
 												windowHelper.graphSection.S3.x2,
-												windowHelper.graphSection.S3.y1 + windowHelper.graphSection.S3.height * 0.05);
+												windowHelper.graphSection.S3.y1 + windowHelper.graphSection.S3.height * 0.1);
 
 	windowHelper.graphSection.S3.displayArea = new WindowSection(windowHelper.graphSection.S3.x1,
 												windowHelper.graphSection.S3.titleArea.y2,
 												windowHelper.graphSection.S3.x2,
-												windowHelper.graphSection.S3.titleArea.y2 + windowHelper.graphSection.S3.height * 0.9);
+												windowHelper.graphSection.S3.titleArea.y2 + windowHelper.graphSection.S3.height * 0.8);
 
 	windowHelper.graphSection.S3.axisArea = new WindowSection(windowHelper.graphSection.S3.x1,
 												windowHelper.graphSection.S3.displayArea.y2,
 												windowHelper.graphSection.S3.x2,
-												windowHelper.graphSection.S3.displayArea.y2 + windowHelper.graphSection.S3.height * 0.05);
+												windowHelper.graphSection.S3.displayArea.y2 + windowHelper.graphSection.S3.height * 0.1);
 
 
 
