@@ -166,7 +166,7 @@ viewBase.prototype.noVisAvail = function(){
 	}
 
 viewBase.prototype.varSelected = function(e){
-				d3.select("#helpBox").remove();
+		d3.select("#helpBox").remove();
 		d3.select("#startButton").attr("disabled", null);
 		var vars = "";
 		for(var i = 0; i<e.length;i++){

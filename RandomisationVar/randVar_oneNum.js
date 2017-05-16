@@ -129,7 +129,7 @@ class randVar_oneNum extends visBase {
 		    	return d.yPerSample[0] + self.windowHelper.graphSection.S2.displayArea.y;
 		    })
 		    .attr("r", function(d) { return self.windowHelper.radius; })
-		    .attr("fill-opacity", 0)
+		    .attr("fill-opacity", 0.5)
 		    .style("stroke","#556270")
 		    .attr("stroke-opacity",1);
 
@@ -153,7 +153,7 @@ class randVar_oneNum extends visBase {
 		sharedFadeInNoExit.apply(this, [settings, currentAnimation]);
 
 		if(settings.goSlow){
-		splitCircle.style("stroke", function(d){
+		splitCircle.style("fill", function(d){
 			var test = self.colorIndex[d.group];
 			return test}).transition().duration(this.transitionSpeed).attr("cy",function(d,i){
 				return d.yPerSample[settings.indexUpTo+1];
@@ -164,7 +164,7 @@ class randVar_oneNum extends visBase {
 				}
 		});
 		}else{
-			splitCircle.style("stroke", function(d){return self.colorIndex[d.group];}).attr("cy",function(d,i){return d.yPerSample[settings.indexUpTo+1]})
+			splitCircle.style("fill", function(d){return self.colorIndex[d.group];}).attr("cy",function(d,i){return d.yPerSample[settings.indexUpTo+1]})
 			.transition().duration(this.transitionSpeed).each("end", function(d){
 				if(d==settings.sample[0]){
 					self.animationController(settings, currentAnimation);

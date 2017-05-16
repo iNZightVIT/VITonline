@@ -7,7 +7,8 @@ class visBase {
 		// This is the group to split on, I.E gender
 		this.headingGroup = headingGroup;
 
-		// This is the continuous data to use for each data point, I.E height
+		// This is the data to use for each data point, I.E height
+		// For proportions, this is also the values of the primary group, E.G 0:male 1:female
 		this.headingContinuous = headingContinuous;
 
 		// This is the statistic to use for showing differences between groups, I.E mean or median.
@@ -15,6 +16,7 @@ class visBase {
 
 		// This is the named prroportion to display on proportion visualisations, I.E for Ethnicity is
 		// chosen and European is chosen as the focus, it will show European vs Other. 
+		// Basically used to pick which category should be value 0.
 		this.focus = focus;
 
 		// whether or not to calculate the large CI numbers
@@ -28,6 +30,14 @@ class visBase {
 
 		// include the boxes for samples
 		this.includeSampleSection = true;
+
+		// Allows the value to be categorical for comparing proportions between groups. E.G comparing gender for each 
+		// travel type in [bus, walk, bike]. Travel style would be the value, group would be gender. For now keep
+		// and display the cat values as either 1 for the focus or 0 for other.
+		this.valueAllowCategorical = false;
+
+		// Holds the names of categories splitting value.
+		this.valueCategories = new Set();
 
 		this.popSetup = false;
 		this.sampSetup = false;
@@ -68,11 +78,23 @@ class visBase {
 		// The statistic for each of the groups, ordered in the same way.
 		this.groupStats = [];
 
+		// Value categories real names.
+		var allValueCategories = new Set();
+		this.valueCategories = new Set();
+
+		// For visualisations where the data is categorical, I.E proportions, we want the focus to be
+		// the first value in the list of categories.
+		if(this.focus != null){
+			this.valueCategories.add(this.focus);
+			allValueCategories.add(this.focus);
+		}
+
 		// For loop to go through every data point and extract the relevant info.
 		// Here this is the category and value for every item.
 		// Items also store their x and y values for drawing on the screen at every sample.
 		// These item stubs are stored in this.population.
-		// 
+
+		
 		// Min and Max for the population is also calculated here.
 		for(var i = 0; i < populationSize;i++){
 			var thisItem = new Object();
@@ -86,7 +108,23 @@ class visBase {
 				}
 			}
 			thisItem.group = this.headingGroup != null ? inputItem[this.headingGroup] : "";
-			thisItem.value = this.headingContinuous != null ? +inputItem[this.headingContinuous] : +(thisItem.group == this.focus);
+			if(!this.valueAllowCategorical){
+				thisItem.value = this.headingContinuous != null ? +inputItem[this.headingContinuous] : +(thisItem.group == this.focus);
+			}else{
+				var itemValueCategory = inputItem[this.headingContinuous];
+
+				// If focus is set, we only want to compare the focus against all other values,
+				// E.g comapre male to female but bike to school against all other transport options.
+				allValueCategories.add(itemValueCategory);
+				if(this.focus != null){
+					itemValueCategory = itemValueCategory == this.focus ? itemValueCategory : "Other";
+				}
+
+				if(itemValueCategory != null){
+					this.valueCategories.add(itemValueCategory);
+				}
+				thisItem.value =  [...this.valueCategories].indexOf(itemValueCategory);
+			}
 			if(isNaN(thisItem.value)) continue;
 			if(max == null | thisItem.value > max) max = thisItem.value;
 			if(min == null | thisItem.value < min) min = thisItem.value;
@@ -96,6 +134,12 @@ class visBase {
 			this.populations[thisItem.group].push(thisItem)
 			this.allPop.push(thisItem);
 
+		}
+
+		//If there are only 2 categories for the value, call the second by its name instead of other
+		if([...allValueCategories].length == 2) {
+			this.valueCategories.delete("Other");
+			this.valueCategories.add([...allValueCategories][1]);
 		}
 
 		// Make a scale that converts values between [min, max] to values to draw on the screen.
@@ -108,19 +152,6 @@ class visBase {
 		this.groups.sort(function(a,b){
 			return getStatistic(self.statistic,self.populations[a], populationSize) - getStatistic(self.statistic,self.populations[b], populationSize);
 		})
-
-		// If focus is set, make it the first item in this.groups
-		if(this.focus){
-			this.propGroups = [];
-			for(var g = 0; g < this.groups.length; g++){
-				if(this.groups[g] == this.focus){
-					var temp = this.groups[0];
-					this.groups[0] = this.groups[g];
-					this.groups[g] = temp;
-					break;
-				}
-			}
-		}
 
 		// Sets up a section for each of the categorical variable possibilities. (If visualising proportion, split on second categorical, *NOT IMPLEMENTED YET*)
 		var numDivisions = this.groups.length;
@@ -135,7 +166,7 @@ class visBase {
 			this.setUpPopCategory(this.populations[this.groups[j]], this.xScale, this.windowHelper.radius, top, bottom);
 
 			// gets the selected statistic for category.
-			var stat = getStatistic(this.statistic, this.populations[this.groups[j]], populationSize);
+			var stat = getStatistic(this.statistic, this.valueAllowCategorical ? this.populations[this.groups[j]].filter(function(i){return i.value==0}) : this.populations[this.groups[j]], populationSize);
 			this.groupStats[this.groups[j]] = stat;
 			s.push(stat);
 		}
@@ -148,9 +179,10 @@ class visBase {
 			newItem.s1 = s[1];
 			
 
-			if(this.groups.length != 2 && !this.focus){
+			if(this.groups.length != 2){
 				this.implemented = false;
 			}
+
 			this.populationDiff = newItem.value;
 		}
 
@@ -342,8 +374,8 @@ class visBase {
 	drawProportional(placeInto){
 		var self = this;
 
-		// Should make a division for each secondary categorical variable. Not Implemented yet, so only 1.
-		var numDivisions = 1;
+		// Should make a division for each group.
+		var numDivisions = this.groups.length;
 		var divisions = this.windowHelper.graphSection.S1.displayArea.getDivisions(numDivisions, 'height');
 		var divSections = divisions[0];
 		var divHeight = divisions[1];
@@ -351,19 +383,30 @@ class visBase {
 			var pos = divSections[i] - divHeight/2 - this.windowHelper.radius*2;
 			var catSVG = placeInto.append("g").attr("id","pop"+i);
 
+			var groupName = this.groups[i];
 			// Now split on main categories. We want a category for the focus and one for other.
-			var focusGroup = self.allPop.filter(function(x){return x.value == 1});
-			var otherGroup = self.allPop.filter(function(x){return x.value != 1});
+			var focusGroup = self.populations[groupName].filter(function(x){return x.value == 0});
+			var otherGroup = self.populations[groupName].filter(function(x){return x.value != 0});
 
-			this.drawProportionBars(catSVG, divHeight, pos, self.xScale, focusGroup, otherGroup, "pop", i);
+			this.drawProportionBars(catSVG, divHeight, pos, self.xScale, focusGroup, otherGroup, groupName, i, [...this.valueCategories]);
 		}
 	}
 
-	drawProportionBars(svg, divHeight, pos, xScale, fG, oG, name, i){
+	drawProportionBars(svg, divHeight, pos, xScale, fG, oG, name, i, barTitles){
 		var self = this;
 		// Each bar has its start in units, its end in units, the total amouint of units and its name.
-		var bars = [[0, fG.length, fG.length + oG.length, self.focus], [fG.length, oG.length, fG.length + oG.length, this.groups.length == 2 ? this.groups[1] : "Other"]];
+		var bars = [[0, fG.length, fG.length + oG.length, barTitles[0]], [fG.length, oG.length, fG.length + oG.length, barTitles[1]]];
+
+		// Bar Name (group)
+		svg.append("text").text(name)
+		.attr("x", xScale(1))
+		.attr("y", pos - divHeight/4 - 2)
+		.attr("text-anchor", "end")
+		.attr("fill","black")
+		.style("font-size", divHeight*0.6).style("opacity", 0.6);
+
 		svg = svg.selectAll("g").data(bars);
+
 		var barsSVG = svg.enter().append("g").attr("id", function(d){return name + i + d[3]});
 		barsSVG.append("rect")
 			.attr("height", divHeight/2)
@@ -373,13 +416,13 @@ class visBase {
 			.attr("fill",function(d,i){return colorByIndex[i]})
 			.attr("fill-opacity","0.8");
 
-		barsSVG.append("text").text(function(d){return d[1]})
+		barsSVG.append("text").text(function(d){return d[1] > 0 ? d[1] : ""})
 		.attr("x", function(d){return xScale(d[0]/d[2]) + (xScale((d[1]+ d[0])/d[2]) - xScale((d[0])/d[2])) /2 })
 		.attr("y", pos)
 		.attr("text-anchor", "middle")
 		.attr("dominant-baseline", "central")
 		.attr("fill","white")
-		.style("font-size", this.windowHelper.fontSize*6).style("opacity", 0.6);
+		.style("font-size", divHeight*0.6).style("opacity", 0.6);
 
 		// barsSVG.append("line")
 		// .attr("x1", function(d){return xScale(d[0]/d[2]) })
@@ -387,7 +430,7 @@ class visBase {
 		// .attr("y1", pos)
 		// .attr("y2", pos);	
 
-		barsSVG.append("text").text(function(d){return d[3]})
+		barsSVG.append("text").text(function(d){return d[1] > 0 ? d[3] : ""})
 		.attr("x", function(d){return xScale(d[0]/d[2])})
 		.attr("y", pos - divHeight/4 - 2)
 		.attr("text-anchor", "start")

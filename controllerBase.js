@@ -10,6 +10,8 @@ var controllerBase = function(){
 	this.paused = false;
 	this.going = false;
 	this.fadeOn = false;
+
+	this.variables_selected = new Set();
 }
 controllerBase.prototype.getPresets = function(){
 		this.model.getPresets(this.view.setupPresets);
@@ -71,6 +73,7 @@ controllerBase.prototype.parseRestOfURL = function() {
 			e.target.selectedOptions.push(va);
 		}
 	}
+	this.variables_selected = new Set(e.target.selectedOptions);
 	this.varSelected(e, true);
 
 	var focus = urlParams.get("focus");
@@ -155,17 +158,27 @@ controllerBase.prototype.loadTestData = function(fromURL){
 		}
 	}
 controllerBase.prototype.varSelected = function(e, fromURL){
+	var selOptions = new Set(e.target.selectedOptions);
+	for (var index = 0; index < e.target.selectedOptions.length; index++){
+		this.variables_selected.add(e.target.selectedOptions[index])
+	}
+	var set_items = [...this.variables_selected];
+	for (var index = 0; index < set_items.length; index++){
+		if(!selOptions.has(set_items[index])){
+			this.variables_selected.delete(set_items[index]);
+		}
+	}
 		d3.select(".svg").selectAll("text").remove();
 		this.view.destroyFocus();
 		this.view.destroyVSelect();
-		this.model.varSelected(e.target.selectedOptions);
-		this.view.varSelected(e.target.selectedOptions);
+		this.model.varSelected([...this.variables_selected]);
+		this.view.varSelected([...this.variables_selected]);
 
 		if(!fromURL){
 			if(this.fileURL){
 				var newurl = this.fileURL;
-				for (var i = 0; i < e.target.selectedOptions.length; i++){
-					newurl += ("&var="+e.target.selectedOptions[i].value);
+				for (var i = 0; i < [...this.variables_selected].length; i++){
+					newurl += ("&var="+[...this.variables_selected][i].value);
 				}
 				this.varURL = newurl;
 				window.history.pushState({path:newurl},'', newurl);

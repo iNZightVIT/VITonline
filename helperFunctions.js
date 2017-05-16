@@ -405,6 +405,7 @@ function getStatistic(stat, origItems, total){
 		// return (items[lQIndexLow].value+items[lQIndexHigh].value)/2;
 	}
 	if(stat = "Proportion"){
+		//var focusItems = items.filter(function(i){return i.value==0})
 		return items.length/total;
 	}
 }

@@ -1,15 +1,14 @@
 
-class bootstrap_oneCat extends visBase {
+class bootstrap_twoCat extends visBase {
 	constructor(inputData, headingGroup, headingContinuous, statistic, focus) {
 		super(inputData, headingGroup, headingContinuous, statistic, focus);
 		this.windowHelper = setUpWindow3({'left':5, 'right':5, 'top':5, 'bottom':5}, true);
 		this.sampleStatType = "stat";
 		this.popDrawType = 1;
 		this.calcLargeCI = true;
+		this.valueAllowCategorical = true;
 		// text labels for each section.
 		this.sectionLabels = ['Data','Re-Sample','Bootstrap Distribution'];
-
-		this.valueAllowCategorical = true;
 		//this.animationList = [this.populationDropDown,this.buildList, this.fadeIn, this.endNoDist, this.distDrop, this.endDist ];
 		this.animationList = [this.populationDropDown.bind(this),
 						this.buildList.bind(this), 
@@ -31,16 +30,19 @@ class bootstrap_oneCat extends visBase {
 		this.samples = [];
 		for(var i = 0; i<numSamples;i++){
 			this.samples.push([]);
-			for(var g = 0; g < [...this.valueCategories].length; g++){
+			for(var g = 0; g < this.groups.length; g++){
 				this.samples[i].push([]);
 			}
 			var stats = [];
 			for(var j = 0; j < sampleSize;j++){
 				var index = Math.ceil(Math.random()*this.allPop.length) - 1;
-				var group = [...this.valueCategories][this.allPop[index].value];
-				var groupIndex = this.allPop[index].value;
+				var group = this.allPop[index].group;
+				var groupIndex = this.groups.indexOf(group);
 					var nI = new item (this.allPop[index].value, j);
 					nI.popId = this.allPop[index].id;
+					nI.popGroup = groupIndex;
+					nI.xPerSample[0] =this.allPop[index].xPerSample[0];
+					nI.yPerSample[0] =this.allPop[index].yPerSample[0];
 					nI.group =	group;
 					nI.order = j;
 					nI.groupIndex = groupIndex;
@@ -54,9 +56,9 @@ class bootstrap_oneCat extends visBase {
 	}
 	fillBaseSampleSection(placeInto){
 		var self = this;
-		placeInto.append("text").text(this.headingContinuous).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(2/4)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
+		placeInto.append("text").text(this.headingGroup).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(2/4)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
 		var popTextG = placeInto.selectAll("g").data(this.allPop).enter().append("g");
-		popTextG.append("text").text(function(d){return [...self.valueCategories][d.value]}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(2/4)).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[d.value]}).attr("text-anchor","middle");
+		popTextG.append("text").text(function(d){return (d.value == 1 || self.groups.length == 2) ? d.group : "Other"}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(2/4)).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[1-d.value]}).attr("text-anchor","middle");
 
 		placeInto.append("g").attr("id","redTContainer");
 		placeInto.append("text").text("ReSample").attr("x",(self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width/2)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("display","inline-block").attr("text-anchor","middle");
@@ -209,8 +211,8 @@ class bootstrap_oneCat extends visBase {
 			var popTextG =popText.enter().append("g");
 			popTextG.append("text").text(
 				function(d){
-					return [...self.valueCategories][d.value];
-				}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(2/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[d.value]}).attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
+					return (d.value == 1 || self.groups.length == 2) ? d.group : "Other"
+				}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(2/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[1- d.value]}).attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
 
 			if(goSlow){
 				this.buildUpSlow(settings, currentAnimation, 0, popText, self.allPop.length, self);

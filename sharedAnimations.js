@@ -215,10 +215,10 @@
 			var catSVG = d3.select("#samples").append("g").attr("id","samp");
 
 			// Now split on main categories. We want a category for the focus and one for other.
-			var focusGroup = allInSample.filter(function(x){return x.value == 1});
-			var otherGroup = allInSample.filter(function(x){return x.value != 1});
+			var focusGroup = allInSample.filter(function(x){return x.value == 0});
+			var otherGroup = allInSample.filter(function(x){return x.value != 0});
 
-			this.drawProportionBars(catSVG, divHeight, pos, self.xScale, focusGroup, otherGroup, "samp");
+			this.drawProportionBars(catSVG, divHeight, pos, self.xScale, focusGroup, otherGroup, "", 0, [...this.valueCategories]);
 		}
 
 		var middle = this.windowHelper.graphSection.S2.displayArea.getMiddleHeight();

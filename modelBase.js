@@ -196,9 +196,10 @@ modelBase.prototype.loadPresetData = function(fromURL){
 		this.fileName = "test data";
 		this.controller.setUpDataVeiw(this.testingData, fromURL);
 	}
-modelBase.prototype.handleFocusSelector = function(num, cat){
-	var unique = this.dataSplit[cat[0]].filter(onlyUnique);
-	this.controller.makeFocusSelector(unique, cat[0]);
+modelBase.prototype.handleFocusSelector = function(num, cat, focusCat){
+	var category_to_focus = focusCat != null ? focusCat : 0;
+	var unique = this.dataSplit[cat[category_to_focus]].filter(onlyUnique);
+	this.controller.makeFocusSelector(unique, cat[category_to_focus]);
 }
 modelBase.prototype.varSelected = function(e){
 		if(this.display){
@@ -224,7 +225,7 @@ modelBase.prototype.varSelected = function(e){
 			var vis = this.visualisations[n];
 			if(vis.numeretical == numeretical.length && vis.categorical == categorical.length){
 				this.currentDisplayType = n;
-				if(vis.needsFocus) this.handleFocusSelector(numeretical, categorical);
+				if(vis.needsFocus) this.handleFocusSelector(numeretical, categorical, vis.focusCat);
 				this.display = vis.setupParams(numeretical,categorical,this);
 				this.controller.startVisPreveiw();
 				this.currentCategory = vis.stats;
@@ -242,6 +243,8 @@ modelBase.prototype.switchFocus = function(newFocus){
 		var curCategory = this.display.headingGroup;
 		var curCategory2 = this.display.category2;
 		this.display.destroy();
+		this.display = this.visualisations[this.currentDisplayType].setupParams(this.num, this.cat, this, newFocus);
+		/*
 		if(this.currentDisplayType == 2){
 			this.display = this.visualisations[2].setupParams(this.num,this.cat,this, newFocus);
 		}
@@ -250,7 +253,7 @@ modelBase.prototype.switchFocus = function(newFocus){
 			var test = d[curCategory] != "NA" && d[curCategory2] != "NA";
 			return test;
 		}), curCategory, curCategory2, newFocus, this.dataSplit[curCategory].filter(onlyUnique), this.dataSplit[curCategory2].filter(onlyUnique))
-		}
+		} */
 	}
 modelBase.prototype.switchVar = function(changeTo){
 		this.destroy();
