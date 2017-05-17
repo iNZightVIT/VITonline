@@ -3,7 +3,7 @@ class bootstrap_twoCat extends visBase {
 	constructor(inputData, headingGroup, headingContinuous, statistic, focus) {
 		super(inputData, headingGroup, headingContinuous, statistic, focus);
 		this.windowHelper = setUpWindow3({'left':5, 'right':5, 'top':5, 'bottom':5}, true);
-		this.sampleStatType = "stat";
+		this.sampleStatType = "diff";
 		this.popDrawType = 1;
 		this.calcLargeCI = true;
 		this.valueAllowCategorical = true;
@@ -36,48 +36,48 @@ class bootstrap_twoCat extends visBase {
 			var stats = [];
 			for(var j = 0; j < sampleSize;j++){
 				var index = Math.ceil(Math.random()*this.allPop.length) - 1;
-				var group = this.allPop[index].group;
+				var pickedOriginal = this.allPop[index];
+
+
+				var group = pickedOriginal.group;
 				var groupIndex = this.groups.indexOf(group);
-					var nI = new item (this.allPop[index].value, j);
-					nI.popId = this.allPop[index].id;
+
+				var nI = new item (pickedOriginal.value, j);
+					nI.popId = pickedOriginal.id;
 					nI.popGroup = groupIndex;
-					nI.xPerSample[0] =this.allPop[index].xPerSample[0];
-					nI.yPerSample[0] =this.allPop[index].yPerSample[0];
+					nI.xPerSample[0] = pickedOriginal.xPerSample[0];
+					nI.yPerSample[0] = pickedOriginal.yPerSample[0];
 					nI.group =	group;
 					nI.order = j;
 					nI.groupIndex = groupIndex;
-					this.samples[i][groupIndex].push(nI);
+				this.samples[i][groupIndex].push(nI);
 			}
 		}
 	}
+
+	getStatisticEachSample(i, g){
+		var populationSize = this.samples[i][g].length;
+
+		//Our statistic will be the proportion of values that match the focus out of each group.
+		return getStatistic(this.statistic, this.samples[i][g].filter(function(item){return item.value == 0}), populationSize);
+	}
+
 	setUpSampleCategory(items, scale, radius, sample, top, bottom){
 		// Sets the y value for all population circles in the category to make it look heaped. 
 		heapYValues3(items, scale, radius, sample, top,bottom);
 	}
 	fillBaseSampleSection(placeInto){
 		var self = this;
-		placeInto.append("text").text(this.headingGroup).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(2/4)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
+		placeInto.append("text").text(this.headingGroup).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(3/4)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
+		placeInto.append("text").text(this.headingContinuous).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(1/4)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
+
 		var popTextG = placeInto.selectAll("g").data(this.allPop).enter().append("g");
-		popTextG.append("text").text(function(d){return (d.value == 1 || self.groups.length == 2) ? d.group : "Other"}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(2/4)).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[1-d.value]}).attr("text-anchor","middle");
+		popTextG.append("text").text(function(d){return (d.value == 1 || self.groups.length == 2) ? d.group : "Other"}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(3/4)).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[[...self.valueCategories].length+self.groups.indexOf(d.group)]}).attr("text-anchor","middle");
+		popTextG.append("text").text(function(d){return [...self.valueCategories][d.value]}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(1/4)).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[d.value]}).attr("text-anchor","middle");
 
 		placeInto.append("g").attr("id","redTContainer");
 		placeInto.append("text").text("ReSample").attr("x",(self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width/2)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("display","inline-block").attr("text-anchor","middle");
 
-	}
-	drawPopulationStatistic(placeInto){
-		var middle = this.windowHelper.graphSection.S1.displayArea.getMiddleHeight();
-		d3.select("#population").append("line").attr("id","popProp")
-			.attr("x1", this.xScale(this.populationStatistic))
-			.attr("x2", this.xScale(this.populationStatistic))
-			.attr("y1", middle +this.windowHelper.graphSection.S1.displayArea.height*(3/8))
-			.attr("y2", middle)
-			.style("stroke-width", 3)
-			.style("stroke", "black").style("opacity",1);
-
-		d3.select("#population").append("text").attr("id","popPropText").text(Math.round(this.populationStatistic*100)/100)
-			.attr("x", this.xScale(this.populationStatistic) + 5)
-			.attr("y", middle +this.windowHelper.graphSection.S1.displayArea.height*(3/8))
-			.style("fill", "black").style("opacity",1).style("font-size", this.windowHelper.fontSize);
 	}
 
 	cleanUpRepitition(){
@@ -123,7 +123,8 @@ class bootstrap_twoCat extends visBase {
 				var visibleCircles = d3.selectAll(".notInCI").filter(function(){
 					return this.attributes["fill-opacity"].value == "1";
 				});
-				visibleCircles.style("opacity",0.2).transition().duration(500).each("end",function(d,i){
+				var after = function(visibleCircles, container, svg){
+					visibleCircles.style("opacity",0.2).transition().duration(500).each("end",function(d,i){
 					if(i==0){
 					drawArrowDown(self.windowHelper.graphSection.S3.axisArea.y2, self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.displayArea.height/2, self.sampleStatScale(self.populationStatistic-CIVar), container, "ciDownArrow", 1, "red",0.75);
 					drawArrowDown(self.windowHelper.graphSection.S3.axisArea.y2, self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.displayArea.height/2, self.sampleStatScale(self.populationStatistic+CIVar), container, "ciDownArrow", 1, "red",0.75);
@@ -140,21 +141,13 @@ class bootstrap_twoCat extends visBase {
 					container.append("text").attr("y",self.windowHelper.graphSection.S3.axisArea.y2).attr("x",self.sampleStatScale(self.populationStatistic+CIVar)).text(Math.round((self.populationStatistic+CIVar)*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging");
 					container.append("text").attr("y",self.windowHelper.graphSection.S3.axisArea.y2).attr("x",self.sampleStatScale(self.populationStatistic-CIVar)).text(Math.round((self.populationStatistic-CIVar)*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging")
 						.transition().duration(500).each("end",function(){
-							container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(self.populationStatistic-CIVar)).attr("x2",self.sampleStatScale(self.populationStatistic+CIVar)).style("stroke","red").style("stroke-width",5)
-								.transition().duration(500).each("end",function(){
-									var midline = container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(self.populationStatistic-CIVar)).attr("x2",self.sampleStatScale(self.populationStatistic+CIVar)).style("stroke","red").style("stroke-width",5);
-									var topline = container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(self.populationStatistic-CIVar)).attr("x2",self.sampleStatScale(self.populationStatistic+CIVar)).style("stroke","red").style("stroke-width",5);
-									midline.transition().duration(1000).attr("y1",self.windowHelper.graphSection.S2.displayArea.y2 - self.windowHelper.graphSection.S2.displayArea.height/8).attr("y2",self.windowHelper.graphSection.S2.displayArea.y2 - self.windowHelper.graphSection.S2.displayArea.height/8);
-									topline.transition().delay(1000).duration(1000).attr("y1",self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8 + 10).attr("y2",self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8 + 10)
-									.transition().duration(50).each("end",function(){
-										drawArrowDown(self.windowHelper.graphSection.S1.displayArea.y2, self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8 + 10, self.sampleStatScale(self.populationStatistic-CIVar), container, "ciDownArrow", 1, "red",0.75);
-										drawArrowDown(self.windowHelper.graphSection.S1.displayArea.y2, self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8 + 10, self.sampleStatScale(self.populationStatistic+CIVar), container, "ciDownArrow", 1, "red",0.75);
-
-									});
-								});
+							container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(self.populationStatistic-CIVar)).attr("x2",self.sampleStatScale(self.populationStatistic+CIVar)).style("stroke","red").style("stroke-width",5);
 						});
 					}
 				});
+				}
+				CIDifferenceArrow.apply(this, [after.bind(this, visibleCircles, container, svg)]);
+
 
 	}
 	showLargeCI() {
@@ -187,7 +180,7 @@ class bootstrap_twoCat extends visBase {
 			this.animationController(settings, currentAnimation);
 			return;
 		}
-		drawArrow(self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(2/8), self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(1/8), settings.sample[upto].popId < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize/2 + (self.windowHelper.fontSize+2)*(settings.sample[upto].popId+1)) : -10, popText, "redHighlight", 1, "red" );
+		drawArrow(self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(1/8), self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(0/8), settings.sample[upto].popId < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize/2 + (self.windowHelper.fontSize+2)*(settings.sample[upto].popId+1)) : -10, popText, "redHighlight", 1, "red" );
 		d3.selectAll(".t"+settings.sample[upto].order).attr("stroke-opacity", 1).attr("fill-opacity", 1).transition().duration(500/settings.repititions).each('end', function(d, i){
 			settings.buildListUpto = upto+1;
 			self.buildUpSlow(settings, currentAnimation, upto+1, popText, max, self);
@@ -212,7 +205,11 @@ class bootstrap_twoCat extends visBase {
 			popTextG.append("text").text(
 				function(d){
 					return (d.value == 1 || self.groups.length == 2) ? d.group : "Other"
-				}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(2/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[1- d.value]}).attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
+				}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(3/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[[...self.valueCategories].length+self.groups.indexOf(d.group)]}).attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
+
+			popTextG.append("text").text(function(d){
+				return [...self.valueCategories][d.value]
+			}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(1/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[d.value]}).attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
 
 			if(goSlow){
 				this.buildUpSlow(settings, currentAnimation, 0, popText, self.allPop.length, self);
@@ -229,7 +226,7 @@ class bootstrap_twoCat extends visBase {
 	}
 
 	fadeIn(settings, currentAnimation){
-		sharedProportionBarFadeIn.apply(this, [settings, currentAnimation]);
+		sharedProportionMultiBarFadeIn.apply(this, [settings, currentAnimation]);
 	}
 
 
@@ -238,7 +235,7 @@ class bootstrap_twoCat extends visBase {
 	}
 	removeBar(settings, currentAnimation){
 		if(settings.repititions > 500){
-			d3.select("#samp").remove();
+			d3.selectAll("#samp").remove();
 		}
 		this.animationController(settings, currentAnimation);
 	}

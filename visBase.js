@@ -150,7 +150,7 @@ class visBase {
 		// we want the groups in order of lowest to highest statistic, (unless a focus is set, in which case it is first)
 		// mainly so the arrow always points right (i think)
 		this.groups.sort(function(a,b){
-			return getStatistic(self.statistic,self.populations[a], populationSize) - getStatistic(self.statistic,self.populations[b], populationSize);
+			return getStatistic(self.statistic,self.valueAllowCategorical ? self.populations[a].filter(function(i){return i.value==0}) : self.populations[a], self.valueAllowCategorical ? self.populations[a].length : populationSize) - getStatistic(self.statistic,self.valueAllowCategorical ? self.populations[b].filter(function(i){return i.value==0}) : self.populations[b], self.valueAllowCategorical ? self.populations[b].length : populationSize);
 		})
 
 		// Sets up a section for each of the categorical variable possibilities. (If visualising proportion, split on second categorical, *NOT IMPLEMENTED YET*)
@@ -166,7 +166,7 @@ class visBase {
 			this.setUpPopCategory(this.populations[this.groups[j]], this.xScale, this.windowHelper.radius, top, bottom);
 
 			// gets the selected statistic for category.
-			var stat = getStatistic(this.statistic, this.valueAllowCategorical ? this.populations[this.groups[j]].filter(function(i){return i.value==0}) : this.populations[this.groups[j]], populationSize);
+			var stat = getStatistic(this.statistic, this.valueAllowCategorical ? this.populations[this.groups[j]].filter(function(i){return i.value==0}) : this.populations[this.groups[j]], this.valueAllowCategorical ? this.populations[this.groups[j]].length : populationSize);
 			this.groupStats[this.groups[j]] = stat;
 			s.push(stat);
 		}
@@ -224,6 +224,11 @@ class visBase {
 			}
 		}
 	}
+
+	getStatisticEachSample(i, g){
+		var populationSize = this.inputData.length;
+		return getStatistic(this.statistic, this.samples[i][g], populationSize);
+	}
 	// goes through samples and calculates the statistics, adding them to this.sampleStatistics.
 	// each entry in sampleStatistics is a difference as well as a list of individual statistic for each sample.
 	// returns the largest and smallest difference as well as largest and smallest individual statistic.
@@ -231,7 +236,7 @@ class visBase {
 		this.sampleStatistics = [];
 		this.largestDiff = null;
 		this.smallestDiff = null;
-		var populationSize = this.inputData.length;
+		
 
 		for(var i = 0; i < this.samples.length; i++){
 			var catagoryStatistics = [];
@@ -240,7 +245,7 @@ class visBase {
 			for(var g = 0; g < this.samples[i].length; g++){
 
 				// statistic for sample i, catagory g;
-				var stat = getStatistic(this.statistic, this.samples[i][g], populationSize);
+				var stat = this.getStatisticEachSample(i, g)
 				catagoryStatistics.push(stat);
 
 				if(this.largestStat == null || stat > this.largestStat){
@@ -402,8 +407,8 @@ class visBase {
 		.attr("x", xScale(1))
 		.attr("y", pos - divHeight/4 - 2)
 		.attr("text-anchor", "end")
-		.attr("fill","black")
-		.style("font-size", divHeight*0.6).style("opacity", 0.6);
+		.attr("fill",colorByIndex[i+[...self.valueCategories].length])
+		.style("font-size", divHeight*0.4).style("opacity", 0.6);
 
 		svg = svg.selectAll("g").data(bars);
 
