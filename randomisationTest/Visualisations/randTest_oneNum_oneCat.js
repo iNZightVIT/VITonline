@@ -20,9 +20,36 @@ class randTest_oneNum_oneCat extends visBase {
 		heapYValues3(items, scale, radius, 0, top,bottom);
 	}
 
+	getStatisticEachSample(i, g){
+		var populationSize = this.inputData.length;
+		return getStatistic(this.statistic, this.samples[i][g], populationSize);
+	}
+	setSampleStatistic(diff, categoryStatistics){
+		if(this.groups.length <= 2){
+			return this.sampleStatType == 'diff' ? diff : categoryStatistics[0];
+		}else{
+			var sum = 0;
+			for(var g = 0; g < this.groups.length; g++){
+				sum += Math.abs(categoryStatistics[g] - this.populationStatistics.population.statistic);
+			}
+			return sum/this.groups.length;
+		}
+	}
 	getSampleSize(){
 		return this.allPop.length;
 	}
+
+	extraStatistics(populationStatistics){
+		var sum = 0;
+		for(var g = 0; g < this.groups.length; g++){
+			sum += populationStatistics.groups[this.groups[g]].groupDeviation;
+		}
+		populationStatistics.averageDeviation = sum/this.groups.length;
+		if(this.groups.length > 2){
+			this.sampleStatType = "Deviation";
+		}
+	}
+
 	makeSample(populations, numSamples, sampleSize, statistic){
 		this.samples = [];
 
@@ -109,11 +136,34 @@ class randTest_oneNum_oneCat extends visBase {
 		placeInto.append("text").text("Re-randomised").attr("x",(self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width/2)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("display","inline-block").attr("text-anchor","middle");
 
 	}
+	drawPopulationStatistic(placeInto){
+		if(this.sampleStatType == "diff"){
+			var middle = this.windowHelper.graphSection.S1.displayArea.getMiddleHeight();
+			drawArrow(this.xScale(this.groupStats[this.groups[1]]), this.xScale(this.groupStats[this.groups[0]]), middle, placeInto, "popDiff", 1, "blue");
+			placeInto.append("text").attr("x", this.xScale(this.groupStats[this.groups[1]])).attr("y", middle).text(Math.round((this.populationStatistic)*100)/100).style("stroke","blue").style("opacity",1);
+		}
+	}
+	drawPopExtra(placeInto){
+		if(this.groups.length > 2){
+			var stat = this.populationStatistics.population.statistic;
+			placeInto.append("line").attr("x1", this.xScale(stat)).attr("x2", this.xScale(stat)).attr("y1", this.windowHelper.graphSection.S1.displayArea.y1).attr("y2", this.windowHelper.graphSection.S2.displayArea.y2).style("stroke", "black").style("stroke-width",1).attr("stroke-dasharray", "5,3");
+			
+			var divisions = this.windowHelper.graphSection.S1.displayArea.getDivisions(this.groups.length, 'height');
+			var divSections = divisions[0];
+			var divHeight = divisions[1];
+			for(var g = 0; g < this.groups.length; g++){
+				var pos = divSections[g] - divHeight/2 - this.windowHelper.radius*2;
+				var groupName = this.groups[g];
+				drawArrow(this.xScale(this.populationStatistics.groups[groupName].statistic), this.xScale(this.populationStatistics.population.statistic), pos, placeInto, "popArrow"+g, 1, "blue");
+			}
+		}
+	}
 
 	cleanUpRepitition(){
 		var self = this;
-		d3.selectAll(".memLine").style("opacity",0.2).style("stroke","steelblue").attr("y2",function(){ return d3.select(this).attr("y1")-self.windowHelper.lineHeight*2});;
+		d3.selectAll(".memLine").style("opacity",0.2).style("stroke","steelblue").attr("y2",function(){ return d3.select(this).attr("y1")-self.windowHelper.lineHeight*2});
 		d3.selectAll("#diffLine").remove();
+		d3.selectAll("#sampArrow").remove();
 	}
 
 	showCI(num, large){
@@ -295,13 +345,44 @@ class randTest_oneNum_oneCat extends visBase {
 
 
 	fadeIn(settings, currentAnimation){
-		sharedFadeIn.apply(this, [settings, currentAnimation]);
+		var self = this;
+		if(this.sampleStatType == "diff"){
+			sharedFadeIn.apply(this, [settings, currentAnimation]);
+		}else{
+			var sampMean = this.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
+			var stat = this.populationStatistics.population.statistic;			
+			var divisions = this.windowHelper.graphSection.S2.displayArea.getDivisions(this.groups.length, 'height');
+			var divSections = divisions[0];
+			var divHeight = divisions[1];
+			d3.selectAll("#sampArrow").remove();
+			for(var g = 0; g < this.groups.length; g++){
+				var pos = divSections[g] - divHeight/2 - this.windowHelper.radius*2;
+				var groupName = this.groups[g];
+				drawArrow(this.xScale(sampMean[0].stats[g]), this.xScale(this.populationStatistics.population.statistic), pos, d3.select(".meanOfSamples"), "sampArrow", 1, "red");
+				d3.select(".meanOfSamples").append("line").attr("x1", this.xScale(sampMean[0].stats[g])).attr("x2", this.xScale(sampMean[0].stats[g])).attr("y1", pos+this.windowHelper.lineHeight).attr("y2", pos-this.windowHelper.lineHeight).style("stroke-width", 2).style("stroke", "black").style("stroke-width",3).attr("id", "sampArrow");
+
+			}
+			var circleOverlay = d3.select("#circleOverlay").selectAll("circle").transition().duration(this.transitionSpeed).each('end', function(d, i){
+				if(d == settings.sample[0]){
+					if(settings.incDist){
+						self.animationController(settings, currentAnimation);
+					}else{
+						d3.select("#differenceLine").remove();
+						self.animationController(settings, currentAnimation);
+					}
+				}
+			});
+		}
 
 	}
 
 
 	distDrop(settings, currentAnimation){
-		sharedDistDrop.apply(this, [settings, currentAnimation]);
+		if(this.sampleStatType == "diff"){
+			sharedDistDrop.apply(this, [settings, currentAnimation]);
+		}else{
+			sharedDistDropNoArrow.apply(this, [settings, currentAnimation]);	
+		}
 	}
 }
 

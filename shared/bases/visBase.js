@@ -180,14 +180,41 @@ class visBase {
 			
 
 			if(this.groups.length != 2){
-				this.implemented = false;
+				//this.implemented = false;
 			}
 
 			this.populationDiff = newItem.value;
 		}
-
-		this.populationStatistic = this.sampleStatType == 'diff' ? this.populationDiff : this.groupStats[this.groups[0]];
+		this.populationStatistics = this.setupPopulationStatistics();
+		if(this.sampleStatType == 'diff'){
+			this.populationStatistic = this.populationDiff;
+		}else if(this.sampleStatType == 'Deviation'){
+			this.populationStatistic = this.populationStatistics.averageDeviation;
+		}else{
+			this.populationStatistic = this.groupStats[this.groups[0]];
+		}
 		this.popSetup = true;
+	}
+
+	setupPopulationStatistics(){
+		var populationStatistics = new Object();
+		populationStatistics.population = new Object();
+		populationStatistics.population.statistic = getStatistic(this.statistic, this.allPop, this.allPop.length);
+
+		populationStatistics.groups = new Object();
+		for(var g = 0; g < this.groups.length; g++){
+			var groupName = this.groups[g];
+			populationStatistics.groups[groupName] = new Object();
+			var stat = getStatistic(this.statistic, this.valueAllowCategorical ? this.populations[groupName].filter(function(i){return i.value==0}) : this.populations[groupName], this.valueAllowCategorical ? this.populations[groupName].length : this.allPop.length);
+			populationStatistics.groups[groupName].statistic = stat;
+			var diff = Math.abs(populationStatistics.population.statistic - stat);
+			populationStatistics.groups[groupName].groupDeviation = diff;
+		}
+		this.extraStatistics(populationStatistics);
+		return(populationStatistics)
+	}
+	extraStatistics(populationStatistics){
+		return;
 	}
 
 	getSampleSize(){
@@ -229,6 +256,51 @@ class visBase {
 		var populationSize = this.inputData.length;
 		return getStatistic(this.statistic, this.samples[i][g], populationSize);
 	}
+	setSampleStatistic(diff, categoryStatistics){
+		return this.sampleStatType == 'diff' ? diff : categoryStatistics[0];
+	}
+	handleSample(i){
+		var categoryStatistics = [];
+		for(var g = 0; g < this.samples[i].length; g++){
+
+			// statistic for sample i, catagory g;
+			var stat = this.getStatisticEachSample(i, g)
+			categoryStatistics.push(stat);
+
+
+		}
+		var diff = null;
+
+		// if there are more than 2 categories, we calculate the difference and put that in. otherwise null;
+		// only supports difference between 2 groups.
+		if(categoryStatistics.length >= 2){
+			diff = categoryStatistics[1] - categoryStatistics[0];
+		}
+		if(this.largestDiff == null || diff > this.largestDiff){
+			this.largestDiff = diff;
+		}
+
+		if(this.smallestDiff == null || diff < this.smallestDiff){
+			this.smallestDiff = diff;
+		}
+
+		var sampleStats = new Object();
+		sampleStats.diff = diff;
+		sampleStats.stats = categoryStatistics;
+		var sampleValue = this.setSampleStatistic(diff, categoryStatistics);
+		sampleStats.value = sampleValue;
+		sampleStats.xPerSample = {};
+		sampleStats.yPerSample = {};
+		this.sampleStatistics.push(sampleStats);
+
+		if(this.largestStat == null || sampleValue > this.largestStat){
+			this.largestStat = sampleValue;
+		}
+
+		if(this.smallestStat == null || sampleValue < this.smallestStat){
+			this.smallestStat = sampleValue;
+		}
+	}
 	// goes through samples and calculates the statistics, adding them to this.sampleStatistics.
 	// each entry in sampleStatistics is a difference as well as a list of individual statistic for each sample.
 	// returns the largest and smallest difference as well as largest and smallest individual statistic.
@@ -236,48 +308,11 @@ class visBase {
 		this.sampleStatistics = [];
 		this.largestDiff = null;
 		this.smallestDiff = null;
-		
+		this.largestStat = null;
+		this.smallestStat = null;
 
 		for(var i = 0; i < this.samples.length; i++){
-			var catagoryStatistics = [];
-			this.largestStat = null;
-			this.smallestStat = null;
-			for(var g = 0; g < this.samples[i].length; g++){
-
-				// statistic for sample i, catagory g;
-				var stat = this.getStatisticEachSample(i, g)
-				catagoryStatistics.push(stat);
-
-				if(this.largestStat == null || stat > this.largestStat){
-					this.largestStat = stat;
-				}
-
-				if(this.smallestStat == null || stat < this.smallestStat){
-					this.smallestStat = stat;
-				}
-			}
-			var diff = null;
-
-			// if there are more than 2 categories, we calculate the difference and put that in. otherwise null;
-			// only supports difference between 2 groups.
-			if(catagoryStatistics.length >= 2){
-				diff = catagoryStatistics[1] - catagoryStatistics[0];
-			}
-			if(this.largestDiff == null || diff > this.largestDiff){
-				this.largestDiff = diff;
-			}
-
-			if(this.smallestDiff == null || diff < this.smallestDiff){
-				this.smallestDiff = diff;
-			}
-
-			var sampleStats = new Object();
-			sampleStats.diff = diff;
-			sampleStats.stats = catagoryStatistics;
-			sampleStats.value = this.sampleStatType == 'diff' ? diff : catagoryStatistics[0];
-			sampleStats.xPerSample = {};
-			sampleStats.yPerSample = {};
-			this.sampleStatistics.push(sampleStats);
+			this.handleSample(i);
 		}
 	}
 	setUpSamples(){
@@ -304,6 +339,8 @@ class visBase {
 		// has the same range as the population scale, but centered around 0.
 		if(this.sampleStatType == "diff") {
 			this.sampleStatScale.domain([0-halfDiff, 0+halfDiff]);
+		}else if(this.sampleStatType == "Deviation"){
+			this.sampleStatScale.domain([0,sampleStatRange[1] + 10]);
 		}else{
 			this.sampleStatScale.domain(populationRange);
 		}
@@ -503,6 +540,12 @@ class visBase {
 		if(this.includeSampleSection){
 			this.drawSampleSection(popDraw);
 		}
+
+		this.drawPopExtra(popDraw);
+	}
+
+	drawPopExtra(placeInto){
+		return;
 	}
 
 	drawSampleAxis(placeInto){

@@ -177,7 +177,38 @@
 				self.animationController(settings, currentAnimation);
 		}
 	}
+	sharedDistDropNoArrow = function(settings, currentAnimation){
+		var self = this;
+		var sentFinish = false;
+		if(!settings.restarting){
+			d3.select(".meanOfSamples").selectAll("g").remove();
 
+			var sampMean = this.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
+			var meanCircles = d3.select("#sampleDisplay").selectAll("circle").filter(function(d, i){
+				return (i>=settings.indexUpTo) && (i <settings.indexUpTo+settings.jumps);
+			});
+
+			this.settings.sampMean = sampMean;
+			this.settings.meanCircles = meanCircles;
+		}else{
+			var sampMean = this.settings.sampMean;
+			var meanCircles = this.settings.meanCircles;
+
+			this.settings.restarting = false;
+		}
+
+		if(settings.goSlow || this.transitionSpeed == 500){
+			meanCircles = meanCircles.transition().delay(this.transitionSpeed).attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){return d.yPerSample[0]}).each('end', function(d, i){
+				if(!sentFinish){
+					self.animationController(settings, currentAnimation);
+					sentFinish = true;
+				}
+			});
+		}else{
+			meanCircles = meanCircles.attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){return d.yPerSample[0]});
+				self.animationController(settings, currentAnimation);
+		}
+	}
 	sharedFadeInNoExit = function(settings, currentAnimation){
 		var self = this;
 		if(!this.settings.restarting){
