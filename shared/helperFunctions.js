@@ -498,7 +498,7 @@ function leastSquares(xSeries, ySeries){
 	return [slope, intercept];
 }
 //var colorByIndex = [d3.rgb("blue"),d3.rgb("red")];
-var colorByIndex = ['#377eb8','#e41a1c','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf']
+var colorByIndex = ['#377eb8','#e41a1c','#4daf4a','#984ea3','#ff7f00','#AAAA33','#a65628','magenta']
 //alert(leastSquares([60,61,62,63,65],[3.1,3.6,3.8,4,4.1]));
 function onlyUnique(value, index, self) { 
     return self.indexOf(value) === index;

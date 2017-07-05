@@ -2,7 +2,7 @@
 class randVar_oneNum extends visBase {
 	constructor(inputData, headingGroup, headingContinuous, statistic) {
 		super(inputData, headingGroup, headingContinuous, statistic);
-		this.sampleStatType = "stat";
+		this.sampleStatType = "diff";
 		//this.colorIndex = ["red", "blue"];
 		this.colorIndex = colorByIndex;
 		this.windowHelper = setUpWindow3({'left':5, 'right':5, 'top':5, 'bottom':5}, true);

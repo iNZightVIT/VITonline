@@ -5,6 +5,7 @@ class randTest_oneNum_oneCat extends visBase {
 		this.windowHelper = setUpWindow3({'left':5, 'right':5, 'top':5, 'bottom':5}, true);
 		// text labels for each section.
 		this.sectionLabels = ['Data','Re-Randomised Data','Re-Randomisation Distribution'];
+		this.maxSize = 500;
 		//this.animationList = [this.populationDropDown,this.buildList, this.splitIntoRandCategories, this.fadeIn, this.endNoDist, this.distDrop, this.endDist ];
 		this.animationList = [this.populationDropDown.bind(this),
 						this.buildList.bind(this), 
@@ -163,7 +164,12 @@ class randTest_oneNum_oneCat extends visBase {
 		var self = this;
 		d3.selectAll(".memLine").style("opacity",0.2).style("stroke","steelblue").attr("y2",function(){ return d3.select(this).attr("y1")-self.windowHelper.lineHeight*2});
 		d3.selectAll("#diffLine").remove();
+		d3.selectAll("#redlineMain").remove();
+		
 		d3.selectAll("#sampArrow").remove();
+		for(var g = 0; g < this.groups.length; g++){
+			d3.selectAll("#distArrow"+g).remove();
+		}
 	}
 
 	showCI(num, large){
@@ -378,10 +384,48 @@ class randTest_oneNum_oneCat extends visBase {
 
 
 	distDrop(settings, currentAnimation){
+		var self = this;
 		if(this.sampleStatType == "diff"){
 			sharedDistDrop.apply(this, [settings, currentAnimation]);
 		}else{
-			sharedDistDropNoArrow.apply(this, [settings, currentAnimation]);	
+			if(this.transitionSpeed > 200){
+				var sampMean = this.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
+				var stat = this.populationStatistics.population.statistic;			
+				var divisions = this.windowHelper.graphSection.S2.displayArea.getDivisions(this.groups.length, 'height');
+				var divSections = divisions[0];
+				var divHeight = divisions[1];
+				for(var g = 0; g < this.groups.length; g++){
+					var pos = divSections[g] - divHeight/2 - this.windowHelper.radius*2;
+					var groupName = this.groups[g];
+					drawArrow(this.xScale(sampMean[0].stats[g]), this.xScale(this.populationStatistics.population.statistic), pos, d3.select(".meanOfSamples"), "distArrow"+g, 1, "green");
+					d3.select("#distArrow"+g+"a1").remove();
+					d3.select("#distArrow"+g+"a2").remove();
+					var subtractY = this.windowHelper.graphSection.S2.height - (divHeight/1.2 * g);
+					var subtractX = 0 - (this.xScale(sampMean[0].stats[g]) - this.xScale(this.populationStatistics.population.statistic))/2;
+					d3.select("#distArrow"+g).selectAll("*").transition().duration(this.transitionSpeed)
+						.attr("transform", "translate("+ subtractX +", " + subtractY +")").each("end", function(d, i){
+							var id = d3.select(this).attr("id");
+							if(id == "distArrow0main"){
+								var headSize = 7.5;
+								var toScaled = sampMean[0].value;
+								var diff = self.sampleStatScale(sampMean[0].value);
+								var yValue = self.windowHelper.graphSection.S3.displayArea.getMiddleHeight();
+								if(Math.abs(diff) < headSize) headSize =Math.abs(diff)*0.5;
+								if(diff != 0) {var arrowHead = diff / Math.abs(diff);} else { var arrowHead = 0;}
+
+								var arrow = drawArrow(self.xScale(self.populationStatistics.population.statistic + (sampMean[0].value)/2), self.xScale(self.populationStatistics.population.statistic - (sampMean[0].value)/2), self.windowHelper.graphSection.S3.displayArea.getDivisions(3, 'height')[1] + self.windowHelper.graphSection.S3.displayArea.y1, d3.select(".meanOfSamples"), "redlineMain", 1, "red");
+								arrow[1].transition().duration(self.transitionSpeed).attr("y1",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height- self.windowHelper.radius*2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height + headSize*arrowHead/2 - self.windowHelper.radius*2).attr("x1",self.sampleStatScale(toScaled)).attr("x2", self.sampleStatScale(toScaled) - arrowHead*headSize);
+								arrow[2].transition().duration(self.transitionSpeed).attr("y1",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height- self.windowHelper.radius*2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - headSize*arrowHead/2 - self.windowHelper.radius*2).attr("x1",self.sampleStatScale(toScaled)).attr("x2", self.sampleStatScale(toScaled) - arrowHead*headSize);
+								arrow[0].transition().duration(self.transitionSpeed).attr("x1",self.sampleStatScale(0)).attr("x2",self.sampleStatScale(toScaled)).attr("y1",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height- self.windowHelper.radius*2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - self.windowHelper.radius*2);
+
+								sharedDistDropNoArrow.apply(self, [settings, currentAnimation]);
+							}
+						});
+
+				}
+			}else{
+				sharedDistDropNoArrow.apply(this, [settings, currentAnimation]);
+			}
 		}
 	}
 }

@@ -48,6 +48,8 @@ class visBase {
 		// Continuous  = 0;
 		// Proportional = 1;
 		this.popDrawType = 0;
+
+		this.maxSize = 2000;
 	}
 
 	changeStat(newStatistic){
@@ -192,6 +194,9 @@ class visBase {
 			this.populationStatistic = this.populationStatistics.averageDeviation;
 		}else{
 			this.populationStatistic = this.groupStats[this.groups[0]];
+		}
+		if(this.allPop.length > this.maxSize){
+			this.implemented = false;
 		}
 		this.popSetup = true;
 	}
@@ -340,7 +345,7 @@ class visBase {
 		if(this.sampleStatType == "diff") {
 			this.sampleStatScale.domain([0-halfDiff, 0+halfDiff]);
 		}else if(this.sampleStatType == "Deviation"){
-			this.sampleStatScale.domain([0,sampleStatRange[1] + 10]);
+			this.sampleStatScale.domain([0,this.xScale.domain()[1] - this.xScale.domain()[0]]);
 		}else{
 			this.sampleStatScale.domain(populationRange);
 		}
