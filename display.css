@@ -155,11 +155,25 @@ select {
   height:100%;
 
 }
-.svg circle {
-  fill: #C7D0D5;
+circle {
+  /*fill-opacity: 0.5;*/
   stroke: #556270;
+  fill: #C7D0D5;
+  /*stroke-opacity: 1;*/
 }
 
+.statLine{
+  stroke-width: 3;
+  stroke: black;
+
+}
+
+.categoryLabel {
+  text-anchor: end;
+  opacity: 1;
+  alignment-baseline: middle;
+  font-size: 1em;
+}
 .chart text {
   fill: white;
   font: 10px sans-serif;
@@ -276,8 +290,8 @@ p.t2 {
   display: block;
   width: 100%;
   float: right;
-  height: 5%;
-
+/*  height: 5%;
+*/
 }
 #displayLabel p {
   margin-top: 0px;

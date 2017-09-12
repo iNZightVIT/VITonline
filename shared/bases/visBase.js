@@ -205,7 +205,9 @@ class visBase {
 		var populationStatistics = new Object();
 		populationStatistics.population = new Object();
 		populationStatistics.population.statistic = getStatistic(this.statistic, this.allPop, this.allPop.length);
-
+		if(this.popDrawType == 1){
+			populationStatistics.population.statistic = 1 - populationStatistics.population.statistic;
+		}
 		populationStatistics.groups = new Object();
 		for(var g = 0; g < this.groups.length; g++){
 			var groupName = this.groups[g];
@@ -492,9 +494,10 @@ class visBase {
 	}
 
 	labelSections(placeInto){
-		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S1.titleArea.y2+2).text(this.sectionLabels[0]).style("opacity", 1).style("font-size",this.windowHelper.fontSize).style("fill","black").style("font-weight","bold");
-		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S2.titleArea.y2+2).text(this.sectionLabels[1]).style("opacity", 1).style("font-size",this.windowHelper.fontSize).style("fill","black").style("font-weight","bold");
-		placeInto.append("text").attr("class","sectionLabel").attr("x", this.windowHelper.graphSection.x).attr("y",this.windowHelper.graphSection.S3.titleArea.y2+2).text(this.sectionLabels[2]).style("opacity", 1).style("font-size",this.windowHelper.fontSize).style("fill","black").style("font-weight","bold");
+		var self = this;
+    	placeInto.append("text").attr("class","sectionLabel").attr("x", self.xScale.range()[0]).attr("y",self.windowHelper.graphSection.S1.titleArea.y1+2).text(self.sectionLabels[0]).style("opacity", 1).style("font-size",self.windowHelper.fontSize).style("fill","black").style("font-weight","bold").attr("dominant-baseline", "hanging");
+    	placeInto.append("text").attr("class","sectionLabel").attr("x", self.xScale.range()[0]).attr("y",self.windowHelper.graphSection.S2.titleArea.y1+2).text(self.sectionLabels[1]).style("opacity", 1).style("font-size",self.windowHelper.fontSize).style("fill","black").style("font-weight","bold").attr("dominant-baseline", "hanging");
+    	placeInto.append("text").attr("class","sectionLabel").attr("x", self.xScale.range()[0]).attr("y",self.windowHelper.graphSection.S3.titleArea.y1+2).text(self.sectionLabels[2]).style("opacity", 1).style("font-size",self.windowHelper.fontSize).style("fill","black").style("font-weight","bold").attr("dominant-baseline", "hanging");
 	}
 
 	drawPopAxis(placeInto){

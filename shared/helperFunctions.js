@@ -340,6 +340,33 @@ function heapYValues3(itemsToHeap, xScale, radius, sampleIndex, areaTopY, areaBo
 	}
 }
 
+function heapYValues4(itemsToHeap, xScale, radius, sampleIndex, areaTopY, areaBottomY){
+	var section = radius * 0.8;
+	var buckets = {};
+	var maxY = 0;
+	for(var i = 0; i < itemsToHeap.length;i++){
+		var thisItem = itemsToHeap[i];
+		thisItem.xValuePerSample[sampleIndex] = xScale(thisItem.values[0]);
+		thisItem.yValuePerSample[sampleIndex] = 0;
+
+		var nearest = Math.round(thisItem.xValuePerSample[sampleIndex] / section)*section;
+		if(!(nearest in buckets)){
+			buckets[nearest] = [];
+		}
+		thisItem.yValuePerSample[sampleIndex] = radius * buckets[nearest].length;
+		buckets[nearest].push(thisItem);
+		if(thisItem.yValuePerSample[sampleIndex] > maxY){
+			maxY = thisItem.yValuePerSample[sampleIndex];
+		}
+	}
+	yScale = d3.scale.linear().range([areaBottomY,Math.max(areaBottomY - maxY,areaTopY+radius*2)]);
+	yScale.domain([0,maxY]);
+	for(var l = 0; l<itemsToHeap.length;l++){
+		var curValue = itemsToHeap[l].yValuePerSample[sampleIndex];
+		itemsToHeap[l].yValuePerSample[sampleIndex] = yScale(curValue);
+	}
+}
+
 function getStatistic(stat, origItems, total){
 	var items = origItems.slice(0);
 	if(stat =="Mean"){
@@ -530,3 +557,4 @@ function getFontSize(wH, leng){
 function getMiddle(a,b){
 	return (a + (b-a)/2);
 }
+
