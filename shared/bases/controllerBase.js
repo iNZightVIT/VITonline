@@ -54,7 +54,11 @@ controllerBase.prototype.parseURL = function(url){
 		}else if(isURL(file)){
 			var single = urlParams.get("single");
 			var outputType = urlParams.get("output");
-			this.loadFromURL(file +"&single=" + single+"&output="+outputType, true);
+			if(single || outputType){
+				this.loadFromURL(file +"&single=" + single+"&output="+outputType, true);
+			}else{
+				this.loadFromURL(file, true);
+			}
 		}else{
 			this.loadFromPreset(file, true);
 		}
