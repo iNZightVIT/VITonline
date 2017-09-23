@@ -52,7 +52,7 @@ function oneMean(inputData, heading, statistic){
 
 	this.setUpSamples = function(sSize){
 		this.statsDone = false;
-		if(this.population.length > 50){
+		if(this.population.length > 1000){
 			alert("population too large to analyse, use data with less rows");
 			return;
 		}
