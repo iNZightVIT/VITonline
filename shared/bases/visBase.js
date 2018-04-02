@@ -341,11 +341,13 @@ class visBase {
 		this.sampleStatScale = d3.scale.linear().range([this.windowHelper.graphSection.x,this.windowHelper.graphSection.x + this.windowHelper.graphSection.width]);
 		var populationRange = this.xScale.domain();
 		var halfDiff = (populationRange[1]-populationRange[0])/2;
+		var sampleHalfDiff = (Math.max(Math.abs(sampleStatRange[0]),Math.abs(sampleStatRange[1]) ));
+		let useDiff = Math.max(halfDiff, sampleHalfDiff);
 
 		// For Differences
 		// has the same range as the population scale, but centered around 0.
 		if(this.sampleStatType == "diff") {
-			this.sampleStatScale.domain([0-halfDiff, 0+halfDiff]);
+			this.sampleStatScale.domain([0-useDiff, 0+useDiff]);
 		}else if(this.sampleStatType == "Deviation"){
 			this.sampleStatScale.domain([0,this.xScale.domain()[1] - this.xScale.domain()[0]]);
 		}else{
