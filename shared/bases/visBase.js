@@ -342,12 +342,18 @@ class visBase {
 		var populationRange = this.xScale.domain();
 		var halfDiff = (populationRange[1]-populationRange[0])/2;
 		var sampleHalfDiff = (Math.max(Math.abs(sampleStatRange[0]),Math.abs(sampleStatRange[1]) ));
-		let useDiff = Math.max(halfDiff, sampleHalfDiff);
+		let scaleOffset = 0;
+		//let useDiff = Math.max(halfDiff, sampleHalfDiff);
+		if(Math.abs(sampleStatRange[0]) > halfDiff && Math.abs(sampleStatRange[0]) >= Math.abs(sampleStatRange[1])){
+			scaleOffset = (0-halfDiff) - Math.abs(sampleStatRange[0]);
+		}else if(Math.abs(sampleStatRange[1]) > halfDiff && Math.abs(sampleStatRange[1]) >= Math.abs(sampleStatRange[0])){
+			scaleOffset = Math.abs(sampleStatRange[1]) - (0+halfDiff);
+		}
 
 		// For Differences
 		// has the same range as the population scale, but centered around 0.
 		if(this.sampleStatType == "diff") {
-			this.sampleStatScale.domain([0-useDiff, 0+useDiff]);
+			this.sampleStatScale.domain([0-halfDiff + scaleOffset, 0+halfDiff + scaleOffset]);
 		}else if(this.sampleStatType == "Deviation"){
 			this.sampleStatScale.domain([0,this.xScale.domain()[1] - this.xScale.domain()[0]]);
 		}else{
