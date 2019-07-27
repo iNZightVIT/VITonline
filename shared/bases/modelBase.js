@@ -237,6 +237,33 @@ modelBase.prototype.varSelected = function(e){
 			this.controller.noVisAvail();
 		}
 	}
+
+modelBase.prototype.filterMissingValues = function(numeric_vars, categorical_vars){
+	test_val = function(v){
+		v = v.toLowerCase().trim();
+		filled = true;
+		filled &= v != undefined
+		filled &= v != null
+		filled &= v != "na"
+		filled &= v != "n/a"
+		filled &= v != "n\\a"
+		filled &= v != "n a"
+		filled &= v != "nan"
+		filled &= v != ""
+		return filled
+	}
+	return this.inputData.filter(function(d){
+		all_values_present = true;
+		for(let n = 0; n <numeric_vars.length; n++){
+			all_values_present &= test_val(d[numeric_vars[n]])
+		}
+		for(let n = 0; n <categorical_vars.length; n++){
+			all_values_present &= test_val(d[categorical_vars[n]])
+		}
+		return all_values_present;
+	});
+}
+
 modelBase.prototype.destroy = function(){
 		this.display.destroy();
 	}
