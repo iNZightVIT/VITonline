@@ -79,6 +79,9 @@ controllerBase.prototype.parseRestOfURL = function() {
 			e.target.selectedOptions.push(va);
 		}
 	}
+	if(variables.length == 0){
+		return;
+	}
 	this.variables_selected = new Set(e.target.selectedOptions);
 	this.varSelected(e, true);
 
@@ -163,9 +166,15 @@ controllerBase.prototype.loadTestData = function(fromURL){
 			window.history.pushState({path:newurl},'', newurl);
 		}
 	}
+
+
 controllerBase.prototype.varSelected = function(e, fromURL){
 	var selOptions = new Set(e.target.selectedOptions);
 	for (var index = 0; index < e.target.selectedOptions.length; index++){
+		console.log(e.target.selectedOptions[index])
+		if(e.target.selectedOptions[index] == "placeholder"){
+			continue
+		}
 		this.variables_selected.add(e.target.selectedOptions[index])
 	}
 	var set_items = [...this.variables_selected];
@@ -174,6 +183,7 @@ controllerBase.prototype.varSelected = function(e, fromURL){
 			this.variables_selected.delete(set_items[index]);
 		}
 	}
+	this.view.setVarSelected(this.variables_selected);
 		d3.select(".svg").selectAll("text").remove();
 		this.view.destroyFocus();
 		this.view.destroyVSelect();
@@ -193,6 +203,38 @@ controllerBase.prototype.varSelected = function(e, fromURL){
 		}
 		
 	}
+controllerBase.prototype.varDropdownSelected = function(e1, e2){
+	this.variables_selected = new Set();
+	for (var index = 0; index < e1.length; index++){
+		console.log(e1[index])
+		if(e1[index].value == "placeholder"){
+			continue
+		}
+		this.variables_selected.add(e1[index])
+	}
+	for (var index = 0; index < e2.length; index++){
+		console.log(e2[index])
+		if(e2[index].value == "placeholder"){
+			continue
+		}
+		this.variables_selected.add(e2[index])
+	}
+	console.log(this.variables_selected);
+	this.view.setVarSelected(this.variables_selected);
+	d3.select(".svg").selectAll("text").remove();
+	this.view.destroyFocus();
+	this.view.destroyVSelect();
+	this.model.varSelected([...this.variables_selected]);
+	this.view.varSelected([...this.variables_selected]);
+	if(this.fileURL){
+		var newurl = this.fileURL;
+		for (var i = 0; i < [...this.variables_selected].length; i++){
+			newurl += ("&var="+[...this.variables_selected][i].value);
+		}
+		this.varURL = newurl;
+		window.history.pushState({path:newurl},'', newurl);
+	}
+}
 controllerBase.prototype.noVisAvail = function(){
 		this.view.noVisAvail();
 	}

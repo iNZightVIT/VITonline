@@ -104,6 +104,7 @@ viewBase.prototype.loadMain = function(dataHeadings){
 
 		var usePreset = tab1.append("input").attr("class","bluebutton").attr("name", "dataPreset").attr("type", "button").attr("value","Use test data").attr("id","dataPreset").attr("onClick","mainControl.loadTestData()");
 		var container = tab1.append("div").attr("id","inputContainer").attr("class","selectContainer");
+		var varSelector = tab1.append("div").attr("id","varSelector").attr("class","selectContainer");
 		var focusContainer = tab1.append("div").attr("id","focusContainer").attr("class","selectContainer");
 		var vSelectContainer = tab1.append("div").attr("id","vSelectContainer").attr("class","selectContainer");
 		var IB = document.getElementById("importButton");
@@ -111,9 +112,25 @@ viewBase.prototype.loadMain = function(dataHeadings){
 			self.controller.impButPressed(e);
 		}
 		var selectMenu = d3.select("#inputContainer").append("select").attr("size",dataHeadings.length).attr("multiple","multiple").attr("id","selectMenu");
+		d3.select("#varSelector").append("label").attr("for","varSelector").text("Select Variables");
+		var selectMenuV1 = d3.select("#varSelector").append("select").attr("size",dataHeadings.length).attr("id","selectMenuV1");
+		var selectMenuV2 = d3.select("#varSelector").append("select").attr("size",dataHeadings.length).attr("id","selectMenuV2");
 		var SM = document.getElementById("selectMenu");
 		SM.onchange = function(e){
 			self.controller.varSelected(e);
+		}
+		var SMV1 = document.getElementById("selectMenuV1");
+		SMV1.onchange = function(e){
+			let e1 = e.target.selectedOptions;
+			let e2 = d3.selectAll("#selectMenuV2 option[selected = true]")[0];
+			self.controller.varDropdownSelected(e1, e2);
+		}
+		var SMV2 = document.getElementById("selectMenuV2");
+		SMV2.onchange = function(e){
+			console.log(e);
+			let e1 = d3.selectAll("#selectMenuV1 option[selected = true]")[0];
+			let e2 = e.target.selectedOptions;
+			self.controller.varDropdownSelected(e1, e2);
 		}
 		// var urlButton = document.getElementById("importURL");
 		// urlButton.onchange = function(e){
@@ -178,7 +195,7 @@ viewBase.prototype.focusSelector = function(headings, curCategory){
 		var self = this;
 		headings.sort();
 		var focusContainer = d3.select("#focusContainer");
-		focusContainer.append("label").attr("for","focusController").text("Choose Category to focus on.")
+		focusContainer.append("label").attr("for","focusController").text("Choose Category to focus on.");
 		var focusController = focusContainer.append("select").attr("size",headings.length).attr("id","focusController");
 			headings.forEach(function(e){
 			if(e != "NA"){
@@ -219,15 +236,79 @@ viewBase.prototype.setUpDataVeiw = function(dataHeadings){
 
 		d3.select("#file").text("file: " + this.controller.model.fileName +"; ");
 		var selectMenu = d3.select("#inputContainer select").attr("size",dataHeadings.length).attr("multiple","multiple");
+		var selectMenuv1 = d3.select("#selectMenuV1").attr("size", 1);
+		var selectMenuv2 = d3.select("#selectMenuV2").attr("size", 1);
+
 		selectMenu.selectAll("*").remove();
+		selectMenuv1.selectAll("*").remove();
+		selectMenuv2.selectAll("*").remove();
 		selectMenu.append("option").attr("value","placeHolder").text("Please Choose a variable").attr("disabled",true).attr("selected",true).attr("hidden",true);
+		selectMenuv1.append("option").attr("value","placeHolder").text("Please Choose a variable").attr("disabled",true).attr("selected",true).attr("hidden",true);
+		selectMenuv2.append("option").attr("value","placeHolder").text("Please Choose a variable").attr("selected",true);
 		dataHeadings.forEach(function(e){
 			selectMenu.append("option").attr("value",e).text(e[0]+" ("+e[1]+")").attr("data", true);
+			selectMenuv1.append("option").attr("value",e).text(e[0]+" ("+e[1]+")").attr("data", true);
+			selectMenuv2.append("option").attr("value",e).text(e[0]+" ("+e[1]+")").attr("data", true);
 		});
 
 		d3.select("#startButton").remove();
 		d3.select("#tab1").append("input").attr("type","button").attr("value","Analyse").attr("class","bluebutton").attr("id","startButton").attr("disabled","true").attr("onClick","mainControl.switchTab2()");
 	}
+
+viewBase.prototype.setVarSelected = function(selected_variables){
+	var selectMenuv1 = d3.select("#selectMenuV1");
+	var selectMenuv2 = d3.select("#selectMenuV2");
+	var selectMenuOptions = d3.selectAll("#selectMenu option")[0];
+	var selectMenuV1Options = d3.selectAll("#selectMenuV1 option")[0];
+	var selectMenuV2Options = d3.selectAll("#selectMenuV2 option")[0];
+	var1Text = "placeholder";
+	if([...selected_variables].length > 0){
+		var1Text = [...selected_variables][0].value;
+	}
+
+	for(let i = 0; i < selectMenuOptions.length; i++){
+		let option = selectMenuOptions[i]
+		if(option.value == var1Text){
+			option.setAttribute("selected",true);
+		}else{
+			option.removeAttribute("selected",false);
+		}
+	}
+
+	for(let i = 0; i < selectMenuV1Options.length; i++){
+		let option = selectMenuV1Options[i]
+		if(option.value == var1Text){
+			option.setAttribute("selected",true);
+		}else{
+			option.removeAttribute("selected",false);
+		}
+	}
+
+	var2Text = "placeholder";
+	if([...selected_variables].length > 1){
+		var2Text = [...selected_variables][1].value;
+	}
+	for(let i = 0; i < selectMenuV2Options.length; i++){
+		let option = selectMenuV2Options[i]
+
+		if(option.value == var2Text){
+			option.setAttribute("selected",true);
+		}else{
+			option.removeAttribute("selected",false);
+		}
+	}
+	for(let i = 0; i < selectMenuOptions.length; i++){
+		let option = selectMenuOptions[i]
+		if(option.value == var1Text | option.value == var2Text){
+			option.setAttribute("selected",true);
+		}else{
+			option.removeAttribute("selected",false);
+		}
+	}
+	
+
+
+}
 viewBase.prototype.setUpStatSelection = function(category){
 		var statSelection = d3.select("#statSelect");
 		statSelection.selectAll("*").remove();
