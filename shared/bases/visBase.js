@@ -431,6 +431,7 @@ class visBase {
 	drawProportional(placeInto){
 		var self = this;
 
+		
 		// Should make a division for each group.
 		var numDivisions = this.groups.length;
 		var divisions = this.windowHelper.graphSection.S1.displayArea.getDivisions(numDivisions, 'height');
@@ -464,7 +465,7 @@ class visBase {
 
 		svg = svg.selectAll("g").data(bars);
 
-		var barsSVG = svg.enter().append("g").attr("id", function(d){return name + i + d[3]});
+		var barsSVG = svg.enter().append("g").attr("id", function(d){return name + "\\" + i + d[3]});
 		barsSVG.append("rect")
 			.attr("height", divHeight/2)
 			.attr("y", pos - divHeight/4)
@@ -472,6 +473,56 @@ class visBase {
 			.attr("x", function(d){return xScale(d[0]/d[2])})
 			.attr("fill",function(d,i){return colorByIndex[i]})
 			.attr("fill-opacity","0.8");
+		for(let b = 0; b < bars.length; b++){
+			let bar = bars[b];
+			let bar_width = xScale((bar[1] + bar[0])/bar[2]) - xScale((bar[0])/bar[2]);
+			let bar_height = divHeight/2;
+			let min_r = 2;
+			let max_r = Math.min(bar_width, bar_height);
+			let radius = max_r;
+			let rows = 1;
+			let row_l = bar[1];
+			let max_row_length = bar_width / (min_r * 2);
+			let width_r = bar_width / (row_l * 2);
+			let height_r = bar_height / (rows * 2);
+			let it_max = 20;
+			let it = 0;
+			while (it < it_max && (max_row_length < row_l || height_r > width_r * 1.5)){
+				rows++;
+				row_l = Math.ceil(bar[1]/rows);
+				width_r = bar_width / (row_l*2);
+				height_r = bar_height / (rows*2);
+				it++;
+			}
+			rows = Math.ceil(bar[1]/row_l);
+			width_r = bar_width / (row_l*2);
+			height_r = bar_height / (rows*2);
+			radius = Math.min(width_r, height_r);
+			let y_free_space = bar_height - (rows * radius * 2);
+			let y_top_margin = y_free_space / 2;
+			let x_free_space = bar_width - (row_l * radius * 2);
+			let x_left_margin = x_free_space / 2;
+			let r = 0;
+			let c = 0;
+			let lim = Math.min(bar[1], max_row_length * (bar_height / (min_r *2)), 500);
+			let bar_id = "#" + name + "\\" + i + bar[3]
+			let bar_element = d3.select(barsSVG[0][b]);
+			let item_x = xScale(bar[0] / bar[2]);
+			for(let i = 0; i < lim; i++){
+				bar_element.append("circle")
+					.attr("cx", item_x + x_left_margin + radius + (radius * 2)*r)
+					.attr("cy", pos - (bar_height / 2) + y_top_margin + radius + (radius * 2)*c)
+					.style("fill", d3.rgb(colorByIndex[b]).brighter(0.5))
+					.attr("r", radius)
+				r++;
+				if(r == row_l){
+					c++;
+					r = 0;
+				}
+				
+			}
+		}
+		
 
 		barsSVG.append("text").text(function(d){return d[1] > 0 ? d[1] : ""})
 		.attr("x", function(d){return xScale(d[0]/d[2]) + (xScale((d[1]+ d[0])/d[2]) - xScale((d[0])/d[2])) /2 })

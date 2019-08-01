@@ -501,7 +501,7 @@ function twoProportion(inputData, heading, heading2, focus, u1, u2){
 						return self.xScale((d[0][0] +(d[0][1]/2))/d[1][1])})
 					.attr("y", function(d,i){ return self.windowHelper.section2.bottom - self.barHeight * (i+1)- self.marginSize *(i+1) + self.barHeight/1.2})
 					.text(function(d){return d[0][1]})
-					.attr("fill",function(d,i){return colorByIndex[0].brighter([20])})
+					.attr("fill",function(d,i){return /*d3.color(colorByIndex[0]).brighter([20])*/ "white"})
 					.style("font-size",this.barHeight)
 					.attr("text-anchor","middle")
 					.style("opacity",0);
@@ -522,7 +522,7 @@ function twoProportion(inputData, heading, heading2, focus, u1, u2){
 						return self.xScale((d[1][0] +((d[1][1]-d[1][0])/2))/d[1][1])})
 					.attr("y", function(d,i){ return self.windowHelper.section2.bottom - self.barHeight * (i+1)- self.marginSize *(i+1) + self.barHeight/1.2})
 					.text(function(d){return d[1][1]-d[0][1]})
-					.attr("fill",function(d,i){return colorByIndex[1].brighter([20])})
+					.attr("fill",function(d,i){/*return d3.color(colorByIndex[1]).brighter([20])*/ "white"})
 					.style("font-size",this.barHeight)
 					.attr("text-anchor","middle")
 					.style("opacity",0);

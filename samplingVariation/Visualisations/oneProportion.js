@@ -163,6 +163,7 @@ function oneProportion(inputData, heading, focus, unique){
 		var gridWidths = [Math.floor((this.xScale((this.samples[0][0][1])/total))/(this.radius*2)-1),Math.floor(this.xScale((this.samples[0][1][1])/total)/(this.radius*2)-1)];
 
 		svg.append("svg").attr("class", "pop");
+		
 		var g1Rect = svg.select(".pop").selectAll("g").data(this.samples[0]);
 		var groups = g1Rect.enter().append("g").attr("id",function(d,i){return "popRect"+i});
 		this.groupCircles = [[],[], gridHeight];

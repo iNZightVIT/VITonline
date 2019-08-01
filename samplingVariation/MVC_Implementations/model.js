@@ -10,7 +10,10 @@ function model(controller){
 			return test;
 		});
 		return new oneProportion(filtered, cat[0], focus ? focus : unique[0], unique)}},
-	{name:"twoProportion", numeretical:0,categorical:2,stats:1,setupParams:function(num, cat, modelObj){var unique1 = modelObj.dataSplit[cat[0]].filter(onlyUnique); modelObj.controller.makeFocusSelector(unique1, cat[0]); modelObj.controller.makeVarSelector(cat[0],cat[1]);return new twoProportion(modelObj.filterMissingValues(num, cat), cat[0], cat[1], unique1[0], modelObj.dataSplit[cat[0]].filter(onlyUnique), modelObj.dataSplit[cat[1]].filter(onlyUnique))}},
+	{name:"twoProportion", numeretical:0,categorical:2,stats:1,needsFocus:true,focusCat:0,setupParams:function(num, cat, modelObj, focus){var unique1 = modelObj.dataSplit[cat[0]].filter(onlyUnique); 
+		// modelObj.controller.makeFocusSelector(unique1, cat[0]);
+		//  modelObj.controller.makeVarSelector(cat[0],cat[1]);
+		 return new twoProportion(modelObj.filterMissingValues(num, cat), cat[0], cat[1], focus ? focus : unique1[0], modelObj.dataSplit[cat[0]].filter(onlyUnique), modelObj.dataSplit[cat[1]].filter(onlyUnique))}},
 	{name:"slope", numeretical:2,categorical:0,stats:2,setupParams:function(num, cat, modelObj){return new slope(modelObj.filterMissingValues(num, cat), num[0], num[1])}}];
 
 }
