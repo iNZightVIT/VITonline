@@ -117,6 +117,48 @@
 		}
 	}
 
+	sharedMultiCatDistDrop = function(settings, currentAnimation){
+		if(this.transitionSpeed > 200){
+			let self = this;
+			var sampMean = this.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
+			var stat = this.populationStatistics.population.statistic;			
+			var divisions = this.windowHelper.graphSection.S2.displayArea.getDivisions(this.groups.length, 'height');
+			var divSections = divisions[0];
+			var divHeight = divisions[1];
+			for(var g = 0; g < this.groups.length; g++){
+				var pos = divSections[g] - divHeight/2 - this.windowHelper.radius*2;
+				var groupName = this.groups[g];
+				drawArrow(this.xScale(sampMean[0].stats[g]), this.xScale(0.5), pos, d3.select(".meanOfSamples"), "distArrow"+g, 1, "green");
+				d3.select("#distArrow"+g+"a1").remove();
+				d3.select("#distArrow"+g+"a2").remove();
+				var subtractY = this.windowHelper.graphSection.S2.height - (divHeight/1.2 * g);
+				var subtractX = 0 - (this.xScale(sampMean[0].stats[g]) - this.xScale(0.5))/2;
+				d3.select("#distArrow"+g).selectAll("*").transition().duration(this.transitionSpeed)
+					.attr("transform", "translate("+ subtractX +", " + subtractY +")").each("end", function(d, i){
+						var id = d3.select(this).attr("id");
+						if(id == "distArrow0main"){
+							var headSize = 7.5;
+							var toScaled = sampMean[0].value;
+							var diff = self.sampleStatScale(sampMean[0].value);
+							var yValue = self.windowHelper.graphSection.S3.displayArea.getMiddleHeight();
+							if(Math.abs(diff) < headSize) headSize =Math.abs(diff)*0.5;
+							if(diff != 0) {var arrowHead = diff / Math.abs(diff);} else { var arrowHead = 0;}
+
+							var arrow = drawArrow(self.xScale(0.5 + (sampMean[0].value)/2), self.xScale(0.5 - (sampMean[0].value)/2), self.windowHelper.graphSection.S3.displayArea.getDivisions(3, 'height')[1] + self.windowHelper.graphSection.S3.displayArea.y1, d3.select(".meanOfSamples"), "redlineMain", 1, "red");
+							arrow[1].transition().duration(self.transitionSpeed).attr("y1",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height- self.windowHelper.radius*2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height + headSize*arrowHead/2 - self.windowHelper.radius*2).attr("x1",self.sampleStatScale(toScaled)).attr("x2", self.sampleStatScale(toScaled) - arrowHead*headSize);
+							arrow[2].transition().duration(self.transitionSpeed).attr("y1",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height- self.windowHelper.radius*2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - headSize*arrowHead/2 - self.windowHelper.radius*2).attr("x1",self.sampleStatScale(toScaled)).attr("x2", self.sampleStatScale(toScaled) - arrowHead*headSize);
+							arrow[0].transition().duration(self.transitionSpeed).attr("x1",self.sampleStatScale(0)).attr("x2",self.sampleStatScale(toScaled)).attr("y1",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height- self.windowHelper.radius*2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - self.windowHelper.radius*2);
+
+							sharedDistDropNoArrow.apply(self, [settings, currentAnimation]);
+						}
+					});
+
+			}
+		}else{
+			sharedDistDropNoArrow.apply(this, [settings, currentAnimation]);
+		}
+	}
+
 	sharedSingleStatDistDrop = function(settings, currentAnimation){
 		var self = this;
 		if(!settings.restarting){
@@ -248,6 +290,33 @@
 
 	}
 
+	sharedMultiArrowFadeIn = function (settings, currentAnimation){
+		var self = this;
+		var sampMean = this.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
+		var stat = this.populationStatistics.population.statistic;			
+		var divisions = this.windowHelper.graphSection.S2.displayArea.getDivisions(this.groups.length, 'height');
+		var divSections = divisions[0];
+		var divHeight = divisions[1];
+		d3.selectAll("#sampArrow").remove();
+		for(var g = 0; g < this.groups.length; g++){
+			var pos = divSections[g] - divHeight/2 - this.windowHelper.radius*2;
+			var groupName = this.groups[g];
+			drawArrow(this.xScale(sampMean[0].stats[g]), this.xScale(this.populationStatistics.population.statistic), pos, d3.select(".meanOfSamples"), "sampArrow", 1, "red");
+			d3.select(".meanOfSamples").append("line").attr("x1", this.xScale(sampMean[0].stats[g])).attr("x2", this.xScale(sampMean[0].stats[g])).attr("y1", pos+this.windowHelper.lineHeight).attr("y2", pos-this.windowHelper.lineHeight).style("stroke-width", 2).style("stroke", "black").style("stroke-width",3).attr("id", "sampArrow");
+
+		}
+		var circleOverlay = d3.select("#circleOverlay").selectAll("circle").transition().duration(this.transitionSpeed).each('end', function(d, i){
+			if(d == settings.sample[0]){
+				if(settings.incDist){
+					self.animationController(settings, currentAnimation);
+				}else{
+					d3.select("#differenceLine").remove();
+					self.animationController(settings, currentAnimation);
+				}
+			}
+		});
+	}
+
 	sharedProportionBarFadeInNoExit = function(settings, currentAnimation){
 		var self = this;
 		if(!this.settings.restarting){
@@ -303,7 +372,7 @@
 		});
 	}
 
-	sharedProportionMultiBarFadeInNoExit = function(settings, currentAnimation){
+	sharedProportionMultiBarFadeInNoExitNoStats = function(settings, currentAnimation){
 		var self = this;
 		if(!this.settings.restarting){
 			var allInSample = settings.sample.slice();
@@ -341,7 +410,11 @@
 
 			this.drawProportionBars(catSVG, divHeight, pos, self.xScale, focusGroup, otherGroup, this.groups[i], i, [...this.valueCategories]);
 		}
-
+	}
+	sharedProportionMultiBarFadeInNoExit = function(settings, currentAnimation){
+		
+		sharedProportionMultiBarFadeInNoExitNoStats.apply(this, [settings, currentAnimation]);
+		var sampMean = this.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
 		showDifference.apply(this, [sampMean]);
 	}
 
@@ -349,6 +422,18 @@
 		var self = this;
 		sharedProportionMultiBarFadeInNoExit.apply(this, [settings, currentAnimation]);
 		var circleOverlay = d3.select(".memLine").transition().duration(settings.incDist ? this.transitionSpeed*1 : this.transitionSpeed*3).each('end', function(d, i){
+			if(settings.incDist){
+				self.animationController(settings, currentAnimation);
+			}else{
+				d3.select("#differenceLine").remove();
+				self.animationController(settings, currentAnimation);
+			}
+		});
+	}
+	sharedProportionMultiBarFadeInNoStat = function(settings, currentAnimation){
+		var self = this;
+		sharedProportionMultiBarFadeInNoExitNoStats.apply(this, [settings, currentAnimation]);
+		var circleOverlay = d3.select("circle").transition().duration(settings.incDist ? this.transitionSpeed*1 : this.transitionSpeed*3).each('end', function(d, i){
 			if(settings.incDist){
 				self.animationController(settings, currentAnimation);
 			}else{

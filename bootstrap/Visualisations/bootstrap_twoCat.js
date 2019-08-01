@@ -26,6 +26,18 @@ class bootstrap_twoCat extends visBase {
 	getSampleSize(){
 		return this.allPop.length < 51 ? this.allPop.length : null;
 	}
+
+	extraStatistics(populationStatistics){
+		var sum = 0;
+		for(var g = 0; g < this.groups.length; g++){
+			sum += populationStatistics.groups[this.groups[g]].groupDeviation;
+		}
+		populationStatistics.averageDeviation = sum/this.groups.length;
+		if(this.groups.length > 2){
+			this.sampleStatType = "Deviation";
+		}
+	}
+
 	makeSample(populations, numSamples, sampleSize, statistic){
 		this.samples = [];
 		for(var i = 0; i<numSamples;i++){
@@ -85,6 +97,11 @@ class bootstrap_twoCat extends visBase {
 		d3.selectAll(".memLine").style("opacity",0.2).style("stroke","steelblue").attr("y2",function(){ return d3.select(this).attr("y1")-self.windowHelper.lineHeight*2});;
 		d3.selectAll("#diffLine").remove();
 		d3.selectAll("#samp").remove();
+		d3.selectAll("#redlineMain").remove();
+		d3.selectAll("#sampArrow").remove();
+		for(var g = 0; g < this.groups.length; g++){
+			d3.selectAll("#distArrow"+g).remove();
+		}
 	}
 	setUpLargeCI(sSize){
 		var self = this;
@@ -226,12 +243,21 @@ class bootstrap_twoCat extends visBase {
 	}
 
 	fadeIn(settings, currentAnimation){
-		sharedProportionMultiBarFadeIn.apply(this, [settings, currentAnimation]);
+		if(this.sampleStatType == "diff"){
+			sharedProportionMultiBarFadeIn.apply(this, [settings, currentAnimation]);
+		}else{
+			sharedMultiArrowFadeIn.apply(this, [settings, currentAnimation]);
+			sharedProportionMultiBarFadeInNoStat.apply(this, [settings, currentAnimation]);
+		}
 	}
 
 
 	distDrop(settings, currentAnimation){
-		sharedSingleStatDistDrop.apply(this, [settings, currentAnimation]);
+		if(this.sampleStatType == "diff"){
+			sharedDistDrop.apply(this, [settings, currentAnimation]);
+		}else{
+			sharedMultiCatDistDrop.apply(this, [settings, currentAnimation]);
+		}
 	}
 	removeBar(settings, currentAnimation){
 		if(settings.repititions > 500){
