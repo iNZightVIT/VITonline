@@ -153,6 +153,7 @@ class visBase {
 		// mainly so the arrow always points right (i think)
 		this.groups.sort(function(a,b){
 			return getStatistic(self.statistic,self.valueAllowCategorical ? self.populations[a].filter(function(i){return i.value==0}) : self.populations[a], self.valueAllowCategorical ? self.populations[a].length : populationSize) - getStatistic(self.statistic,self.valueAllowCategorical ? self.populations[b].filter(function(i){return i.value==0}) : self.populations[b], self.valueAllowCategorical ? self.populations[b].length : populationSize);
+			// return getStatistic(self.statistic,self.valueAllowCategorical ? self.populations[a] : self.populations[a], self.valueAllowCategorical ? self.populations[a].length : populationSize) - getStatistic(self.statistic,self.valueAllowCategorical ? self.populations[b].filter(function(i){return i.value==0}) : self.populations[b], self.valueAllowCategorical ? self.populations[b].length : populationSize);
 		})
 
 		// Sets up a section for each of the categorical variable possibilities. (If visualising proportion, split on second categorical, *NOT IMPLEMENTED YET*)
@@ -169,6 +170,7 @@ class visBase {
 
 			// gets the selected statistic for category.
 			var stat = getStatistic(this.statistic, this.valueAllowCategorical ? this.populations[this.groups[j]].filter(function(i){return i.value==0}) : this.populations[this.groups[j]], this.valueAllowCategorical ? this.populations[this.groups[j]].length : populationSize);
+			// var stat = getStatistic(this.statistic, this.valueAllowCategorical ? this.populations[this.groups[j]] : this.populations[this.groups[j]], this.valueAllowCategorical ? this.populations[this.groups[j]].length : populationSize);
 			this.groupStats[this.groups[j]] = stat;
 			s.push(stat);
 		}
@@ -188,9 +190,12 @@ class visBase {
 			this.populationDiff = newItem.value;
 		}
 		this.populationStatistics = this.setupPopulationStatistics();
+		
 		if(this.sampleStatType == 'diff'){
+			// this.populationDiff = newItem.value;
 			this.populationStatistic = this.populationDiff;
 		}else if(this.sampleStatType == 'Deviation'){
+			this.populationDiff = this.populationStatistics.averageDeviation;
 			this.populationStatistic = this.populationStatistics.averageDeviation;
 		}else{
 			this.populationStatistic = this.groupStats[this.groups[0]];
@@ -204,7 +209,7 @@ class visBase {
 	setupPopulationStatistics(){
 		var populationStatistics = new Object();
 		populationStatistics.population = new Object();
-		populationStatistics.population.statistic = getStatistic(this.statistic, this.allPop, this.allPop.length);
+		populationStatistics.population.statistic = getStatistic(this.statistic, this.valueAllowCategorical ? this.allPop.filter(function(i){return i.value==0}):this.allPop, this.allPop.length);
 		if(this.popDrawType == 1){
 			populationStatistics.population.statistic = 1 - populationStatistics.population.statistic;
 		}
@@ -264,7 +269,7 @@ class visBase {
 		return getStatistic(this.statistic, this.samples[i][g], populationSize);
 	}
 	setSampleStatistic(diff, categoryStatistics){
-		return this.sampleStatType == 'diff' ? diff : categoryStatistics[0];
+		return (this.sampleStatType == 'diff' || this.sampleStatType == "Deviation") ? diff : categoryStatistics[0];
 	}
 	handleSample(i){
 		var categoryStatistics = [];
@@ -280,8 +285,16 @@ class visBase {
 
 		// if there are more than 2 categories, we calculate the difference and put that in. otherwise null;
 		// only supports difference between 2 groups.
-		if(categoryStatistics.length >= 2){
+		if(categoryStatistics.length == 2){
 			diff = categoryStatistics[1] - categoryStatistics[0];
+		}
+		if(categoryStatistics.length > 2){
+			let pop_stat = this.populationStatistics.population.statistic;
+			diff = 0;
+			for(var g = 0; g < this.samples[i].length; g++){
+				diff += Math.abs(categoryStatistics[g] - pop_stat);
+			}
+			diff /= this.samples[i].length;
 		}
 		if(this.largestDiff == null || diff > this.largestDiff){
 			this.largestDiff = diff;
@@ -337,7 +350,7 @@ class visBase {
 
 		this.makeSample(this.populations, this.numSamples, sSize,this.statistic);
 		this.setUpSampleStatistics();
-		var sampleStatRange = this.sampleStatType == 'diff' ? [this.smallestDiff, this.largestDiff] : [this.smallestStat, this.largestStat];
+		var sampleStatRange = (this.sampleStatType == 'diff' || this.sampleStatType == "Deviation") ? [this.smallestDiff, this.largestDiff] : [this.smallestStat, this.largestStat];
 		this.sampleStatScale = d3.scale.linear().range([this.windowHelper.graphSection.x,this.windowHelper.graphSection.x + this.windowHelper.graphSection.width]);
 		var populationRange = this.xScale.domain();
 		var halfDiff = (populationRange[1]-populationRange[0])/2;
@@ -372,7 +385,7 @@ class visBase {
 			}
 		}
 
-		var statlist = this.sampleStatType == 'diff' ? this.sampleStatistics.map(function(statObj){ return statObj.diff}) : this.sampleStatistics.map(function(statObj){ return statObj.stats[0]});
+		var statlist = (this.sampleStatType == 'diff' || this.sampleStatType == 'Deviation') ? this.sampleStatistics.map(function(statObj){ return statObj.diff}) : this.sampleStatistics.map(function(statObj){ return statObj.stats[0]});
 		statlist.sort(function(a,b){
 			if(Math.abs(self.populationStatistic - a ) < Math.abs(self.populationStatistic - b)) return -1;
 			if(Math.abs(self.populationStatistic - a ) > Math.abs(self.populationStatistic - b)) return 1;
@@ -628,8 +641,21 @@ class visBase {
 
 	drawPopulationStatistic(placeInto){
 		var middle = this.windowHelper.graphSection.S1.displayArea.getMiddleHeight();
-		drawArrow(this.xScale(this.groupStats[this.groups[1]]), this.xScale(this.groupStats[this.groups[0]]), middle, placeInto, "popDiff", 1, "blue");
+		if(this.sampleStatType == 'diff'){
+			drawArrow(this.xScale(this.groupStats[this.groups[1]]), this.xScale(this.groupStats[this.groups[0]]), middle, placeInto, "popDiff", 1, "blue");
 			placeInto.append("text").attr("x", this.xScale(this.groupStats[this.groups[1]])).attr("y", middle).text(Math.round((this.populationStatistic)*100)/100).style("stroke","blue").style("opacity",1);
+
+		}else if(this.sampleStatType == 'Deviation'){
+			placeInto.append("line").attr("x1", this.xScale(this.populationStatistic)).attr("x2", this.xScale(this.populationStatistic))
+			.attr("y1", this.windowHelper.graphSection.S1.y).attr("y1", this.windowHelper.height)
+			.style("stroke-dasharray", 5)
+			placeInto.append("text").attr("x", this.xScale(this.populationStatistic) + 2).attr("y", this.windowHelper.graphSection.S1.displayArea.y2 - 2).text(Math.round((this.populationStatistic)*100)/100).style("stroke","blue").style("opacity",1);
+
+		}else{
+			drawArrow(this.xScale(this.groupStats[this.groups[1]]), this.xScale(this.groupStats[this.groups[0]]), middle, placeInto, "popDiff", 1, "blue");
+			placeInto.append("text").attr("x", this.xScale(this.groupStats[this.groups[1]])).attr("y", middle).text(Math.round((this.populationStatistic)*100)/100).style("stroke","blue").style("opacity",1);
+
+		}
 
 	}
 

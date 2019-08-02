@@ -23,17 +23,14 @@ class randTest_twoCat extends visBase {
 		heapYValues3(items, scale, radius, 0, top,bottom);
 	}
 
-	getStatisticEachSample(i, g){
-		var populationSize = this.inputData.length;
-		return getStatistic(this.statistic, this.samples[i][g], populationSize);
-	}
 	setSampleStatistic(diff, categoryStatistics){
 		if(this.groups.length <= 2){
 			return this.sampleStatType == 'diff' ? diff : categoryStatistics[0];
 		}else{
 			var sum = 0;
+			let pop_stat = this.populationStatistics.population.statistic;
 			for(var g = 0; g < this.groups.length; g++){
-				sum += Math.abs(categoryStatistics[g] - this.populationStatistics.population.statistic);
+				sum += Math.abs(categoryStatistics[g] - pop_stat);
 			}
 			return sum/this.groups.length;
 		}
@@ -124,8 +121,10 @@ class randTest_twoCat extends visBase {
 		}
 	}
 	getStatisticEachSample(i, g){
-		var populationSize = this.inputData.length;
-		return 1 - getStatistic(this.statistic, this.samples[i][g], populationSize);
+		var populationSize = this.samples[i][g].length;
+
+		//Our statistic will be the proportion of values that match the focus out of each group.
+		return getStatistic(this.statistic, this.samples[i][g].filter(function(item){return item.value == 0}), populationSize);
 	}
 	setUpSampleCategory(items, scale, radius, sample, top, bottom){
 		// Sets the y value for all population circles in the category to make it look heaped. 
@@ -143,13 +142,13 @@ class randTest_twoCat extends visBase {
 		placeInto.append("text").text("Re-randomised").attr("x",(self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width/2)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("display","inline-block").attr("text-anchor","middle");
 
 	}
-	drawPopulationStatistic(placeInto){
-		if(this.sampleStatType == "diff"){
-			var middle = this.windowHelper.graphSection.S1.displayArea.getMiddleHeight();
-			drawArrow(this.xScale(this.groupStats[this.groups[1]]), this.xScale(this.groupStats[this.groups[0]]), middle, placeInto, "popDiff", 1, "blue");
-			placeInto.append("text").attr("x", this.xScale(this.groupStats[this.groups[1]])).attr("y", middle).text(Math.round((this.populationStatistic)*100)/100).style("stroke","blue").style("opacity",1);
-		}
-	}
+	// drawPopulationStatistic(placeInto){
+	// 	if(this.sampleStatType == "diff"){
+	// 		var middle = this.windowHelper.graphSection.S1.displayArea.getMiddleHeight();
+	// 		drawArrow(this.xScale(this.groupStats[this.groups[1]]), this.xScale(this.groupStats[this.groups[0]]), middle, placeInto, "popDiff", 1, "blue");
+	// 		placeInto.append("text").attr("x", this.xScale(this.groupStats[this.groups[1]])).attr("y", middle).text(Math.round((this.populationStatistic)*100)/100).style("stroke","blue").style("opacity",1);
+	// 	}
+	// }
 	drawPopExtra(placeInto){
 		if(this.groups.length > 2){
 			var stat = this.populationStatistics.population.statistic;

@@ -26,7 +26,18 @@ class bootstrap_twoCat extends visBase {
 	getSampleSize(){
 		return this.allPop.length < 51 ? this.allPop.length : null;
 	}
-
+	setSampleStatistic(diff, categoryStatistics){
+		if(this.groups.length <= 2){
+			return this.sampleStatType == 'diff' ? diff : categoryStatistics[0];
+		}else{
+			var sum = 0;
+			let pop_stat = this.populationStatistics.population.statistic;
+			for(var g = 0; g < this.groups.length; g++){
+				sum += Math.abs(categoryStatistics[g] - pop_stat);
+			}
+			return sum/this.groups.length;
+		}
+	}
 	extraStatistics(populationStatistics){
 		var sum = 0;
 		for(var g = 0; g < this.groups.length; g++){
