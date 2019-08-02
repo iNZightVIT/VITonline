@@ -1,23 +1,25 @@
-	matchPropBars = function(){
+	matchPropBars = function(m_index = [0]){
 		let circles = d3.selectAll(".pop circle")[0];
 		let sample_circles = d3.selectAll("#samp circle")[0];
 		let matched_population_circles = [];
 		for(let sc = 0; sc < sample_circles.length; sc++){
 			let my_id = sample_circles[sc].id;
-			let id_values = my_id.split('-');
-			let primary_category = id_values[0];
-			let secondary_category = id_values[1];
-			let repetition = id_values[2];
+			let primary_category = my_id.split('-')[0];
+			let secondary_category = my_id.split('-').slice(1, my_id.split('-').length - 1).join('-');
+			id_values = [primary_category, secondary_category];
 
-			let match_on_index = 0;
+			let match_on_index = m_index;
 			for(let c = 0; c < circles.length; c++){
 				let match_id = circles[c].id;
 				if(matched_population_circles.includes(match_id)) continue;
-				let match_id_values = my_id.split('-');
-				let match_primary_category = id_values[0];
-				let match_secondary_category = id_values[1];
-				let match_repetition = id_values[2];
-				if(id_values[match_on_index] == match_id_values[match_on_index]){
+				let match_primary_category = match_id.split('-')[0];
+				let match_secondary_category = match_id.split('-').slice(1, match_id.split('-').length - 1).join('-');
+				match_id_values = [match_primary_category, match_secondary_category];
+				let match = true;
+				for (let m of match_on_index){
+					if(id_values[m] != match_id_values[m]) match = false;
+				}
+				if(match){
 					console.log("hi");
 					matched_population_circles.push(match_id);
 					let samp_circ = d3.select(sample_circles[sc]);
