@@ -14,30 +14,40 @@ viewBase.prototype.leaveVis = function(){
 		d3.select("#visControls1").remove();
 		d3.select("#visControls2").remove();
 	}
-viewBase.prototype.setUpTab2 = function(){
+viewBase.prototype.setUpTab2 = function(difference, sampleSize){
 	var self = this;
-		var tab2Top = d3.select("#tab2Top");
-		tab2Top.selectAll("*").remove();
-		tab2Top.append("input").attr("type","button").attr("value","< Back to Data Input").attr("class","bluebutton").attr("id","backTab2").attr("disabled",null).attr("onClick","mainControl.switchTab1()")
-			.style("height","15%");
-		//tab2Top.append("label").text("Sample Size");
-		//tab2Top.append("input").attr("type","text").attr("value","20").attr("id","sampsize");
-
-		tab2Top.append("label").text("Statistic");
-		tab2Top.append("select").attr("id","statSelect").append("option").text("Select variable");
-		var SSize = document.getElementById("sampsize");
-		//SSize.onchange = function(e){
-		//	controller.startVisPreveiw();
-		//}
-		var SS = document.getElementById("statSelect");
-		SS.onchange = function(e){
-			self.controller.statChanged(e);
-		}
-		tab2Top.append("input").attr("type","button").attr("value","Precalculate Display").classed("bluebutton", true).attr("id","Calculate").attr("disabled",null).attr("onClick","mainControl.startVisPressed()")
-			.style("height","15%");
-		//tab2Top.append("input").attr("type","button").attr("value","Pause").classed("bluebutton", true).attr("id","Pause").attr("disabled",true).attr("onClick","mainControl.pause()")
-		//	.style("height","15%");
+	var tab2Top = d3.select("#tab2Top");
+	tab2Top.selectAll("*").remove();
+	var tab2Bot = d3.select("#tab2Bot");
+	tab2Bot.selectAll("*").remove();
+	tab2Top.append("input").attr("type","button").attr("value","< Back to Data Input").attr("class","bluebutton").attr("id","backTab2").attr("disabled",null).attr("onClick","mainControl.switchTab1()")
+		.style("height","15%");
+	
+	if(sampleSize){
+		tab2Top.append("label").text("Sample Size");
+		tab2Top.append("input").attr("type","text").attr("value","20").attr("id","sampsize");
 	}
+
+	tab2Top.append("label").text("Statistic");
+	tab2Top.append("select").attr("id","statSelect").append("option").text("Select variable");
+	if(difference){
+		tab2Top.append("select").attr("id","statTypeSelect").append("option").text("Difference");
+	}
+	if(sampleSize){
+		let SSize = document.getElementById("sampsize");
+		SSize.onchange = function(e){
+			self.controller.startVisPreveiw();
+		}
+	}
+	var SS = document.getElementById("statSelect");
+	SS.onchange = function(e){
+		self.controller.statChanged(e);
+	}
+	tab2Top.append("input").attr("type","button").attr("value","Record my choices").classed("bluebutton", true).attr("id","Calculate").attr("disabled",null).attr("onClick","mainControl.startVisPressed()")
+		.style("height","15%");
+	//tab2Top.append("input").attr("type","button").attr("value","Pause").classed("bluebutton", true).attr("id","Pause").attr("disabled",true).attr("onClick","mainControl.pause()")
+	//	.style("height","15%");
+}
 
 viewBase.prototype.makeButtons = function(){
 		d3.select("#stopButton").remove();

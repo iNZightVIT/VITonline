@@ -17,7 +17,6 @@ function oneMean(inputData, heading, statistic){
 		this.popSetup = false;
 	this.sampSetup = false;
 	this.drawnMeans = [];
-	this.sampleSize = 20;
 	this.pauseState = 0;
 			this.implemented = true;
 
@@ -27,7 +26,6 @@ function oneMean(inputData, heading, statistic){
 		this.destroy();
 	}
 	this.setUpPopulation = function(){
-		this.sampleSize = 20;
 		var max = null;
 		var min = null;
 		for(var i = 0; i<inputData.length;i++){
@@ -47,7 +45,6 @@ function oneMean(inputData, heading, statistic){
 
 		heapYValues3(this.population, this.xScale, this.radius, 0, this.windowHelper.section1.top, this.windowHelper.section1.twoThird);
 		this.popSetup = true;
-		this.sampleSize = this.population.length;
 	}
 
 	this.setUpSamples = function(sSize){
@@ -56,11 +53,11 @@ function oneMean(inputData, heading, statistic){
 			alert("population too large to analyse, use data with less rows");
 			return;
 		}
-		this.sampleSize = this.population.length;
+		let sampleSize = this.population.length;
 		var statList = [];
 		var oldSampNum = this.numSamples;
 		//this.numSamples = 10000;
-		this.samples = this.makeSamples(this.population, this.numSamples, this.sampleSize);
+		this.samples = this.makeSamples(this.population, this.numSamples, sampleSize);
 		//this.tenKSamples = this.makeSamples(this.population, 10000, sSize);
 		for(var k = 0; k < this.numSamples;k++){
 			var stat = getStatistic(this.statistic, this.samples[k])

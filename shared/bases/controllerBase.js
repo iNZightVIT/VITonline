@@ -292,7 +292,11 @@ controllerBase.prototype.varChanged = function(e){
 controllerBase.prototype.switchTab2 = function(){
 		d3.select("#tab1").style("display","none");
 		d3.select("#tab2").style("display","block");
-		this.view.setUpTab2();
+		let cat = this.model.cat;
+		let num = this.model.num;
+		let difference = (cat.length == 1 && num.length == 1) || (cat.length == 2);
+		let showSampleSize = this.model.display.sampleSize != undefined;
+		this.view.setUpTab2(difference, showSampleSize);
 		if(this.model.display.sampleSize != 20){
 			d3.select("#sampsize").attr("value",String(this.model.display.sampleSize));
 		}
