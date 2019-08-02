@@ -466,7 +466,7 @@ class visBase {
 	drawProportionBars(svg, divHeight, pos, xScale, fG, oG, name, i, barTitles){
 		var self = this;
 		// Each bar has its start in units, its end in units, the total amouint of units and its name.
-		var bars = [[0, fG.length, fG.length + oG.length, barTitles[0]], [fG.length, oG.length, fG.length + oG.length, barTitles[1]]];
+		var bars = [[0, fG.length, fG.length + oG.length, barTitles[0], name], [fG.length, oG.length, fG.length + oG.length, barTitles[1], name]];
 
 		// Bar Name (group)
 		svg.append("text").text(name)
@@ -524,8 +524,13 @@ class visBase {
 			for(let i = 0; i < lim; i++){
 				bar_element.append("circle")
 					.attr("cx", item_x + x_left_margin + radius + (radius * 2)*r)
+					.attr("data-cx", item_x + x_left_margin + radius + (radius * 2)*r)
 					.attr("cy", pos - (bar_height / 2) + y_top_margin + radius + (radius * 2)*c)
+					.attr("data-cy", pos - (bar_height / 2) + y_top_margin + radius + (radius * 2)*c)
+					.attr("id", bar[3] + '-' + bar[4] + '-' + i)
+					.attr("data-fill", d3.rgb(colorByIndex[b]).brighter(0.5))
 					.style("fill", d3.rgb(colorByIndex[b]).brighter(0.5))
+					.attr("data-r", radius)
 					.attr("r", radius)
 				r++;
 				if(r == row_l){
@@ -688,7 +693,7 @@ class visBase {
 		if(!this.sampSetup) return;
 		var self = this;
 
-		var sampleDraw = d3.select(".svg").append("g").attr("id", "samples");
+		var sampleDraw = d3.select(".svg").insert("g", ".meanOfSamples").attr("id", "samples");
 
 		// does not handle more than 2 categories right now.
 		//if(this.groups.length > 2) return;

@@ -99,8 +99,8 @@ class randTest_twoCat extends visBase {
 					nI.order = sampleOrder;
 					sampleOrder++;
 					// Sets initial x and y (first element is for 'population' sample) to be same as the parents.
-					nI.xPerSample[0] =populations[this.groups[group]][itemIndex].xPerSample[0];
-					nI.yPerSample[0] =populations[this.groups[group]][itemIndex].yPerSample[0];
+					nI.xPerSample[0] = populations[this.groups[group]][itemIndex].xPerSample[0];
+					nI.yPerSample[0] = populations[this.groups[group]][itemIndex].yPerSample[0];
 
 					// For Randomisation Tests, we want the group to be randomly selected but with the same proportions 
 					// as the original.
@@ -161,7 +161,7 @@ class randTest_twoCat extends visBase {
 		d3.selectAll(".memLine").style("opacity",0.2).style("stroke","steelblue").attr("y2",function(){ return d3.select(this).attr("y1")-self.windowHelper.lineHeight*2});
 		d3.selectAll("#diffLine").remove();
 		d3.selectAll("#redlineMain").remove();
-		
+		d3.selectAll("#samp").remove();
 		d3.selectAll("#sampArrow").remove();
 		for(var g = 0; g < this.groups.length; g++){
 			d3.selectAll("#distArrow"+g).remove();
@@ -231,68 +231,103 @@ class randTest_twoCat extends visBase {
 
 	populationDropDown(settings, currentAnimation){
 		var self = this;
+		sharedProportionMultiBarFadeInNoExitNoStatsHidden.apply(this, [settings, currentAnimation]);
 
-		// If reps = 1 and distribution is not shown, do the population drop down. Otherwise, just just straight to the split.
-		if(settings.repititions == 1 && !settings.incDist){
-			if(!settings.restarting){
-				var sentFinish = false;
+		matchPropBars.apply(this);
 
-				// Delete Old elements
-				d3.select("#circleOverlay").selectAll("circle").data([]).exit().remove();
-				var circleOverlay = settings.drawArea.select("#circleOverlay").selectAll("g").data([]);
-				circleOverlay.exit().remove();
+		let sample_circles = d3.selectAll("#samp circle")[0];
+		for(let sc = 0; sc < sample_circles.length; sc++){
+			let samp_circ = d3.select(sample_circles[sc]);
+			samp_circ.attr("cx", samp_circ.attr("data-px"));
+			samp_circ.attr("cy", samp_circ.attr("data-py"));
+			samp_circ.style("fill", samp_circ.attr("data-pfill"));
+			samp_circ.attr("r", samp_circ.attr("data-pr"));
+			samp_circ.style("opacity", 1);
+			samp_circ.style("fill-opacity", 1);
+		}
 
-				// Add new elements in, appear on top of original population.
-				circleOverlay = settings.drawArea.select("#circleOverlay").selectAll("circle").data(settings.sample, function(d){return d.order});
-				var circles = circleOverlay.enter().append("circle");
-				circles.attr("class", "move")
-			    .attr("cx", function(d, i) { 
-			    	return d.xPerSample[0]; })
-			    .attr("cy", function(d) {
-			    	return d.yPerSample[0];
-			    })
-			    .attr("r", function(d) { return self.windowHelper.radius; })
-			    .attr("fill-opacity", 1)
-			    .attr("stroke","#556270")
-			    .attr("stroke-opacity",1)
-			    .style("fill",function(d){return colorByIndex[d.popGroup]}).attr("class",function(d){return "c"+d.popId});
-			}else{
-
-				// If restarting, select original circles again.
-				var circles = d3.select("#circleOverlay").selectAll("circle");
-				self.settings.restarting = false;
-			}
-
-			//	Pause
-			circles.transition().duration(self.transitionSpeed)
+		if((settings.repititions == 1 || settings.repititions == 5) && !settings.incDist){
+			d3.selectAll("#samp circle").transition().duration(self.transitionSpeed)
 			// Move down to middle of section 2.
 			.transition().duration(self.transitionSpeed).attr('cy', (self.windowHelper.graphSection.S2.displayArea.getMiddleHeight()))
 			// Remove fill, and once done move to next animation.
-			.transition().duration(100).attr("fill-opacity", 0).transition().duration(settings.pauseDelay).each('end', function(d, i){
-					if(d == self.settings.sample[0]){
+			.transition().duration(100).style("fill", "white").transition().duration(500).each('end', function(d, i){
+					if(i == 0){
 						self.animationController(settings, currentAnimation);
 					}
 				});
-		}else {
-			d3.select("#circleOverlay").selectAll("circle").data([]).exit().remove();
-			var circleOverlay = settings.drawArea.select("#circleOverlay").selectAll("g").data([]);
-			circleOverlay.exit().remove();
-
-			circleOverlay = settings.drawArea.select("#circleOverlay").selectAll("circle").data(settings.sample, function(d){return d.order});
-			var circles = circleOverlay.enter().append("circle");
-			circles.attr("class", "move")
-		    .attr("cx", function(d, i) { 
-		    	return d.xPerSample[0]; })
-			.attr('cy', (self.windowHelper.graphSection.S2.displayArea.getMiddleHeight()))
-		    .attr("r", function(d) { return self.windowHelper.radius; })
-		    .attr("fill-opacity", 0)
-		    .attr("stroke","#556270")
-		    .attr("stroke-opacity",1)
-		    .style("fill",function(d){return colorByIndex[d.popGroup]}).attr("class",function(d){return "c"+d.popId});
-
+		}else if(settings.repititions < 5){
+			d3.selectAll("#samp circle").attr('cy', (self.windowHelper.graphSection.S2.displayArea.getMiddleHeight()))
+			.style("fill", "white").transition().duration(500).each('end', function(d, i){
+					if(i == 0){
+						self.animationController(settings, currentAnimation);
+					}
+				});
+		}else{
 			self.animationController(settings, currentAnimation);
-
 		}
+
+		// // If reps = 1 and distribution is not shown, do the population drop down. Otherwise, just just straight to the split.
+		// if(settings.repititions == 1 && !settings.incDist){
+		// 	if(!settings.restarting){
+		// 		var sentFinish = false;
+
+		// 		// Delete Old elements
+		// 		d3.select("#circleOverlay").selectAll("circle").data([]).exit().remove();
+		// 		var circleOverlay = settings.drawArea.select("#circleOverlay").selectAll("g").data([]);
+		// 		circleOverlay.exit().remove();
+
+		// 		// Add new elements in, appear on top of original population.
+		// 		circleOverlay = settings.drawArea.select("#circleOverlay").selectAll("circle").data(settings.sample, function(d){return d.order});
+		// 		var circles = circleOverlay.enter().append("circle");
+		// 		circles.attr("class", "move")
+		// 	    .attr("cx", function(d, i) { 
+		// 	    	return d.xPerSample[0]; })
+		// 	    .attr("cy", function(d) {
+		// 	    	return d.yPerSample[0];
+		// 	    })
+		// 	    .attr("r", function(d) { return self.windowHelper.radius; })
+		// 	    .attr("fill-opacity", 1)
+		// 	    .attr("stroke","#556270")
+		// 	    .attr("stroke-opacity",1)
+		// 	    .style("fill",function(d){return colorByIndex[d.popGroup]}).attr("class",function(d){return "c"+d.popId});
+		// 	}else{
+
+		// 		// If restarting, select original circles again.
+		// 		var circles = d3.select("#circleOverlay").selectAll("circle");
+		// 		self.settings.restarting = false;
+		// 	}
+
+		// 	//	Pause
+		// 	circles.transition().duration(self.transitionSpeed)
+		// 	// Move down to middle of section 2.
+		// 	.transition().duration(self.transitionSpeed).attr('cy', (self.windowHelper.graphSection.S2.displayArea.getMiddleHeight()))
+		// 	// Remove fill, and once done move to next animation.
+		// 	.transition().duration(100).attr("fill-opacity", 0).transition().duration(settings.pauseDelay).each('end', function(d, i){
+		// 			if(d == self.settings.sample[0]){
+		// 				self.animationController(settings, currentAnimation);
+		// 			}
+		// 		});
+		// }else {
+		// 	d3.select("#circleOverlay").selectAll("circle").data([]).exit().remove();
+		// 	var circleOverlay = settings.drawArea.select("#circleOverlay").selectAll("g").data([]);
+		// 	circleOverlay.exit().remove();
+
+		// 	circleOverlay = settings.drawArea.select("#circleOverlay").selectAll("circle").data(settings.sample, function(d){return d.order});
+		// 	var circles = circleOverlay.enter().append("circle");
+		// 	circles.attr("class", "move")
+		//     .attr("cx", function(d, i) { 
+		//     	return d.xPerSample[0]; })
+		// 	.attr('cy', (self.windowHelper.graphSection.S2.displayArea.getMiddleHeight()))
+		//     .attr("r", function(d) { return self.windowHelper.radius; })
+		//     .attr("fill-opacity", 0)
+		//     .attr("stroke","#556270")
+		//     .attr("stroke-opacity",1)
+		//     .style("fill",function(d){return colorByIndex[d.popGroup]}).attr("class",function(d){return "c"+d.popId});
+
+		// 	self.animationController(settings, currentAnimation);
+
+		// }
 
 	}
 	buildList(settings, currentAnimation){
@@ -318,26 +353,36 @@ class randTest_twoCat extends visBase {
 
 	splitIntoRandCategories(settings, currentAnimation){
 		var self = this;
-		var circles = d3.select("#circleOverlay").selectAll("circle");
+		var circles = d3.selectAll("#samp circle");
 		// If reps = 1 and distribution is not shown, do the population drop down. Otherwise, just just straight to the split.
 		if(settings.repititions == 1 || (settings.repititions == 5 && !settings.incDist)){
-			circles.style("fill",function(d){return colorByIndex[d.groupIndex]})
-			.attr("fill-opacity", 1)
+			circles.attr("fill-opacity", 1)
 			.transition().duration(self.transitionSpeed)
 			.transition().duration(self.transitionSpeed)
 			    .attr("cy", function(d) {
-			    	return d.yPerSample[settings.indexUpTo+1];
-		    	}).style("fill",function(d){return colorByIndex[d.groupIndex]})
+			    	return d3.select(this).attr("data-cy");
+		    	})
+			    .attr("cx", function(d) {
+			    	return d3.select(this).attr("data-cx");
+		    	})
+			    .style("fill", function(d) {
+			    	return d3.select(this).attr("data-fill");
+		    	})
 				.each('end', function(d, i){
 					self.settings.restarting = false;
-					if(d == self.settings.sample[0]){
+					if(i == 0){
 						self.animationController(settings, currentAnimation);
 					}
 				});
 		}else {
 			circles.attr("cy", function(d) {
-			    	return d.yPerSample[settings.indexUpTo+1];
-		    	}).style("fill",function(d){return colorByIndex[d.groupIndex]})
+			    	return d3.select(this).attr("data-cy");
+				})
+				.attr("cx", function(d) {
+			    	return d3.select(this).attr("data-cx");
+		    	}).style("fill", function(d) {
+			    	return d3.select(this).attr("data-fill");
+		    	})
 				.attr("fill-opacity", 1);
 			self.settings.restarting = false;
 			self.animationController(settings, currentAnimation);
@@ -349,9 +394,31 @@ class randTest_twoCat extends visBase {
 	fadeIn(settings, currentAnimation){
 		var self = this;
 		if(this.sampleStatType == "diff"){
-			sharedFadeIn.apply(this, [settings, currentAnimation]);
+			sharedProportionMultiBarFadeIn.apply(this, [settings, currentAnimation]);
 		}else{
 			sharedMultiArrowFadeIn.apply(this, [settings, currentAnimation]);
+			d3.selectAll("#samp circle").transition().duration(this.transitionSpeed).style("opacity", 1).each('end', function(d, i){
+				if(i == 0){
+					if(settings.incDist){
+						self.animationController(settings, currentAnimation);
+					}else{
+						d3.select("#differenceLine").remove();
+						self.animationController(settings, currentAnimation);
+					}
+				}
+			});
+		
+			if ((settings.repititions == 1)){
+
+				d3.selectAll("#samp rect").transition().duration(this.transitionSpeed).style("opacity", 1);
+				d3.selectAll("#samp text").transition().duration(this.transitionSpeed).style("opacity", 1)
+				// sharedProportionMultiBarFadeInNoStat.apply(this, [settings, currentAnimation]);
+			}else{
+			d3.selectAll("#samp rect").style("opacity", 1);
+			d3.selectAll("#samp text").style("opacity", 1)
+			// sharedProportionMultiBarFadeInNoStat.apply(this, [settings, currentAnimation]);
+			}
+
 		}
 
 	}

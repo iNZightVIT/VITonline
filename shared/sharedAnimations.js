@@ -1,3 +1,40 @@
+	matchPropBars = function(){
+		let circles = d3.selectAll(".pop circle")[0];
+		let sample_circles = d3.selectAll("#samp circle")[0];
+		let matched_population_circles = [];
+		for(let sc = 0; sc < sample_circles.length; sc++){
+			let my_id = sample_circles[sc].id;
+			let id_values = my_id.split('-');
+			let primary_category = id_values[0];
+			let secondary_category = id_values[1];
+			let repetition = id_values[2];
+
+			let match_on_index = 0;
+			for(let c = 0; c < circles.length; c++){
+				let match_id = circles[c].id;
+				if(matched_population_circles.includes(match_id)) continue;
+				let match_id_values = my_id.split('-');
+				let match_primary_category = id_values[0];
+				let match_secondary_category = id_values[1];
+				let match_repetition = id_values[2];
+				if(id_values[match_on_index] == match_id_values[match_on_index]){
+					console.log("hi");
+					matched_population_circles.push(match_id);
+					let samp_circ = d3.select(sample_circles[sc]);
+					let pop_circ = d3.select(circles[c]);
+					samp_circ.attr("data-id", pop_circ.attr("id"));
+					samp_circ.attr("data-px", pop_circ.attr("data-cx"));
+					samp_circ.attr("data-py", pop_circ.attr("data-cy"));
+					samp_circ.attr("data-pfill", pop_circ.attr("data-fill"));
+					samp_circ.attr("data-pr", pop_circ.attr("data-r"));
+
+
+					break;
+				}
+			}
+		}
+	}
+	
 	showDifference = function( sampMean){
 		var self = this;
 		var middle = this.windowHelper.graphSection.S2.displayArea.getMiddleHeight();
@@ -411,6 +448,14 @@
 			this.drawProportionBars(catSVG, divHeight, pos, self.xScale, focusGroup, otherGroup, this.groups[i], i, [...this.valueCategories]);
 		}
 	}
+
+	sharedProportionMultiBarFadeInNoExitNoStatsHidden = function(settings, currentAnimation){
+		sharedProportionMultiBarFadeInNoExitNoStats.apply(this, [settings, currentAnimation]);
+		d3.selectAll("#samp circle").style("opacity", 0);
+		d3.selectAll("#samp rect").style("opacity", 0);
+		d3.selectAll("#samp text").style("opacity", 0);
+	}
+
 	sharedProportionMultiBarFadeInNoExit = function(settings, currentAnimation){
 		
 		sharedProportionMultiBarFadeInNoExitNoStats.apply(this, [settings, currentAnimation]);
