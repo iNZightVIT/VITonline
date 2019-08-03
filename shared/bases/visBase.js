@@ -645,6 +645,7 @@ class visBase {
 	}
 
 	drawPopulationStatistic(placeInto){
+		let area = this.windowHelper.graphSection.S1.displayArea;
 		var middle = this.windowHelper.graphSection.S1.displayArea.getMiddleHeight();
 		if(this.sampleStatType == 'diff'){
 			drawArrow(this.xScale(this.groupStats[this.groups[1]]), this.xScale(this.groupStats[this.groups[0]]), middle, placeInto, "popDiff", 1, "blue");
@@ -657,8 +658,14 @@ class visBase {
 			placeInto.append("text").attr("x", this.xScale(this.populationStatistic) + 2).attr("y", this.windowHelper.graphSection.S1.displayArea.y2 - 2).text(Math.round((this.populationStatistic)*100)/100).style("stroke","blue").style("opacity",1);
 
 		}else{
-			drawArrow(this.xScale(this.groupStats[this.groups[1]]), this.xScale(this.groupStats[this.groups[0]]), middle, placeInto, "popDiff", 1, "blue");
-			placeInto.append("text").attr("x", this.xScale(this.groupStats[this.groups[1]])).attr("y", middle).text(Math.round((this.populationStatistic)*100)/100).style("stroke","blue").style("opacity",1);
+			// drawArrow(this.xScale(this.groupStats[this.groups[1]]), this.xScale(this.groupStats[this.groups[0]]), middle, placeInto, "popDiff", 1, "blue");
+			placeInto.append("line").attr("x1", this.xScale(this.populationStatistic)).attr("x2", this.xScale(this.populationStatistic))
+			.attr("y1", this.windowHelper.graphSection.S1.y).attr("y1", this.windowHelper.height)
+			.style("stroke-dasharray", 5)
+			let text_y = middle + this.windowHelper.graphSection.S1.displayArea.height / 4;
+			
+			placeInto.append("text").attr("x", this.xScale(this.populationStatistic)).attr("y", text_y).text(Math.round((this.populationStatistic)*100)/100).style("stroke","blue").style("opacity",1);
+			makeBoxplot( this.windowHelper.graphSection.S1.displayArea.x + this.windowHelper.radius,text_y,this.windowHelper.graphSection.S1.displayArea.width -this.windowHelper.radius,this.windowHelper.graphSection.S1.displayArea.height / 4 - this.windowHelper.radius,this.allPop,this.xScale);
 
 		}
 
