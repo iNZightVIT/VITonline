@@ -156,55 +156,6 @@
 		}
 	}
 
-	sharedSingleDistDrop = function(settings, currentAnimation){
-		let self = this;
-		if(!settings.restarting){
-			var sentFinish = false;
-
-			var sampMean = this.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
-			if(this.transitionSpeed > 200){
-				var downTo = this.sampleStatistics[settings.indexUpTo].yPerSample[0];
-				var redLine = d3.select(".meanOfSamples").append("line").attr("id","redLine").attr("y1", this.windowHelper.section2.twoThird+this.windowHelper.lineHeight).attr("y2", this.windowHelper.section2.twoThird -this.windowHelper.lineHeight).attr("x1",this.xScale(sampMean[0].value)).attr("x2",this.xScale(sampMean[0].value)).style("stroke-width", 2).style("stroke", "red").style("opacity", 0);
-
-			}
-			var meanCircles = d3.select(".meanOfSamples").selectAll("circle").filter(function(d, i){
-				return (i>=settings.indexUpTo) && (i <settings.indexUpTo+settings.jumps);
-			});
-
-			settings.sampMean = sampMean;
-			settings.meanCircles = meanCircles;
-		}else{
-			var downTo = this.sampleStatistics[settings.indexUpTo].yPerSample[0];
-			var rL = settings.redLine;
-			d3.select("#redLine").remove();
-			if(rL) var redLine =  d3.select(".meanOfSamples").append("line").attr("id","redLine").attr("y1", rL[0]).attr("y2", rL[1]).attr("x1",rL[2]).attr("x2",rL[2]).style("stroke-width", 2).style("stroke", "red").style("opacity", 0);
-			var sampMean = settings.sampMean;
-			var meanCircles = settings.meanCircles;
-
-			settings.restarting = false;
-		}
-
-		if(this.transitionSpeed > 200){
-			//redLine.style("opacity",1).transition().duration(this.transitionSpeed*2).attr("y1", downTo).attr("y2", downTo).each("end",function(){d3.select(this).remove()});
-			redLine.style("opacity",1).transition().duration(this.transitionSpeed*2).attr("y1", downTo+this.radius/2).attr("y2", downTo-this.radius/2).each("end",function(){d3.select(this).remove()});
-		}
-		if(settings.goSlow || settings.repititions == 5){
-			meanCircles = meanCircles.transition().delay(this.transitionSpeed*2).attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){return d.yPerSample[0]}).each('end', function(d, i){
-				if(!sentFinish){
-					self.animationController(settings, currentAnimation);
-					sentFinish = true;
-				}
-			});
-		}else{
-			meanCircles = meanCircles.attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){return d.yPerSample[0]})
-				.transition().duration(this.transitionSpeed*2).each('end', function(d, i){
-				if(i == 0){
-					self.animationController(settings, currentAnimation);
-					sentFinish = true;
-				}
-			});
-		}
-	}
 
 	sharedMultiCatDistDrop = function(settings, currentAnimation){
 		if(this.transitionSpeed > 200){
@@ -490,17 +441,9 @@
 		    var fillInTime = this.transitionSpeed/this.baseTransitionSpeed;
 		    this.settings.restarting = false;
 		}
-		var sampMean = this.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
-		if(!sampMean) {
-			this.animationController(settings, currentAnimation);
-			return;
-		}
-		for(var k = 1;k<sampMean.length;k++){
-			this.drawnMeans.push(sampMean[k]);
-		}
 
 		// Draw Bars
-		var numDivisions = this.groups.length;
+		var numDivisions = this.sampleGroups.length;
 		var divisions = this.windowHelper.graphSection.S2.displayArea.getDivisions(numDivisions, 'height');
 		var divSections = divisions[0];
 		var divHeight = divisions[1];
@@ -509,10 +452,10 @@
 			var catSVG = d3.select("#samples").append("g").attr("id","samp");
 
 			// Now split on main categories. We want a category for the focus and one for other.
-			var focusGroup = settings.sample.filter(function(x){return x.value == 0 && x.group == self.groups[i]});
-			var otherGroup = settings.sample.filter(function(x){return x.value != 0 && x.group == self.groups[i]});
+			var focusGroup = settings.sample.filter(function(x){return x.value == 0 && x.group == self.sampleGroups[i]});
+			var otherGroup = settings.sample.filter(function(x){return x.value != 0 && x.group == self.sampleGroups[i]});
 
-			this.drawProportionBars(catSVG, divHeight, pos, self.xScale, focusGroup, otherGroup, this.groups[i], i, [...this.valueCategories]);
+			this.drawProportionBars(catSVG, divHeight, pos, self.xScale, focusGroup, otherGroup, this.sampleGroups[i], i, [...this.valueCategories]);
 		}
 	}
 

@@ -60,6 +60,11 @@ class visBase {
 		// Sets the y value for all population circles in the category to make it look heaped. 
 		heapYValues3(items, scale, radius, 0, top,bottom);
 	}
+
+	setupSampleGroups(){
+		this.sampleGroups = this.groups;
+	}
+
 	setUpPopulation(){
 		var self = this;
 		var max = null;
@@ -77,6 +82,7 @@ class visBase {
 			this.groups = [""];
 			this.populations[""] = [];
 		}
+		this.setupSampleGroups();
 		// The statistic for each of the groups, ordered in the same way.
 		this.groupStats = [];
 
@@ -366,7 +372,10 @@ class visBase {
 		// For Differences
 		// has the same range as the population scale, but centered around 0.
 		if(this.sampleStatType == "diff") {
-			this.sampleStatScale.domain([0-halfDiff + scaleOffset, 0+halfDiff + scaleOffset]);
+			let extra = Math.max(Math.abs((0-halfDiff) - sampleStatRange[0]), Math.abs(sampleStatRange[1] - (0+halfDiff)), 0);
+			// this.sampleStatScale.domain([0-halfDiff + scaleOffset, 0+halfDiff + scaleOffset]);
+			this.sampleStatScale.domain([0 - (halfDiff + extra), 0 + (halfDiff + extra)]);
+			this.sampleStatScale.domain([0 - (halfDiff), 0 + (halfDiff )]);
 		}else if(this.sampleStatType == "Deviation"){
 			this.sampleStatScale.domain([0,this.xScale.domain()[1] - this.xScale.domain()[0]]);
 		}else{

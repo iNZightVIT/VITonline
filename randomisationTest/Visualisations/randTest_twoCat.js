@@ -365,6 +365,9 @@ class randTest_twoCat extends visBase {
 			    .attr("cx", function(d) {
 			    	return d3.select(this).attr("data-cx");
 		    	})
+			    .attr("r", function(d) {
+			    	return d3.select(this).attr("data-r");
+		    	})
 			    .style("fill", function(d) {
 			    	return d3.select(this).attr("data-fill");
 		    	})
@@ -378,6 +381,9 @@ class randTest_twoCat extends visBase {
 			circles.attr("cy", function(d) {
 			    	return d3.select(this).attr("data-cy");
 				})
+				.attr("r", function(d) {
+			    	return d3.select(this).attr("data-r");
+		    	})
 				.attr("cx", function(d) {
 			    	return d3.select(this).attr("data-cx");
 		    	}).style("fill", function(d) {
@@ -394,32 +400,38 @@ class randTest_twoCat extends visBase {
 	fadeIn(settings, currentAnimation){
 		var self = this;
 		if(this.sampleStatType == "diff"){
-			sharedProportionMultiBarFadeIn.apply(this, [settings, currentAnimation]);
+			// sharedProportionMultiBarFadeIn.apply(this, [settings, currentAnimation]);
 		}else{
 			sharedMultiArrowFadeIn.apply(this, [settings, currentAnimation]);
-			d3.selectAll("#samp circle").transition().duration(this.transitionSpeed).style("opacity", 1).each('end', function(d, i){
-				if(i == 0){
-					if(settings.incDist){
-						self.animationController(settings, currentAnimation);
-					}else{
-						d3.select("#differenceLine").remove();
-						self.animationController(settings, currentAnimation);
-					}
-				}
-			});
-		
-			if ((settings.repititions == 1)){
-
-				d3.selectAll("#samp rect").transition().duration(this.transitionSpeed).style("opacity", 1);
-				d3.selectAll("#samp text").transition().duration(this.transitionSpeed).style("opacity", 1)
-				// sharedProportionMultiBarFadeInNoStat.apply(this, [settings, currentAnimation]);
-			}else{
-			d3.selectAll("#samp rect").style("opacity", 1);
-			d3.selectAll("#samp text").style("opacity", 1)
-			// sharedProportionMultiBarFadeInNoStat.apply(this, [settings, currentAnimation]);
-			}
-
 		}
+		d3.selectAll("#samp circle").transition().duration(this.transitionSpeed).style("opacity", 1).each('end', function(d, i){
+			
+			if(i == 0){
+				
+				if(settings.incDist){
+					self.animationController(settings, currentAnimation);
+				}else{
+					d3.select("#differenceLine").remove();
+					self.animationController(settings, currentAnimation);
+				}
+			}
+		});
+	
+		if ((settings.repititions == 1)){
+			var sampMean = self.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
+			showDifference.apply(self, [sampMean]);
+			d3.selectAll("#samp rect").transition().duration(this.transitionSpeed).style("opacity", 1);
+			d3.selectAll("#samp text").transition().duration(this.transitionSpeed).style("opacity", 1)
+			// sharedProportionMultiBarFadeInNoStat.apply(this, [settings, currentAnimation]);
+		}else{
+		var sampMean = self.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
+		showDifference.apply(self, [sampMean]);
+		d3.selectAll("#samp rect").style("opacity", 1);
+		d3.selectAll("#samp text").style("opacity", 1)
+		// sharedProportionMultiBarFadeInNoStat.apply(this, [settings, currentAnimation]);
+		}
+
+		
 
 	}
 
