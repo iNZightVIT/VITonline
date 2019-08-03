@@ -45,10 +45,10 @@ class bootstrap_oneNum extends visBase {
 	}
 	fillBaseSampleSection(placeInto){
 		var self = this;
-		placeInto.append("text").text(this.headingContinuous).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width/4).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
+		placeInto.append("text").text(this.headingContinuous).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width * (2/4)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
 		// placeInto.append("text").text(this.headingGroup).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(3/4)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
 		var popTextG = placeInto.selectAll("g").data(this.allPop).enter().append("g");
-		popTextG.append("text").text(function(d){return d.value}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width/4).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").attr("text-anchor","middle");
+		popTextG.append("text").text(function(d){return d.value}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width * (2/4)).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").attr("text-anchor","middle");
 		// popTextG.append("text").text(function(d){return d.group}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(3/4)).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[self.groups.indexOf(d.group)]}).attr("text-anchor","middle");
 
 		placeInto.append("g").attr("id","redTContainer");
@@ -156,14 +156,32 @@ class bootstrap_oneNum extends visBase {
 			return;
         }
         let selected_sample_item = settings.sample[upto];
-		popText.append("text").attr("class", "redHighlight").text(self.allPop[selected_sample_item.id].value).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width/4).attr("y", selected_sample_item.id < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(selected_sample_item.id+1)) : -10).style("font-size",self.windowHelper.fontSize).style("display","inline-block").attr("text-anchor","middle").style("fill", "red");
+        d3.selectAll("#sampleReRandomised text").style("fill", "black")
+            .attr("x", function(){return d3.select(this).attr("data-x") ? d3.select(this).attr("data-x") : d3.select(this).attr("x")})
+            .attr("y", function(){return d3.select(this).attr("data-y") ? d3.select(this).attr("data-y") : d3.select(this).attr("y")});
+		popText.append("text").attr("class", "redHighlight").text(self.allPop[selected_sample_item.id].value).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width * (2/4)).attr("y", selected_sample_item.id < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(selected_sample_item.id+1)) : -10).style("font-size",self.windowHelper.fontSize).style("display","inline-block").attr("text-anchor","middle").style("fill", "red");
 		d3.selectAll(".pop .c"+selected_sample_item.id).attr("stroke-opacity", 1).attr("fill-opacity", 1).transition().duration(500/settings.repititions).each('end', function(d, i){
             if(i == 0){
                 self.buildUpSlow(settings, currentAnimation, upto+1, popText, max, self);
             }
         });
         d3.select("#circleOverlay .c"+selected_sample_item.order).attr("stroke-opacity", 1).attr("fill-opacity", 1);
-		d3.selectAll(".t"+selected_sample_item.order).style("opacity", 1);
+        
+        
+        if(upto < 10){
+
+            d3.selectAll(".t"+selected_sample_item.order)
+            .attr("data-x", function(){return d3.select(this).attr("x")})
+            .attr("data-y", function(){return d3.select(this).attr("y")})
+            .attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width * (2/4)).attr("y", (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(selected_sample_item.id+1)))
+            .style("opacity", 1).style("fill", "red")
+            .transition().duration(500/settings.repititions)
+            .attr("x", function(){return d3.select(this).attr("data-x") ? d3.select(this).attr("data-x") : d3.select(this).attr("x")})
+            .attr("y", function(){return d3.select(this).attr("data-y") ? d3.select(this).attr("data-y") : d3.select(this).attr("y")});
+        }else{
+
+            d3.selectAll(".t"+selected_sample_item.order).style("opacity", 1).style("fill", "red");
+        }
 
 
 	}
@@ -181,7 +199,7 @@ class bootstrap_oneNum extends visBase {
 		var popTextG =popText.enter().append("g");
 		popTextG.append("text").text(function(d){
 			return d.value;
-		}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(1/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", "black").attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
+		}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(2/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", "black").attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
 
 		popTextG.append("text").text(function(d){
 			return d.group;
