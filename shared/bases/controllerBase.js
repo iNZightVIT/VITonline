@@ -101,7 +101,7 @@ controllerBase.prototype.parseRestOfURL = function() {
 	}
 
 
-	var sampleSize = urlParams.has("samplesize") ? urlParams.get("samplesize") : this.model.display.sampleSize;
+	var sampleSize = urlParams.has("samplesize") ? urlParams.get("samplesize") : null;
 
 	this.switchTab2();
 	if(urlParams.has("samplesize")){
@@ -265,7 +265,10 @@ controllerBase.prototype.statChanged = function(e){
 	}
 controllerBase.prototype.startVisPressed = function(){
 		//this.view.finishSetUp();
-		this.startVisFull(this.model.display.sampleSize);
+		let samp_field = d3.select("#sampsize");
+
+		let optionSampleSize = samp_field[0][0] ? parseInt(samp_field.property("value")) : 0;
+		this.startVisFull(optionSampleSize ? optionSampleSize : this.model.display.sampleSize);
 		d3.select("#Calculate").attr("disabled", true);
 		d3.select("#Pause").attr("disabled", null);
 	}

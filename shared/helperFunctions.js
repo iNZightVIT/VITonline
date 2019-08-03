@@ -529,6 +529,9 @@ function leastSquares(xSeries, ySeries){
 var colorByIndex = ['#377eb8','#e41a1c','#4daf4a','#984ea3','#ff7f00','#AAAA33','#a65628','magenta']
 //alert(leastSquares([60,61,62,63,65],[3.1,3.6,3.8,4,4.1]));
 function onlyUnique(value, index, self) { 
+	if(["na", "n/a", "n\\a"].includes(value.toLowerCase())){
+		return false;
+	}
     return self.indexOf(value) === index;
 }
 

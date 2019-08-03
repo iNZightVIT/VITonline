@@ -341,10 +341,10 @@ class visBase {
 			this.handleSample(i);
 		}
 	}
-	setUpSamples(){
+	setUpSamples(sampleSize){
 		var self = this;
 
-		var sSize = this.getSampleSize();
+		var sSize = this.getSampleSize(sampleSize);
 		if(sSize == null){
 			return;
 		}
@@ -475,7 +475,9 @@ class visBase {
 	drawProportionBars(svg, divHeight, pos, xScale, fG, oG, name, i, barTitles){
 		var self = this;
 		// Each bar has its start in units, its end in units, the total amouint of units and its name.
-		var bars = [[0, fG.length, fG.length + oG.length, barTitles[0], name], [fG.length, oG.length, fG.length + oG.length, barTitles[1], name]];
+		let bt1 = barTitles[0];
+		let bt2 = barTitles[1];
+		var bars = [[0, fG.length, fG.length + oG.length, bt1, name], [fG.length, oG.length, fG.length + oG.length, bt2, name]];
 
 		// Bar Name (group)
 		svg.append("text").text(name)
@@ -527,7 +529,7 @@ class visBase {
 			let r = 0;
 			let c = 0;
 			let lim = Math.min(bar[1], max_row_length * (bar_height / (min_r *2)), 500);
-			let bar_id = "#" + name + "\\" + i + bar[3]
+			let bar_id = "#" + name + "\\" + i + bar[3].replace(/ /g,'')
 			let bar_element = d3.select(barsSVG[0][b]);
 			let item_x = xScale(bar[0] / bar[2]);
 			for(let i = 0; i < lim; i++){
@@ -536,7 +538,7 @@ class visBase {
 					.attr("data-cx", item_x + x_left_margin + radius + (radius * 2)*r)
 					.attr("cy", pos - (bar_height / 2) + y_top_margin + radius + (radius * 2)*c)
 					.attr("data-cy", pos - (bar_height / 2) + y_top_margin + radius + (radius * 2)*c)
-					.attr("id", bar[3] + '-' + bar[4] + '-' + i)
+					.attr("id", 'pc---' + bar[3].replace(/ /g,'') + '---' + bar[4].replace(/\W/g,'') + '---' + i)
 					.attr("data-fill", d3.rgb(colorByIndex[b]).brighter(0.5))
 					.style("fill", d3.rgb(colorByIndex[b]).brighter(0.5))
 					.attr("data-r", radius)
@@ -883,8 +885,6 @@ class visBase {
 		// max number of samples to take
 		this.numSamples = 1100;
 
-		// include the boxes for samples
-		this.includeSampleSection = true;
 
 		this.animationIndex = 0;
 

@@ -1,17 +1,19 @@
 
-class bootstrap_twoCat extends visBase {
+class samp_twoCat extends visBase {
 	constructor(inputData, headingGroup, headingContinuous, statistic, focus) {
 		super(inputData, headingGroup, headingContinuous, statistic, focus);
-		this.windowHelper = setUpWindow3({'left':5, 'right':5, 'top':5, 'bottom':5}, true);
+		this.windowHelper = setUpWindow3({'left':5, 'right':5, 'top':5, 'bottom':5}, false);
 		this.sampleStatType = "diff";
 		this.popDrawType = 1;
 		this.calcLargeCI = true;
-		this.valueAllowCategorical = true;
+        this.valueAllowCategorical = true;
+        this.includeSampleSection = false;
+        this.sampleSize = 40;
 		// text labels for each section.
 		this.sectionLabels = ['Data','Re-Sample','Bootstrap Distribution'];
 		//this.animationList = [this.populationDropDown,this.buildList, this.fadeIn, this.endNoDist, this.distDrop, this.endDist ];
-		this.animationList = [this.populationDropDown.bind(this),
-						this.buildList.bind(this), 
+        this.animationList = [this.populationDropDown.bind(this),
+                        this.buildList.bind(this),
 						this.fadeIn.bind(this), 
 						this.endNoDist.bind(this), 
 						this.distDrop.bind(this),
@@ -23,8 +25,9 @@ class bootstrap_twoCat extends visBase {
 		// No real need to set anything up here, everything done when drawn.
 	}
 
-	getSampleSize(){
-		return this.allPop.length < 51 ? this.allPop.length : null;
+	getSampleSize(sampleSize){
+        this.sampleSize = parseInt(sampleSize ? sampleSize : this.sampleSize);
+		return parseInt(this.sampleSize);
 	}
 	setSampleStatistic(diff, categoryStatistics){
 		if(this.groups.length <= 2){
@@ -56,9 +59,10 @@ class bootstrap_twoCat extends visBase {
 			for(var g = 0; g < this.groups.length; g++){
 				this.samples[i].push([]);
 			}
-			var stats = [];
+            var stats = [];
+            let indexes = pickRand(sampleSize, this.allPop.length);
 			for(var j = 0; j < sampleSize;j++){
-				var index = Math.ceil(Math.random()*this.allPop.length) - 1;
+				var index =indexes[j];
 				var pickedOriginal = this.allPop[index];
 
 
@@ -203,7 +207,7 @@ class bootstrap_twoCat extends visBase {
 		var self = this;
 		sharedProportionMultiBarFadeInNoExitNoStatsHidden.apply(this, [settings, currentAnimation]);
 
-		matchPropBars.apply(this, [[0, 1]]);
+		matchPropBars.apply(this, [[0, 1], true]);
 
 		let sample_circles = d3.selectAll("#samp circle")[0];
 		for(let sc = 0; sc < sample_circles.length; sc++){
@@ -212,23 +216,27 @@ class bootstrap_twoCat extends visBase {
 			samp_circ.attr("cy", samp_circ.attr("data-py"));
 			samp_circ.style("fill", samp_circ.attr("data-pfill"));
 			samp_circ.attr("r", samp_circ.attr("data-pr"));
-			samp_circ.style("opacity", 1);
+			samp_circ.style("opacity", 0.2);
 			samp_circ.style("fill-opacity", 1);
-		}
+        }
+        d3.selectAll(".pop circle").style("opacity", 0.2);
 
 	    this.animationController(settings, currentAnimation);
 	}
-	buildUpSlow(settings, currentAnimation, upto, popText, max, self, seen){
-		let sample_circles = d3.selectAll("#samp circle")[0];
+	buildUpSlow(settings, currentAnimation, upto, max, self, seen){
+        let sample_circles = d3.selectAll("#samp circle")[0];
+        let pop_id = "";
+        let id = "";
 		for(let sc = 0; sc < sample_circles.length; sc++){
 			let samp_circ = d3.select(sample_circles[sc]);
-			let id = samp_circ[0][0].id;
+			id = samp_circ[0][0].id;
 			let primary_category = id.split('---')[1];
-			let secondary_category = id.split('---').slice(2, id.split('---').length - 1).join('---');
+			let secondary_category = id.split('---').slice(2, id.split('---').length - 1).join('---').replace(/\W/g,'');
 			let id_values = id.split('---');
 			if(seen.includes(id)) continue;
-			let primary_category_name = [...self.valueCategories][settings.sample[upto].value].replace(/ /g,'')
+			let primary_category_name = [...self.valueCategories][settings.sample[upto].value].replace(/ /g,'');
 			if((settings.sample[upto].group.replace(/\W/g,'') == secondary_category) && (primary_category_name == primary_category)){
+                pop_id = samp_circ.attr("data-id");
 				samp_circ.attr("cy", function(){
 					return d3.select(this).attr("data-cy");
 				}).attr("r", function(){
@@ -238,26 +246,31 @@ class bootstrap_twoCat extends visBase {
 				// }).transition().duration(500/settings.repititions).attr("fill-opacity", 1);
 				}).style("fill", function(){
 					return d3.select(this).attr("data-fill");
-				}).attr("fill-opacity", 1);
+				}).attr("fill-opacity", 1).style("opacity", 1);
 				seen.push(id);
 				break;
 			}
-			// console.log(settings.sample[upto]);
-		}
-
-		d3.selectAll("#redHighlight").remove();
-		if(upto >= max){
+			console.log(settings.sample[upto]);
+        }
+        if(upto >= max){
 			this.animationController(settings, currentAnimation);
 			return;
 		}
-		drawArrow(self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(1/8), self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(0/8), settings.sample[upto].popId < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize/2 + (self.windowHelper.fontSize+2)*(settings.sample[upto].popId+1)) : -10, popText, "redHighlight", 1, "red" );
-		d3.selectAll(".t"+settings.sample[upto].order).attr("stroke-opacity", 1).attr("fill-opacity", 1).transition().duration(500/settings.repititions).each('end', function(d, i){
+        if(pop_id == ""){
+
+            this.animationController(settings, currentAnimation);
+			return;
+        }
+        console.log(pop_id);
+        console.log(d3.selectAll("#samp #"+id));
+        console.log(d3.selectAll(".pop #"+pop_id));
+		d3.selectAll("#samp #"+id).attr("stroke-opacity", 1).attr("fill-opacity", 1).transition().duration(500/settings.repititions).each('end', function(d, i){
 			if(i == 0){
 				settings.buildListUpto = upto+1;
-				self.buildUpSlow(settings, currentAnimation, upto+1, popText, max, self, seen);
+				self.buildUpSlow(settings, currentAnimation, upto+1, max, self, seen);
 			}
 		});
-		d3.selectAll(".t"+settings.sample[upto].order).style("opacity", 1);
+		d3.selectAll(".pop #"+pop_id).style("opacity", 1);
 
 
 
@@ -268,40 +281,29 @@ class bootstrap_twoCat extends visBase {
 		if(!settings.restarting){
 			order(settings.sample);
 			var goSlow = (settings.repititions == 1 || settings.repititions == 5) && !settings.incDist;
-			var popText = d3.select("#sampleReRandomised").empty() ? d3.select("#dynamic").append("g").attr("id", "sampleReRandomised") : d3.select("#sampleReRandomised");
-			popText = popText.selectAll("g").data([]);
-			popText.exit().remove();
 			var i = this.upTo;
-
-			popText = d3.select("#sampleReRandomised").selectAll("g").data(settings.sample);
-
-			var popTextG =popText.enter().append("g");
-			popTextG.append("text").text(
-				function(d){
-					// return (d.value == 1 || self.groups.length == 2) ? d.group : "Other"
-					return d.group
-				}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(3/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[[...self.valueCategories].length+self.groups.indexOf(d.group)]}).attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
-
-			popTextG.append("text").text(function(d){
-				return [...self.valueCategories][d.value]
-			}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(1/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[d.value]}).attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
-
 			if(goSlow){
-				this.buildUpSlow(settings, currentAnimation, 0, popText, self.allPop.length, self, []);
+                self.buildupMem = [];
+				this.buildUpSlow(settings, currentAnimation, 0, self.sampleSize, self, self.buildupMem);
 			}else{
-				d3.selectAll("#samp circle").attr('cy', function(){return d3.select(this).attr("data-cy")})
+                let sample_circles = d3.selectAll("#samp circle");
+				sample_circles.attr('cy', function(){return d3.select(this).attr("data-cy")})
 				.attr('cx', function(){return d3.select(this).attr("data-cx")})
 				.attr('r', function(){return d3.select(this).attr("data-r")})
 				.style('fill', function(){return d3.select(this).attr("data-fill")})
-				.style('fill-opacity', 1);
+                .style('fill-opacity', 1);
+                
+                for(let sc = 0; sc < sample_circles[0].length; sc++){
+                    let samp_circ = d3.select(sample_circles[0][sc]);
+                    let pop_id = samp_circ.attr("data-id");
+                    d3.selectAll(".pop #"+pop_id).style("opacity", 1);
+                }
+
 				self.animationController(settings, currentAnimation);
 			}
 		}else{
-			popText = d3.select("#sampleReRandomised").selectAll("g").data(settings.sample);
-			this.buildUpSlow(settings, currentAnimation, settings.buildListUpto, popText, self.allPop.length, self);
+			this.buildUpSlow(settings, currentAnimation, settings.buildListUpto, self.sampleSize, self, self.buildupMem);
 		}
-
-
 	}
 
 	fadeIn(settings, currentAnimation){
