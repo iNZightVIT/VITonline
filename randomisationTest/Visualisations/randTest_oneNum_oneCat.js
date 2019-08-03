@@ -140,8 +140,8 @@ class randTest_oneNum_oneCat extends visBase {
 	drawPopulationStatistic(placeInto){
 		if(this.sampleStatType == "diff"){
 			var middle = this.windowHelper.graphSection.S1.displayArea.getMiddleHeight();
-			drawArrow(this.xScale(this.groupStats[this.groups[1]]), this.xScale(this.groupStats[this.groups[0]]), middle, placeInto, "popDiff", 1, "blue");
-			placeInto.append("text").attr("x", this.xScale(this.groupStats[this.groups[1]])).attr("y", middle).text(Math.round((this.populationStatistic)*100)/100).style("stroke","blue").style("opacity",1);
+			drawArrow(this.xScale(this.groupStats[this.groups[1]]), this.xScale(this.groupStats[this.groups[0]]), middle, placeInto, "popDiff", 1, "red");
+			placeInto.append("text").attr("x", this.xScale(this.groupStats[this.groups[1]])).attr("y", middle).text(Math.round((this.populationStatistic)*100)/100).style("stroke","red").style("opacity",1);
 		}
 	}
 	drawPopExtra(placeInto){
