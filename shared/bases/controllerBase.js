@@ -297,7 +297,7 @@ controllerBase.prototype.switchTab2 = function(){
 		d3.select("#tab2").style("display","block");
 		let cat = this.model.cat;
 		let num = this.model.num;
-		let difference = (cat.length == 1 && num.length == 1) || (cat.length == 2);
+		let difference = (cat.length == 1 && num.length == 1) || (cat.length == 2) || this.model.display.sampleStatType == "diff";
 		let showSampleSize = this.model.display.sampleSize != undefined;
 		this.view.setUpTab2(difference, showSampleSize);
 		if(this.model.display.sampleSize != 20){
