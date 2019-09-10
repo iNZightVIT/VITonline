@@ -879,9 +879,6 @@ class visBase {
 
 	resetData(){
 
-		// whether or not to calculate the large CI numbers
-		this.calcLargeCI = true;
-
 		// max number of samples to take
 		this.numSamples = 1100;
 

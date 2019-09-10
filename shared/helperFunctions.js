@@ -167,8 +167,10 @@ function setUpWindow2(margins){
 function setUpWindow3(margins, includeSampleSection){
 	var windowHelper = new Object();
 
-	windowHelper.width = window.innerWidth*0.8;
-	windowHelper.height = window.innerHeight*0.92*0.99;
+	let container_bbox = d3.select("#rightHalf").node().getBoundingClientRect();
+
+	windowHelper.width = container_bbox['width'] * 0.95;
+	windowHelper.height = container_bbox['height']*0.94;
 	windowHelper.realWidth = windowHelper.width - margins.left - margins.right;
 	windowHelper.realHeight = windowHelper.height - margins.top - margins.bottom;
 
