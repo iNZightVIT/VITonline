@@ -100,10 +100,14 @@ select {
   height:5%;
   font-size: 2vh;
   font-weight: 700;
+  border-radius: 4px;
     /*#18afe3*/
   color: white;
   background-color: #094b85;
   cursor: pointer;
+  box-sizing: border-box;
+  padding: 5px;
+  border: 3px solid transparent;
 }
 .bluebutton:hover{
   /*background: #18afe3;
