@@ -98,9 +98,9 @@ select {
   text-align: center;
   width:100%;
   height:5%;
-  font-size: 2vh;
+  font-size: 1vw;
   font-weight: 700;
-  border-radius: 4px;
+  border-radius: 8px;
     /*#18afe3*/
   color: white;
   background-color: #094b85;
@@ -108,6 +108,9 @@ select {
   box-sizing: border-box;
   padding: 5px;
   border: 3px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .bluebutton:hover{
   /*background: #18afe3;
@@ -115,13 +118,6 @@ select {
   border: 3px solid #18afe3;
 }
 .bluebutton:disabled{
-  display: inline-block;
-  vertical-align: middle;
-  text-align: center;
-  width:100%;
-  height:5%;
-  font-size: 2vh;
-  font-weight: 700;
     /*#18afe3*/
   color: white;
   background-color: grey;
@@ -286,7 +282,7 @@ p.t2 {
   color: #094b85;
 }
 .buttontext {
-  margin-top: 2%;
+  /* margin-top: 2%; */
 }
 #popText {
   background: grey;

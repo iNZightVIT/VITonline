@@ -72,5 +72,11 @@ p.t2 {
   color: #094b85;
 }
 .buttontext {
-  margin-top: 2%;
+  /* position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+  text-align: center; */
 }
