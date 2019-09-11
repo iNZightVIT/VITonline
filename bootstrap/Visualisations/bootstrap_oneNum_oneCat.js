@@ -22,12 +22,13 @@ class bootstrap_oneNum_oneCat extends visBase {
 	getSampleSize(){
 		return this.allPop.length;
 	}
-	makeSample(populations, numSamples, sampleSize, statistic){
+	makeSample(populations, numSamples, sampleSize, statistic, saveSample){
 		this.samples = [];
 		for(var i = 0; i<numSamples;i++){
-			this.samples.push([]);
+			// this.samples.push([]);
+			let sample = [];
 			for(var g = 0; g < this.groups.length; g++){
-				this.samples[i].push([]);
+				sample.push([]);
 			}
 			var stats = [];
 			for(var j = 0; j < sampleSize;j++){
@@ -42,7 +43,11 @@ class bootstrap_oneNum_oneCat extends visBase {
 					nI.group =	group;
 					nI.order = j;
 					nI.groupIndex = groupIndex;
-					this.samples[i][groupIndex].push(nI);
+					sample[groupIndex].push(nI);
+			}
+			this.handleSample(i, sample);
+			if(saveSample){
+				this.samples.push(sample);
 			}
 		}
 	}

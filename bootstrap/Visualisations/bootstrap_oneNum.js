@@ -23,10 +23,12 @@ class bootstrap_oneNum extends visBase {
 	getSampleSize(){
 		return this.allPop.length;
 	}
-	makeSample(populations, numSamples, sampleSize, statistic){
+	makeSample(populations, numSamples, sampleSize, statistic, saveSample){
 		this.samples = [];
+		let sample = [];
 		for(var i = 0; i<numSamples;i++){
-			this.samples.push([[]]);
+			// this.samples.push([[]]);
+			let sample = [[]];
 			var stats = [];
 			for(var j = 0; j < sampleSize;j++){
                 var index = Math.ceil(Math.random()*this.allPop.length) - 1;
@@ -34,8 +36,12 @@ class bootstrap_oneNum extends visBase {
                 var nI = new item (itemSelected.value, itemSelected.id);
                 nI.xPerSample[0] =this.allPop[index].xPerSample[0];
                 nI.yPerSample[0] =this.allPop[index].yPerSample[0];
-                this.samples[i][0].push(nI);
+                sample[0].push(nI);
                 nI.order = j;
+			}
+			this.handleSample(i, sample);
+			if(saveSample){
+				this.samples.push(sample);
 			}
 		}
 	}

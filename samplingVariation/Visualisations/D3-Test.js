@@ -56,7 +56,7 @@ function oneMean(inputData, heading, statistic){
 			alert("Sample size is too large for the poplation");
 			return;
 		}
-		this.samples = this.makeSamples(this.population, this.numSamples, this.sampleSize);
+		this.samples = this.makeSamples(this.population, this.numSamples, this.sampleSize, true);
 		for(var k = 0; k < this.numSamples;k++){
 			var stat = getStatistic(this.statistic, this.samples[k])
 			heapYValues3(this.samples[k], this.xScale,this.radius, k+1, this.windowHelper.section2.top, this.windowHelper.section2.twoThird);
@@ -71,16 +71,16 @@ function oneMean(inputData, heading, statistic){
 
 
 
-	this.makeSamples = function(population, numSamples, sampleSize){
+	this.makeSamples = function(population, numSamples, sampleSize, saveSamples){
 	var samples = [];
-	for(var i = 0; i<numSamples;i++){
-		samples.push([]);
-		var indexs = pickRand(sampleSize, population.length);
-		for(var k = 0; k<sampleSize;k++){
-			samples[i].push(population[indexs[k]]);
+		for(var i = 0; i<numSamples;i++){
+			samples.push([]);
+			var indexs = pickRand(sampleSize, population.length);
+			for(var k = 0; k<sampleSize;k++){
+				samples[i].push(population[indexs[k]]);
+			}
 		}
-	}
-	return samples;
+		return samples;
 	}
 	this.draw = function(){
 		this.drawPop();

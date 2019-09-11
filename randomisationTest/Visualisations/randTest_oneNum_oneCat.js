@@ -21,9 +21,12 @@ class randTest_oneNum_oneCat extends visBase {
 		heapYValues3(items, scale, radius, 0, top,bottom);
 	}
 
-	getStatisticEachSample(i, g){
+	getStatisticEachSample(i, g, sample){
+		if(sample == undefined){
+			sample = this.samples[i];
+		}
 		var populationSize = this.inputData.length;
-		return getStatistic(this.statistic, this.samples[i][g], populationSize);
+		return getStatistic(this.statistic, sample[g], populationSize);
 	}
 	setSampleStatistic(diff, categoryStatistics){
 		if(this.groups.length <= 2){
@@ -51,7 +54,7 @@ class randTest_oneNum_oneCat extends visBase {
 		}
 	}
 
-	makeSample(populations, numSamples, sampleSize, statistic){
+	makeSample(populations, numSamples, sampleSize, statistic, saveSample){
 		this.samples = [];
 
 		// Set of original counts for each category. 
@@ -67,9 +70,10 @@ class randTest_oneNum_oneCat extends visBase {
 			}
 		}
 		for(var i = 0; i<numSamples;i++){
-			this.samples.push([]);
+			// this.samples.push([]);
+			let sample = [];
 			for(var g = 0; g < this.groups.length; g++){
-				this.samples[i].push([]);
+				sample.push([]);
 			}
 			// Copy the counts array so we can modify it.
 			var sampleCategoryCounts = initialGroupCounts.slice();
@@ -115,9 +119,13 @@ class randTest_oneNum_oneCat extends visBase {
 					
 					nI.group =	this.groups[newGroup];
 					nI.groupIndex = newGroup;
-					this.samples[i][newGroup].push(nI);
+					sample[newGroup].push(nI);
 					thisIndex++;
 				}
+			}
+			this.handleSample(i, sample);
+			if(saveSample){
+				this.samples.push(sample);
 			}
 		}
 	}

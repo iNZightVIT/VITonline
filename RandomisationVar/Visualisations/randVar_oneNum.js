@@ -33,10 +33,11 @@ class randVar_oneNum extends visBase {
 	getSampleSize(){
 		return this.allPop.length;
 	}
-	makeSample(populations, numSamples, sampleSize, statistic){
+	makeSample(populations, numSamples, sampleSize, statistic, saveSample){
 		this.samples = [];
 		for(var i = 0; i<numSamples;i++){
-			this.samples.push([[],[]]);
+			// this.samples.push([[],[]]);
+			let sample = [[],[]];
 			for(var k = 0; k<sampleSize;k++){
 				var popItem = this.allPop[k];
 				var gRand = Math.round(Math.random());
@@ -50,7 +51,11 @@ class randVar_oneNum extends visBase {
 				
 				nI.group =	gRand;
 				nI.groupIndex = gRand;
-				this.samples[i][gRand].push(nI);
+				sample[gRand].push(nI);
+			}
+			this.handleSample(i, sample);
+			if(saveSample){
+				this.samples.push(sample);
 			}
 		}
 	}

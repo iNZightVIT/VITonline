@@ -50,7 +50,7 @@ class randTest_twoCat extends visBase {
 		}
 	}
 
-	makeSample(populations, numSamples, sampleSize, statistic){
+	makeSample(populations, numSamples, sampleSize, statistic, saveSample){
 		this.samples = [];
 
 		// Set of original counts for each category. 
@@ -66,9 +66,10 @@ class randTest_twoCat extends visBase {
 			}
 		}
 		for(var i = 0; i<numSamples;i++){
-			this.samples.push([]);
+			// this.samples.push([]);
+			let sample = [];
 			for(var g = 0; g < this.groups.length; g++){
-				this.samples[i].push([]);
+				sample.push([]);
 			}
 			// Copy the counts array so we can modify it.
 			var sampleCategoryCounts = initialGroupCounts.slice();
@@ -114,17 +115,24 @@ class randTest_twoCat extends visBase {
 					
 					nI.group =	this.groups[newGroup];
 					nI.groupIndex = newGroup;
-					this.samples[i][newGroup].push(nI);
+					sample[newGroup].push(nI);
 					thisIndex++;
 				}
 			}
+			this.handleSample(i, sample);
+			if(saveSample){
+				this.samples.push(sample);
+			}
 		}
 	}
-	getStatisticEachSample(i, g){
-		var populationSize = this.samples[i][g].length;
+	getStatisticEachSample(i, g, sample){
+		if(sample == undefined){
+			sample = this.samples[i];
+		}
+		var populationSize = sample[g].length;
 
 		//Our statistic will be the proportion of values that match the focus out of each group.
-		return getStatistic(this.statistic, this.samples[i][g].filter(function(item){return item.value == 0}), populationSize);
+		return getStatistic(this.statistic, sample[g].filter(function(item){return item.value == 0}), populationSize);
 	}
 	setUpSampleCategory(items, scale, radius, sample, top, bottom){
 		// Sets the y value for all population circles in the category to make it look heaped. 

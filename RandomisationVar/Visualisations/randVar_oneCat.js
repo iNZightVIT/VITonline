@@ -52,9 +52,12 @@ class randVar_oneCat extends visBase {
 	getSampleSize(){
 		return this.allPop.length;
     }
-    getStatisticEachSample(i, g){
-		var populationSize = this.samples[i][g].length;
-		return getStatistic(this.statistic, this.samples[i][g].filter(function(item){return item.value == 0}), populationSize);
+    getStatisticEachSample(i, g, sample){
+		if(sample == undefined){
+			sample = this.samples[i];
+		}
+		var populationSize = sample[g].length;
+		return getStatistic(this.statistic, sample[g].filter(function(item){return item.value == 0}), populationSize);
 	}
     extraStatistics(populationStatistics){
 		var sum = 0;
@@ -66,10 +69,11 @@ class randVar_oneCat extends visBase {
 			this.sampleStatType = "Deviation";
 		}
 	}
-	makeSample(populations, numSamples, sampleSize, statistic){
+	makeSample(populations, numSamples, sampleSize, statistic, saveSample){
 		this.samples = [];
 		for(var i = 0; i<numSamples;i++){
-			this.samples.push([[],[]]);
+			// this.samples.push([[],[]]);
+			let sample = [[],[]];
 			for(var k = 0; k<sampleSize;k++){
 				var popItem = this.allPop[k];
 				var gRand = Math.round(Math.random() * (this.num_categories - 1));
@@ -83,9 +87,14 @@ class randVar_oneCat extends visBase {
 				
 				nI.group =	this.sampleGroups[gRand];
 				nI.groupIndex = gRand;
-				this.samples[i][gRand].push(nI);
+				sample[gRand].push(nI);
+			}
+			this.handleSample(i, sample);
+			if(saveSample){
+				this.samples.push(sample);
 			}
 		}
+
 	}
 	setUpSampleCategory(items, scale, radius, sample, top, bottom){
 		// Sets the y value for all population circles in the category to make it look heaped. 

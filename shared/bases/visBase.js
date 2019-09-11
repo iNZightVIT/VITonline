@@ -246,8 +246,9 @@ class visBase {
 
 	setUpLargeCI(sSize){
 		// Get the tail proportion info for 10,000 samples.
-		this.makeSample(this.populations, 10000, sSize, this.statistic);
-		this.setUpSampleStatistics();
+		this.resetSampleStatistics();
+		this.makeSample(this.populations, 10000, sSize, this.statistic, false);
+		// this.setUpSampleStatistics();
 		this.largeTailSize = 0;
 		for(var k = 0; k < this.sampleStatistics.length; k++){
 			if(this.sampleStatistics[k].diff >= this.populationDiff){
@@ -270,19 +271,25 @@ class visBase {
 		}
 	}
 
-	getStatisticEachSample(i, g){
+	getStatisticEachSample(i, g, sample){
 		var populationSize = this.inputData.length;
-		return getStatistic(this.statistic, this.samples[i][g], populationSize);
+		if(sample == undefined){
+			sample = this.samples[i];
+		}
+		return getStatistic(this.statistic, sample[g], populationSize);
 	}
 	setSampleStatistic(diff, categoryStatistics){
 		return (this.sampleStatType == 'diff' || this.sampleStatType == "Deviation") ? diff : categoryStatistics[0];
 	}
-	handleSample(i){
+	handleSample(i, sample){
 		var categoryStatistics = [];
-		for(var g = 0; g < this.samples[i].length; g++){
+		if(sample == undefined){
+			sample = this.samples[i];
+		}
+		for(var g = 0; g < sample.length; g++){
 
 			// statistic for sample i, catagory g;
-			var stat = this.getStatisticEachSample(i, g)
+			var stat = this.getStatisticEachSample(i, g, sample)
 			categoryStatistics.push(stat);
 
 
@@ -297,10 +304,10 @@ class visBase {
 		if(categoryStatistics.length > 2){
 			let pop_stat = this.populationStatistics.population.statistic;
 			diff = 0;
-			for(var g = 0; g < this.samples[i].length; g++){
+			for(var g = 0; g < sample.length; g++){
 				diff += Math.abs(categoryStatistics[g] - pop_stat);
 			}
-			diff /= this.samples[i].length;
+			diff /= sample.length;
 		}
 		if(this.largestDiff == null || diff > this.largestDiff){
 			this.largestDiff = diff;
@@ -341,6 +348,13 @@ class visBase {
 			this.handleSample(i);
 		}
 	}
+	resetSampleStatistics(){
+		this.sampleStatistics = [];
+		this.largestDiff = null;
+		this.smallestDiff = null;
+		this.largestStat = null;
+		this.smallestStat = null;
+	}
 	setUpSamples(sampleSize){
 		var self = this;
 
@@ -354,8 +368,9 @@ class visBase {
 			this.setUpLargeCI(sSize);
 		}
 
-		this.makeSample(this.populations, this.numSamples, sSize,this.statistic);
-		this.setUpSampleStatistics();
+		this.resetSampleStatistics();
+		this.makeSample(this.populations, this.numSamples, sSize, this.statistic, true);
+		// this.setUpSampleStatistics();
 		var sampleStatRange = (this.sampleStatType == 'diff' || this.sampleStatType == "Deviation") ? [this.smallestDiff, this.largestDiff] : [this.smallestStat, this.largestStat];
 		this.sampleStatScale = d3.scale.linear().range([this.windowHelper.graphSection.x,this.windowHelper.graphSection.x + this.windowHelper.graphSection.width]);
 		var populationRange = this.xScale.domain();
@@ -414,7 +429,7 @@ class visBase {
 	// I.E 2 samples with 2 categories: [[[1,2,3],[4,5,6]], [[1,3,5],[2,4,6]]]
 	// 	   2 samples with no categories: [[[1,2,3,4,5,6]], [[1,2,3,4,5,6]]] (counts as 1 category so consistant)
 	// Implementation will likely be different for each visualisation.
-	makeSample(populations, numSamples, sampleSize, statistic){
+	makeSample(populations, numSamples, sampleSize, statistic, saveSample){
 
 	}
 

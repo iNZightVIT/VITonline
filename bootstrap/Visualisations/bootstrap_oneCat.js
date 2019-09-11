@@ -27,12 +27,13 @@ class bootstrap_oneCat extends visBase {
 	getSampleSize(){
 		return this.allPop.length < 51 ? this.allPop.length : null;
 	}
-	makeSample(populations, numSamples, sampleSize, statistic){
+	makeSample(populations, numSamples, sampleSize, statistic, saveSample){
 		this.samples = [];
 		for(var i = 0; i<numSamples;i++){
-			this.samples.push([]);
+			// this.samples.push([]);
+			let sample = [];
 			for(var g = 0; g < [...this.valueCategories].length; g++){
-				this.samples[i].push([]);
+				sample.push([]);
 			}
 			var stats = [];
 			for(var j = 0; j < sampleSize;j++){
@@ -44,7 +45,11 @@ class bootstrap_oneCat extends visBase {
 					nI.group =	group;
 					nI.order = j;
 					nI.groupIndex = groupIndex;
-					this.samples[i][groupIndex].push(nI);
+					sample[groupIndex].push(nI);
+			}
+			this.handleSample(i, sample);
+			if(saveSample){
+				this.samples.push(sample);
 			}
 		}
 	}
@@ -87,8 +92,9 @@ class bootstrap_oneCat extends visBase {
 	setUpLargeCI(sSize){
 		var self = this;
 		// Get the tail proportion info for 10,000 samples.
-		this.makeSample(this.populations, 10000, sSize, this.statistic);
-		this.setUpSampleStatistics();
+		this.resetSampleStatistics();
+		this.makeSample(this.populations, 10000, sSize, this.statistic, false);
+		// this.setUpSampleStatistics();
 		this.largeTailSize = 0;
 		var statlist = this.sampleStatType == 'diff' ? this.sampleStatistics.map(function(statObj){ return statObj.diff}) : this.sampleStatistics.map(function(statObj){ return statObj.stats[0]});
 		statlist.sort(function(a,b){

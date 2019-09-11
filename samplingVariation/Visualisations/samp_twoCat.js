@@ -52,12 +52,13 @@ class samp_twoCat extends visBase {
 		}
 	}
 
-	makeSample(populations, numSamples, sampleSize, statistic){
+	makeSample(populations, numSamples, sampleSize, statistic, saveSample){
 		this.samples = [];
 		for(var i = 0; i<numSamples;i++){
-			this.samples.push([]);
+			let sample = []
+			// this.samples.push([]);
 			for(var g = 0; g < this.groups.length; g++){
-				this.samples[i].push([]);
+				sample.push([]);
 			}
             var stats = [];
             let indexes = pickRand(sampleSize, this.allPop.length);
@@ -77,16 +78,23 @@ class samp_twoCat extends visBase {
 					nI.group =	group;
 					nI.order = j;
 					nI.groupIndex = groupIndex;
-				this.samples[i][groupIndex].push(nI);
+				sample[groupIndex].push(nI);
+			}
+			this.handleSample(i, sample);
+			if(saveSample){
+				this.samples.push(sample);
 			}
 		}
 	}
 
-	getStatisticEachSample(i, g){
-		var populationSize = this.samples[i][g].length;
+	getStatisticEachSample(i, g, sample){
+		if(sample == undefined){
+			sample = this.samples[i];
+		}
+		var populationSize = sample[g].length;
 
 		//Our statistic will be the proportion of values that match the focus out of each group.
-		return getStatistic(this.statistic, this.samples[i][g].filter(function(item){return item.value == 0}), populationSize);
+		return getStatistic(this.statistic, sample[g].filter(function(item){return item.value == 0}), populationSize);
 	}
 
 	setUpSampleCategory(items, scale, radius, sample, top, bottom){
@@ -122,8 +130,9 @@ class samp_twoCat extends visBase {
 	setUpLargeCI(sSize){
 		var self = this;
 		// Get the tail proportion info for 10,000 samples.
-		this.makeSample(this.populations, 10000, sSize, this.statistic);
-		this.setUpSampleStatistics();
+		this.resetSampleStatistics();
+		this.makeSample(this.populations, 10000, sSize, this.statistic, false);
+		// this.setUpSampleStatistics();
 		this.largeTailSize = 0;
 		var statlist = this.sampleStatType == 'diff' ? this.sampleStatistics.map(function(statObj){ return statObj.diff}) : this.sampleStatistics.map(function(statObj){ return statObj.stats[0]});
 		statlist.sort(function(a,b){
