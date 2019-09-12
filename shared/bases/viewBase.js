@@ -257,9 +257,9 @@ viewBase.prototype.setUpDataVeiw = function(dataHeadings){
 		selectMenu.selectAll("*").remove();
 		selectMenuv1.selectAll("*").remove();
 		selectMenuv2.selectAll("*").remove();
-		selectMenu.append("option").attr("value","placeHolder").text("Please Choose a variable").attr("disabled",true).attr("selected",true).attr("hidden",true);
-		selectMenuv1.append("option").attr("value","placeHolder").text("Please Choose a variable").attr("disabled",true).attr("selected",true).attr("hidden",true);
-		selectMenuv2.append("option").attr("value","placeHolder").text("Please Choose a variable").attr("selected",true);
+		selectMenu.append("option").attr("value","placeholder").text("Please Choose a variable").attr("disabled",true).attr("selected",true).attr("hidden",true);
+		selectMenuv1.append("option").attr("value","placeholder").text("Please Choose a variable").attr("disabled",true).attr("selected",true).attr("hidden",true);
+		selectMenuv2.append("option").attr("value","placeholder").text("Please Choose a variable").attr("selected",true);
 		dataHeadings.forEach(function(e){
 			selectMenu.append("option").attr("value",e).text(e[0]+" ("+e[1]+")").attr("data", true);
 			selectMenuv1.append("option").attr("value",e).text(e[0]+" ("+e[1]+")").attr("data", true);

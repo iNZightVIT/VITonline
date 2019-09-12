@@ -213,6 +213,7 @@ modelBase.prototype.varSelected = function(e){
 		for(var i =0;i<e.length;i++){
 			var d = e[i];
 			var val = d.value.split(",");
+			if(val == "placeholder") continue;
 			selected.push([val[0],val[1]]);
 			if(val[1] == "n"){
 				numeretical.push(val[0])
