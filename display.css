@@ -91,11 +91,7 @@ select {
   position: absolute;
   z-index: -1;
 }
-input {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  }
+
 .bluebutton{
   margin-top:1px;
   display: inline-block;
@@ -117,6 +113,10 @@ input {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 .bluebutton:hover{
   /*background: #18afe3;
@@ -133,6 +133,8 @@ input {
   /*border: 5px solid #18afe3;*/
  /* background: #18afe3;
 */}
+
+
 #leftHalf {
   display: block;
   float: left;
@@ -215,18 +217,19 @@ line {
 }
 .repSelect{
   display: inline-block;
-  width:auto;
+  width: 2vmin;
+  height: 2vmin;
   float:left;
-  margin-right: 5%;
-  margin-top: 5%;
+  margin: 5%;
 }
 .repLabel {
   display: inline-block;
   width: auto;
   float:left;
-  font-size: 0.75em;
-  font-weight: 500;
-  color:black;
+  font-size: calc(2vmin);
+  background: transparent;
+  font-weight: 700;
+  color:#094b85;
   margin-top: 5%;
 }
 .labelText {
