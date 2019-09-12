@@ -20,8 +20,9 @@ viewBase.prototype.setUpTab2 = function(difference, sampleSize){
 	tab2Top.selectAll("*").remove();
 	var tab2Bot = d3.select("#tab2Bot");
 	tab2Bot.selectAll("*").remove();
-	tab2Top.append("input").attr("type","button").attr("value","< Back to Data Input").attr("class","bluebutton").attr("id","backTab2").attr("disabled",null).attr("onClick","mainControl.switchTab1()")
-		.style("height","15%");
+	tab2Top.append("input").attr("type","button").attr("value","< Back to Data Input").attr("class","bluebutton").attr("id","backTab2").attr("disabled",null).attr("onClick","mainControl.switchTab1()");
+	// tab2Top.append("input").attr("type","button").attr("value","< Back to Data Input").attr("class","bluebutton").attr("id","backTab2").attr("disabled",null).attr("onClick","mainControl.switchTab1()")
+	// 	.style("height","15%");
 	
 	if(sampleSize){
 		tab2Top.append("label").text("Sample Size");
@@ -43,16 +44,18 @@ viewBase.prototype.setUpTab2 = function(difference, sampleSize){
 	SS.onchange = function(e){
 		self.controller.statChanged(e);
 	}
-	tab2Top.append("input").attr("type","button").attr("value","Record my choices").classed("bluebutton", true).attr("id","Calculate").attr("disabled",null).attr("onClick","mainControl.startVisPressed()")
-		.style("height","15%");
+	tab2Top.append("input").attr("type","button").attr("value","Record my choices").classed("bluebutton", true).attr("id","Calculate").attr("disabled",null).attr("onClick","mainControl.startVisPressed()");
+	// tab2Top.append("input").attr("type","button").attr("value","Record my choices").classed("bluebutton", true).attr("id","Calculate").attr("disabled",null).attr("onClick","mainControl.startVisPressed()")
+	// 	.style("height","15%");
 	//tab2Top.append("input").attr("type","button").attr("value","Pause").classed("bluebutton", true).attr("id","Pause").attr("disabled",true).attr("onClick","mainControl.pause()")
 	//	.style("height","15%");
 }
 
 viewBase.prototype.makeButtons = function(){
 		d3.select("#stopButton").remove();
-		d3.select("#tab2Top").append("input").attr("type","button").attr("value","Stop").classed("bluebutton", true).attr("id","stopButton").attr("disabled",null).attr("onClick","mainControl.stopPressed()")
-			.style("height","15%");
+		d3.select("#tab2Top").append("input").attr("type","button").attr("value","Stop").classed("bluebutton", true).attr("id","stopButton").attr("disabled",null).attr("onClick","mainControl.stopPressed()");
+		// d3.select("#tab2Top").append("input").attr("type","button").attr("value","Stop").classed("bluebutton", true).attr("id","stopButton").attr("disabled",null).attr("onClick","mainControl.stopPressed()")
+		// 	.style("height","15%");
 		var tab2 = d3.select("#tab2");
 		var vs = tab2.select("#tab2Mid").append("div").attr("id","visControls1");
 		vs.append("label").text("Sampling");
@@ -64,8 +67,9 @@ viewBase.prototype.makeButtons = function(){
 		vs.append("label").attr("for","sampTwenty").attr("class","repLabel").text("20");
 		vs.append("input").attr("type","radio").attr("name","Sampling").attr("value","1000").attr("id","sampThousand").attr("class","repSelect").text("1000");
 		vs.append("label").attr("for","sampThousand").attr("class","repLabel").text("1000");
-		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","startSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(false)")
-			.style("height","15%");
+		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","startSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(false)");
+		// vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","startSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(false)")
+		// 	.style("height","15%");
 
 		vs = tab2.select("#tab2Bot").append("div").attr("id","visControls2");
 		vs.append("label").text("Sampling Distribution");
@@ -77,8 +81,9 @@ viewBase.prototype.makeButtons = function(){
 		vs.append("label").attr("for","distTwenty").attr("class","repLabel").text("20");
 		vs.append("input").attr("type","radio").attr("name","Dist").attr("value","1000").attr("id","distThousand").attr("class","repSelect").text("1000");
 		vs.append("label").attr("for","distThousand").attr("class","repLabel").text("1000");
-		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","distSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(true)")
-			.style("height","15%");
+		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","distSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(true)");
+		// vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","distSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(true)")
+		// 	.style("height","15%");
 		/*
 		vs.append("input").attr("name", "do1").attr("type", "button").attr("value","1 sample").attr("onClick", "mainControl.startAnimation(1,true)");
 		vs.append("input").attr("name", "do10").attr("type", "button").attr("value","10 samples").attr("onClick", "mainControl.startAnimation(10, false)");
@@ -349,7 +354,8 @@ viewBase.prototype.startedVis = function(incDist){
 			var tab = d3.select("#visControls1");
 		}
 		tab.select(".goButton").style("display","none");
-		tab.append("input").attr("type","button").attr("value","Pause").classed("bluebutton", true).attr("id","pauseButton").attr("disabled",null).attr("onClick","mainControl.pause()").style("height","15%");
+		// tab.append("input").attr("type","button").attr("value","Pause").classed("bluebutton", true).attr("id","pauseButton").attr("disabled",null).attr("onClick","mainControl.pause()").style("height","15%");
+		tab.append("input").attr("type","button").attr("value","Pause").classed("bluebutton", true).attr("id","pauseButton").attr("disabled",null).attr("onClick","mainControl.pause()");
 	}
 viewBase.prototype.doneVis = function(){
 		d3.select("#pauseButton").remove();
