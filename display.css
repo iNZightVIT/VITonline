@@ -91,6 +91,11 @@ select {
   position: absolute;
   z-index: -1;
 }
+input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  }
 .bluebutton{
   margin-top:1px;
   display: inline-block;
