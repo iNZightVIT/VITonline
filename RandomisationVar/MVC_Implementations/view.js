@@ -7,7 +7,7 @@ view.prototype = Object.create(viewBase.prototype);
 view.prototype.constructor = view;
 view.prototype.makeButtons = function(){
 		d3.select("#stopButton").remove();
-		d3.select("#tab2Top").append("input").attr("type","button").attr("value","Stop").classed("bluebutton", true).attr("id","stopButton").attr("disabled",null).attr("onClick","mainControl.stopPressed()")
+		d3.select("#tab2Top").append("input").attr("type","button").attr("value","Stop").classed("bluebutton", true).attr("id","stopButton").attr("disabled",null).attr("onClick","mainControl.stopPressed()").text("Stop")
 			.style("height","15%");
 		var tab2 = d3.select("#tab2");
 		var vs = tab2.select("#tab2Mid").append("div").attr("id","visControls1");
@@ -21,7 +21,7 @@ view.prototype.makeButtons = function(){
 		vs.append("input").attr("type","radio").attr("name","Sampling").attr("value","1000").attr("id","sampThousand").attr("class","repSelect").text("1000").attr("onClick","mainControl.view.tSDisable()");
 		vs.append("label").attr("for","sampThousand").attr("class","repLabel").text("1000");
 
-		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","startSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(false)")
+		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","startSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(false)").text("Go")
 			.style("height","15%");
 
 		vs = tab2.select("#tab2Bot").append("div").attr("id","visControls2");
@@ -34,6 +34,6 @@ view.prototype.makeButtons = function(){
 		vs.append("label").attr("for","distTwenty").attr("class","repLabel").text("20");
 		vs.append("input").attr("type","radio").attr("name","Dist").attr("value","1000").attr("id","distThousand").attr("class","repSelect").text("1000");
 		vs.append("label").attr("for","distThousand").attr("class","repLabel").text("1000");
-		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","distSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(true)")
+		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","distSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(true)").text("Go")
 			.style("height","15%");
 }

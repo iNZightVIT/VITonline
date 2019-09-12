@@ -339,12 +339,14 @@ controllerBase.prototype.pause = function(){
 		if(!this.paused){
 			this.model.display.pause();
 			d3.select("#pauseButton").attr("value","Restart");
+			d3.select("#pauseButton").text("Restart");
 			this.paused = true;
 		}else{
 			if(this.model.display.pauseCalled) return;
 			this.model.display.unPause();
 			this.view.unPause(this.model.display.incDist);
 			d3.select("#pauseButton").attr("value","Pause");
+			d3.select("#pauseButton").text("Pause");
 			this.paused = false;
 		}
 	}

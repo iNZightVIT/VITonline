@@ -20,7 +20,7 @@ viewBase.prototype.setUpTab2 = function(difference, sampleSize){
 	tab2Top.selectAll("*").remove();
 	var tab2Bot = d3.select("#tab2Bot");
 	tab2Bot.selectAll("*").remove();
-	tab2Top.append("input").attr("type","button").attr("value","< Back to Data Input").attr("class","bluebutton").attr("id","backTab2").attr("disabled",null).attr("onClick","mainControl.switchTab1()");
+	tab2Top.append("input").attr("type","button").attr("value","< Back to Data Input").attr("class","bluebutton").attr("id","backTab2").attr("disabled",null).attr("onClick","mainControl.switchTab1()").text("< Back to Data Input");
 	// tab2Top.append("input").attr("type","button").attr("value","< Back to Data Input").attr("class","bluebutton").attr("id","backTab2").attr("disabled",null).attr("onClick","mainControl.switchTab1()")
 	// 	.style("height","15%");
 	
@@ -44,7 +44,7 @@ viewBase.prototype.setUpTab2 = function(difference, sampleSize){
 	SS.onchange = function(e){
 		self.controller.statChanged(e);
 	}
-	tab2Top.append("input").attr("type","button").attr("value","Record my choices").classed("bluebutton", true).attr("id","Calculate").attr("disabled",null).attr("onClick","mainControl.startVisPressed()");
+	tab2Top.append("input").attr("type","button").attr("value","Record my choices").classed("bluebutton", true).attr("id","Calculate").attr("disabled",null).attr("onClick","mainControl.startVisPressed()").text("Record my choices");
 	// tab2Top.append("input").attr("type","button").attr("value","Record my choices").classed("bluebutton", true).attr("id","Calculate").attr("disabled",null).attr("onClick","mainControl.startVisPressed()")
 	// 	.style("height","15%");
 	//tab2Top.append("input").attr("type","button").attr("value","Pause").classed("bluebutton", true).attr("id","Pause").attr("disabled",true).attr("onClick","mainControl.pause()")
@@ -53,7 +53,7 @@ viewBase.prototype.setUpTab2 = function(difference, sampleSize){
 
 viewBase.prototype.makeButtons = function(){
 		d3.select("#stopButton").remove();
-		d3.select("#tab2Top").append("input").attr("type","button").attr("value","Stop").classed("bluebutton", true).attr("id","stopButton").attr("disabled",null).attr("onClick","mainControl.stopPressed()");
+		d3.select("#tab2Top").append("input").attr("type","button").attr("value","Stop").classed("bluebutton", true).attr("id","stopButton").attr("disabled",null).attr("onClick","mainControl.stopPressed()").text("Stop");
 		// d3.select("#tab2Top").append("input").attr("type","button").attr("value","Stop").classed("bluebutton", true).attr("id","stopButton").attr("disabled",null).attr("onClick","mainControl.stopPressed()")
 		// 	.style("height","15%");
 		var tab2 = d3.select("#tab2");
@@ -67,7 +67,7 @@ viewBase.prototype.makeButtons = function(){
 		vs.append("label").attr("for","sampTwenty").attr("class","repLabel").text("20");
 		vs.append("input").attr("type","radio").attr("name","Sampling").attr("value","1000").attr("id","sampThousand").attr("class","repSelect").text("1000");
 		vs.append("label").attr("for","sampThousand").attr("class","repLabel").text("1000");
-		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","startSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(false)");
+		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","startSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(false)").text("Go");
 		// vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","startSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(false)")
 		// 	.style("height","15%");
 
@@ -81,7 +81,7 @@ viewBase.prototype.makeButtons = function(){
 		vs.append("label").attr("for","distTwenty").attr("class","repLabel").text("20");
 		vs.append("input").attr("type","radio").attr("name","Dist").attr("value","1000").attr("id","distThousand").attr("class","repSelect").text("1000");
 		vs.append("label").attr("for","distThousand").attr("class","repLabel").text("1000");
-		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","distSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(true)");
+		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","distSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(true)").text("Go");
 		// vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","distSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(true)")
 		// 	.style("height","15%");
 		/*
@@ -109,15 +109,15 @@ viewBase.prototype.loadMain = function(dataHeadings){
 		var label = tab1.append("label").attr("for", "importButton").text("Choose a Local file").attr("class","bluebutton");
 
 		var URLInput = tab1.append("input").attr("name", "URLInput").attr("type", "text").attr("placeholder","import data from...").attr("id","URLInput");
-		var importFromURL = tab1.append("input").attr("name", "importURL").attr("type", "button").attr("value","Data from URL").attr("id","importURL").attr("class","bluebutton");
+		var importFromURL = tab1.append("input").attr("name", "importURL").attr("type", "button").attr("value","Data from URL").attr("id","importURL").attr("class","bluebutton").text("Data from URL");
 
 		var textInput = tab1.append("textarea").attr("name", "textInput").attr("type", "text").attr("placeholder","paste csv data here...").attr("id","textInput");
-		var importFromText = tab1.append("input").attr("name", "importText").attr("type", "button").attr("value","Data from Text").attr("id","importText").attr("class","bluebutton").attr("disabled", "true");
+		var importFromText = tab1.append("input").attr("name", "importText").attr("type", "button").attr("value","Data from Text").attr("id","importText").attr("class","bluebutton").attr("disabled", "true").text("Data from Text");
 
-		var importFromPreset = tab1.append("input").attr("name", "importPreset").attr("type", "button").attr("value","Example Data").attr("id","importPreset").attr("class","bluebutton");
+		var importFromPreset = tab1.append("input").attr("name", "importPreset").attr("type", "button").attr("value","Example Data").attr("id","importPreset").attr("class","bluebutton").text("Example Data");
 		var presetSelect = tab1.append("div").attr("id","presetSelect");
 
-		var usePreset = tab1.append("input").attr("class","bluebutton").attr("name", "dataPreset").attr("type", "button").attr("value","Use test data").attr("id","dataPreset").attr("onClick","mainControl.loadTestData()");
+		var usePreset = tab1.append("input").attr("class","bluebutton").attr("name", "dataPreset").attr("type", "button").attr("value","Use test data").attr("id","dataPreset").attr("onClick","mainControl.loadTestData()").text("Use test data");
 		var container = tab1.append("div").attr("id","inputContainer").attr("class","selectContainer");
 		var varSelector = tab1.append("div").attr("id","varSelector").attr("class","selectContainer");
 		var focusContainer = tab1.append("div").attr("id","focusContainer").attr("class","selectContainer");
@@ -267,7 +267,7 @@ viewBase.prototype.setUpDataVeiw = function(dataHeadings){
 		});
 
 		d3.select("#startButton").remove();
-		d3.select("#tab1").append("input").attr("type","button").attr("value","Analyse").attr("class","bluebutton").attr("id","startButton").attr("disabled","true").attr("onClick","mainControl.switchTab2()");
+		d3.select("#tab1").append("input").attr("type","button").attr("value","Analyse").attr("class","bluebutton").attr("id","startButton").attr("disabled","true").attr("onClick","mainControl.switchTab2()").text("Analyse");
 	}
 
 viewBase.prototype.setVarSelected = function(selected_variables){
@@ -355,7 +355,7 @@ viewBase.prototype.startedVis = function(incDist){
 		}
 		tab.select(".goButton").style("display","none");
 		// tab.append("input").attr("type","button").attr("value","Pause").classed("bluebutton", true).attr("id","pauseButton").attr("disabled",null).attr("onClick","mainControl.pause()").style("height","15%");
-		tab.append("input").attr("type","button").attr("value","Pause").classed("bluebutton", true).attr("id","pauseButton").attr("disabled",null).attr("onClick","mainControl.pause()");
+		tab.append("input").attr("type","button").attr("value","Pause").classed("bluebutton", true).attr("id","pauseButton").attr("disabled",null).attr("onClick","mainControl.pause()").text("Pause");
 	}
 viewBase.prototype.doneVis = function(){
 		d3.select("#pauseButton").remove();
