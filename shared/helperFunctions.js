@@ -190,7 +190,7 @@ function setUpWindow3(margins, includeSampleSection){
 												windowHelper.sampleSection.S1.x2 + margins.left + (windowHelper.sampleSection.width - margins.left)/2, 
 												windowHelper.sampleSection.y2);
 
-	windowHelper.graphSection = new WindowSection(windowHelper.sampleSection.x2 + margins.left,
+	windowHelper.graphSection = new WindowSection(windowHelper.sampleSection.x2 + (margins.left*4),
 												0,
 												windowHelper.realWidth,
 												windowHelper.realHeight);
