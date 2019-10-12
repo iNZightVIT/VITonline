@@ -24,7 +24,8 @@ class bootstrap_twoCat extends visBase {
 	}
 
 	getSampleSize(){
-		return this.allPop.length < 51 ? this.allPop.length : null;
+		// return this.allPop.length < 51 ? this.allPop.length : null;
+		return this.allPop.length;
 	}
 	setSampleStatistic(diff, categoryStatistics){
 		if(this.groups.length <= 2){
@@ -296,7 +297,7 @@ class bootstrap_twoCat extends visBase {
 			}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(1/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[d.value]}).attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
 
 			if(goSlow){
-				this.buildUpSlow(settings, currentAnimation, 0, popText, self.allPop.length, self, []);
+				this.buildUpSlow(settings, currentAnimation, 0, popText, Math.min(self.allPop.length, 40), self, []);
 			}else{
 				d3.selectAll("#samp circle").attr('cy', function(){return d3.select(this).attr("data-cy")})
 				.attr('cx', function(){return d3.select(this).attr("data-cx")})
@@ -307,7 +308,7 @@ class bootstrap_twoCat extends visBase {
 			}
 		}else{
 			popText = d3.select("#sampleReRandomised").selectAll("g").data(settings.sample);
-			this.buildUpSlow(settings, currentAnimation, settings.buildListUpto, popText, self.allPop.length, self);
+			this.buildUpSlow(settings, currentAnimation, settings.buildListUpto, popText, Math.min(self.allPop.length, 40), self);
 		}
 
 

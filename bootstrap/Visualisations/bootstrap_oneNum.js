@@ -232,7 +232,7 @@ class bootstrap_oneNum extends visBase {
 		}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(3/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[self.groups.indexOf(d.group)]}).attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
 
 		if(goSlow){
-			this.buildUpSlow(settings, currentAnimation, 0, popText, self.allPop.length, self);
+			this.buildUpSlow(settings, currentAnimation, 0, popText, Math.min(self.allPop.length, 40), self);
 		}else{
 			d3.select("#circleOverlay").selectAll("circle").attr("stroke-opacity", 1).attr("fill-opacity", 1);
 			this.animationController(settings, currentAnimation);
