@@ -71,7 +71,7 @@ textarea{
   
 }
 .selectContainer select{
-    width:110%;
+    /* width:110%; */
    background: transparent;
    padding: 5px;
    font-size: 16px;
@@ -83,6 +83,19 @@ textarea{
 select {
   width:100%;
 }
+
+/* select:after {
+  content: "▼";
+  padding: 12px 8px;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  z-index: 1;
+  text-align: center;
+  width: 10%;
+  height: 100%;
+  pointer-events: none;
+} */
 #importButton {
     width: 0.1px;
   height: 0.1px;
