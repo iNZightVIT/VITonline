@@ -265,16 +265,17 @@ function setUpWindow3(margins, includeSampleSection){
 }
 function drawArrow(to, from, yValue, placement, id, op, color){
 	var group = placement.append("svg").attr("id",id);
-	var mainLine = group.append("line").attr("x1", from).attr("x2", to).attr("y1", yValue).attr("y2", yValue).style("stroke-width", 2).style("stroke", color).style("opacity", op).attr("id", id+"main");
 	let to_num = isNaN(to) ? 0 : to;
+	let from_num = isNaN(from) ? 0 : from;
 	var diff = to_num - from;
 	if(isNaN(diff)){
 		var data = placement.data();
 		data = data[data.length-1];
 		to_num = to(data);
-		var from = from(data);
-		var diff = to_num - from;
+		from_num = from(data);
+		var diff = to_num - from_num;
 	}
+	var mainLine = group.append("line").attr("x1", from_num).attr("x2", to).attr("y1", yValue).attr("y2", yValue).style("stroke-width", 2).style("stroke", color).style("opacity", op).attr("id", id+"main");
 	var headSize = 10;
 	if(Math.abs(diff) < headSize) headSize =Math.abs(diff)*0.5;
 	if(diff != 0) {var arrowHead = diff / Math.abs(diff);} else { var arrowHead = 0;}
