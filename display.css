@@ -180,7 +180,9 @@ select {
 circle {
   /*fill-opacity: 0.5;*/
   stroke: #556270;
-  fill: #C7D0D5;
+  /* fill: #C7D0D5; */
+  /* stroke: #556270; */
+  fill: darkgrey;
   /*stroke-opacity: 1;*/
 }
 

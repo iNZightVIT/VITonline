@@ -24,7 +24,6 @@
 				if(match){
 					let pop_circ = d3.select(circles[c]);
 					if(!random){
-						console.log("hi");
 						matched_population_circles.push(match_id);
 						let samp_circ = d3.select(sample_circles[sc]);
 						
@@ -57,6 +56,9 @@
 	}
 	
 	showDifference = function( sampMean){
+		if(this.sampleStatType != "diff"){
+			return;
+		}
 		var self = this;
 		var middle = this.windowHelper.graphSection.S2.displayArea.getMiddleHeight();
 		if(this.drawnMeans.length > 0){
@@ -65,7 +67,7 @@
 			meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.stats[0]);}).attr("x2", function(d){return self.xScale(d.stats[0]);}).attr("y1", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][0] + this.windowHelper.lineHeight*3).attr("y2", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][0] - this.windowHelper.lineHeight).style("stroke-width", 3).style("stroke", "black").style("opacity",1);
 			meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.stats[1]);}).attr("x2", function(d){return self.xScale(d.stats[1]);}).attr("y1", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][2] + this.windowHelper.lineHeight*3).attr("y2", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][2] - this.windowHelper.lineHeight).style("stroke-width", 3).style("stroke", "black").style("opacity",1);
 		
-			d3.selectAll(".memLine").style("opacity",0.2).style("stroke","steelblue").attr("y2",function(){ return d3.select(this).attr("y1")-self.windowHelper.lineHeight*2});;
+			d3.selectAll(".memLine").style("opacity",0.2).style("stroke","darkgrey").attr("y2",function(){ return d3.select(this).attr("y1")-self.windowHelper.lineHeight*2});;
 			d3.selectAll("#diffLine").remove();
 		}
 		this.drawnMeans.push(sampMean[0]);
@@ -73,7 +75,7 @@
 		meanLineG = mLines.enter().append("g");
 		meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.stats[0]);}).attr("x2", function(d){return self.xScale(d.stats[0]);}).attr("y1", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][0] + this.windowHelper.lineHeight*3).attr("y2", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][0] - this.windowHelper.lineHeight).style("stroke-width", 3).style("stroke", "black").style("opacity",1);
 		meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.stats[1]);}).attr("x2", function(d){return self.xScale(d.stats[1]);}).attr("y1", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][2] + this.windowHelper.lineHeight*3).attr("y2", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][2] - this.windowHelper.lineHeight).style("stroke-width", 3).style("stroke", "black").style("opacity",1);
-		drawArrow(function(d){return self.xScale(d.stats[1]);},function(d){return self.xScale(d.stats[0]);},middle, meanLineG, "diffLine", 1, "red");
+		drawArrow(function(d){return self.xScale(d.stats[1]);},function(d){return self.xScale(d.stats[0]);},middle, meanLineG, "diffLine", 1, "darkgrey");
 	}
 
 	showSingleStat = function(sampMean){
@@ -92,7 +94,7 @@
 				.style("stroke-width", 3)
 				.style("stroke", "black").style("opacity",1);
 		
-			d3.selectAll(".memLine").style("opacity",0.2).style("stroke","steelblue").attr("y2", divSections[0] - divHeight*(1/4) - this.windowHelper.radius*2);;
+			d3.selectAll(".memLine").style("opacity",0.2).style("stroke","darkgrey").attr("y2", divSections[0] - divHeight*(1/4) - this.windowHelper.radius*2);;
 			d3.selectAll("#diffLine").remove();
 		}
 		this.drawnMeans.push(sampMean[0]);
@@ -131,7 +133,7 @@
 				self.headSize = headSize;
 				self.arrowHead = arrowHead;
 				self.toScaled = toScaled;
-				var arrow = drawArrow(self.xScale(sampMean[0].stats[1]), self.xScale(sampMean[0].stats[0]), middle, redLine, "redlineMain", 1, "red");
+				var arrow = drawArrow(self.xScale(sampMean[0].stats[1]), self.xScale(sampMean[0].stats[0]), middle, redLine, "redlineMain", 1, "darkgrey");
 				arrow[1].transition().duration(this.transitionSpeed).attr("y1",this.windowHelper.graphSection.S3.displayArea.y + this.windowHelper.graphSection.S3.displayArea.height- this.windowHelper.radius*2).attr("y2",this.windowHelper.graphSection.S3.displayArea.y + this.windowHelper.graphSection.S3.displayArea.height + headSize*arrowHead/2 - this.windowHelper.radius*2).attr("x1",this.sampleStatScale(toScaled)).attr("x2", this.sampleStatScale(toScaled) - arrowHead*headSize);
 				arrow[2].transition().duration(this.transitionSpeed).attr("y1",this.windowHelper.graphSection.S3.displayArea.y + this.windowHelper.graphSection.S3.displayArea.height- this.windowHelper.radius*2).attr("y2",this.windowHelper.graphSection.S3.displayArea.y + this.windowHelper.graphSection.S3.displayArea.height - headSize*arrowHead/2 - this.windowHelper.radius*2).attr("x1",this.sampleStatScale(toScaled)).attr("x2", this.sampleStatScale(toScaled) - arrowHead*headSize);
 				arrow[0].transition().duration(this.transitionSpeed).attr("x1",this.sampleStatScale(0)).attr("x2",this.sampleStatScale(toScaled)).attr("y1",this.windowHelper.graphSection.S3.displayArea.y + this.windowHelper.graphSection.S3.displayArea.height- this.windowHelper.radius*2).attr("y2",this.windowHelper.graphSection.S3.displayArea.y + this.windowHelper.graphSection.S3.displayArea.height - this.windowHelper.radius*2);
@@ -163,14 +165,14 @@
 			var acrossTo = this.sampleStatistics[settings.indexUpTo].xPerSample[0];
 		}
 		if(settings.goSlow || this.transitionSpeed == 500){
-			meanCircles = meanCircles.transition().delay(this.transitionSpeed).attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){return d.yPerSample[0]}).each('end', function(d, i){
+			meanCircles = meanCircles.transition().delay(this.transitionSpeed).attr("fill-opacity",1).attr("stroke-opacity",1).attr("cy", function(d){return d.yPerSample[0]}).each('end', function(d, i){
 				if(!sentFinish){
 					self.animationController(settings, currentAnimation);
 					sentFinish = true;
 				}
 			});
 		}else{
-			meanCircles = meanCircles.attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){return d.yPerSample[0]});
+			meanCircles = meanCircles.attr("fill-opacity",1).attr("stroke-opacity",1).attr("cy", function(d){return d.yPerSample[0]});
 				self.animationController(settings, currentAnimation);
 		}
 	}
@@ -187,7 +189,7 @@
 			for(var g = 0; g < this.groups.length; g++){
 				var pos = divSections[g] - divHeight/2 - this.windowHelper.radius*2;
 				var groupName = this.groups[g];
-				drawArrow(this.xScale(sampMean[0].stats[g]), this.xScale(stat), pos, d3.select(".meanOfSamples"), "distArrow"+g, 1, "green");
+				drawArrow(this.xScale(sampMean[0].stats[g]), this.xScale(stat), pos, d3.select(".meanOfSamples"), "distArrow"+g, 1, "darkgrey");
 				d3.select("#distArrow"+g+"a1").remove();
 				d3.select("#distArrow"+g+"a2").remove();
 				var subtractY = this.windowHelper.graphSection.S2.height - (divHeight/1.2 * g);
@@ -203,7 +205,7 @@
 							if(Math.abs(diff) < headSize) headSize =Math.abs(diff)*0.5;
 							if(diff != 0) {var arrowHead = diff / Math.abs(diff);} else { var arrowHead = 0;}
 
-							var arrow = drawArrow(self.xScale(stat + (sampMean[0].value)/2), self.xScale(stat - (sampMean[0].value)/2), self.windowHelper.graphSection.S3.displayArea.getDivisions(3, 'height')[1] + self.windowHelper.graphSection.S3.displayArea.y1, d3.select(".meanOfSamples"), "redlineMain", 1, "red");
+							var arrow = drawArrow(self.xScale(stat + (sampMean[0].value)/2), self.xScale(stat - (sampMean[0].value)/2), self.windowHelper.graphSection.S3.displayArea.getDivisions(3, 'height')[1] + self.windowHelper.graphSection.S3.displayArea.y1, d3.select(".meanOfSamples"), "redlineMain", 1, "darkgrey");
 							arrow[1].transition().duration(self.transitionSpeed).attr("y1",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height- self.windowHelper.radius*2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height + headSize*arrowHead/2 - self.windowHelper.radius*2).attr("x1",self.sampleStatScale(toScaled)).attr("x2", self.sampleStatScale(toScaled) - arrowHead*headSize);
 							arrow[2].transition().duration(self.transitionSpeed).attr("y1",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height- self.windowHelper.radius*2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - headSize*arrowHead/2 - self.windowHelper.radius*2).attr("x1",self.sampleStatScale(toScaled)).attr("x2", self.sampleStatScale(toScaled) - arrowHead*headSize);
 							arrow[0].transition().duration(self.transitionSpeed).attr("x1",self.sampleStatScale(0)).attr("x2",self.sampleStatScale(toScaled)).attr("y1",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height- self.windowHelper.radius*2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - self.windowHelper.radius*2);
@@ -270,11 +272,11 @@
 			var acrossTo = this.sampleStatistics[settings.indexUpTo].xPerSample[0];
 		}
 		if(settings.goSlow || this.transitionSpeed == 500){
-			meanCircles = meanCircles.transition().delay(this.transitionSpeed).attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){return d.yPerSample[0]}).each('end', function(d, i){
+			meanCircles = meanCircles.transition().delay(this.transitionSpeed).attr("fill-opacity",1).attr("stroke-opacity",1).attr("cy", function(d){return d.yPerSample[0]}).each('end', function(d, i){
 				self.animationController(settings, currentAnimation);
 			});
 		}else{
-			meanCircles = meanCircles.attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){return d.yPerSample[0]});
+			meanCircles = meanCircles.attr("fill-opacity",1).attr("stroke-opacity",1).attr("cy", function(d){return d.yPerSample[0]});
 				self.animationController(settings, currentAnimation);
 		}
 	}
@@ -299,14 +301,14 @@
 		}
 
 		if(settings.goSlow || this.transitionSpeed == 500){
-			meanCircles = meanCircles.transition().delay(this.transitionSpeed).attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){return d.yPerSample[0]}).each('end', function(d, i){
+			meanCircles = meanCircles.transition().delay(this.transitionSpeed).attr("fill-opacity",1).attr("stroke-opacity",1).attr("cy", function(d){return d.yPerSample[0]}).each('end', function(d, i){
 				if(!sentFinish){
 					self.animationController(settings, currentAnimation);
 					sentFinish = true;
 				}
 			});
 		}else{
-			meanCircles = meanCircles.attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){return d.yPerSample[0]});
+			meanCircles = meanCircles.attr("fill-opacity",1).attr("stroke-opacity",1).attr("cy", function(d){return d.yPerSample[0]});
 				self.animationController(settings, currentAnimation);
 		}
 	}
@@ -375,7 +377,7 @@
 		for(var g = 0; g < this.groups.length; g++){
 			var pos = divSections[g] - divHeight/2 - this.windowHelper.radius*2;
 			var groupName = this.groups[g];
-			drawArrow(this.xScale(sampMean[0].stats[g]), this.xScale(stat), pos, d3.select(".meanOfSamples"), "sampArrow", 1, "red");
+			drawArrow(this.xScale(sampMean[0].stats[g]), this.xScale(stat), pos, d3.select(".meanOfSamples"), "sampArrow", 1, "darkgrey");
 			d3.select(".meanOfSamples").append("line").attr("x1", this.xScale(sampMean[0].stats[g])).attr("x2", this.xScale(sampMean[0].stats[g])).attr("y1", pos+this.windowHelper.lineHeight).attr("y2", pos-this.windowHelper.lineHeight).style("stroke-width", 2).style("stroke", "black").style("stroke-width",3).attr("id", "sampArrow");
 
 		}
@@ -489,6 +491,7 @@
 		
 		sharedProportionMultiBarFadeInNoExitNoStats.apply(this, [settings, currentAnimation]);
 		var sampMean = this.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
+
 		showDifference.apply(this, [sampMean]);
 	}
 

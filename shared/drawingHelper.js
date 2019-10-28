@@ -206,7 +206,8 @@ function drawSampleDisplay(self, placeInto){
             })
             .attr("r", self.windowHelper.radius)
             .attr("fill-opacity", 0)
-            .attr("stroke","#556270")
+            .attr("stroke", "darkgrey")
+            .attr("fill", "darkgrey")
             .attr("stroke-opacity",0)
             .attr("class",function(d){
                         if(d.inCI){
