@@ -14,7 +14,7 @@ viewBase.prototype.leaveVis = function(){
 		d3.select("#visControls1").remove();
 		d3.select("#visControls2").remove();
 	}
-viewBase.prototype.setUpTab2 = function(difference, sampleSize){
+viewBase.prototype.setUpTab2 = function(difference, avg_dev, sampleSize){
 	var self = this;
 	var tab2Top = d3.select("#tab2Top");
 	tab2Top.selectAll("*").remove();
@@ -32,7 +32,7 @@ viewBase.prototype.setUpTab2 = function(difference, sampleSize){
 	tab2Top.append("label").text("Statistic");
 	tab2Top.append("select").attr("id","statSelect").append("option").text("Select variable");
 	if(difference){
-		tab2Top.append("select").attr("id","statTypeSelect").append("option").text("Difference");
+		tab2Top.append("select").attr("id","statTypeSelect").append("option").text(!avg_dev ? "Difference" : "Average Deviation");
 	}
 	if(sampleSize){
 		let SSize = document.getElementById("sampsize");

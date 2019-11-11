@@ -238,7 +238,14 @@ modelBase.prototype.varSelected = function(e){
 			this.controller.noVisAvail();
 		}
 	}
-
+modelBase.prototype.getStatsCategories = function(){
+	let categories = this.stats[this.currentCategory];
+	let num_groups = this.display.groups ? this.display.groups.length : 1;
+	// if(num_groups >= 3 && categories[0] == "Proportion"){
+	// 	categories = ["Average Deviation"];
+	// }
+	return categories
+}
 modelBase.prototype.filterMissingValues = function(numeric_vars, categorical_vars){
 	test_val = function(v){
 		v = v.toLowerCase().trim();

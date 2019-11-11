@@ -298,12 +298,14 @@ controllerBase.prototype.switchTab2 = function(){
 		let cat = this.model.cat;
 		let num = this.model.num;
 		let difference = (cat.length == 1 && num.length == 1) || (cat.length == 2) || this.model.display.sampleStatType == "diff";
+		let num_groups = this.model.display.groups ? this.model.display.groups.length : 1
+		let avg_dev = num_groups >= 3;
 		let showSampleSize = this.model.display.sampleSize != undefined;
-		this.view.setUpTab2(difference, showSampleSize);
+		this.view.setUpTab2(difference, avg_dev, showSampleSize);
 		if(this.model.display.sampleSize != 20){
 			d3.select("#sampsize").attr("value",String(this.model.display.sampleSize));
 		}
-		this.setUpStatSelection(this.model.stats[this.model.currentCategory])
+		this.setUpStatSelection(this.model.getStatsCategories())
 		if(this.model.display.implemented == false){
 			d3.select("#Calculate").attr("value","Visualisation not implemented").attr("disabled",true);
 		}
