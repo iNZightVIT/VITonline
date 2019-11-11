@@ -12,7 +12,8 @@ function oneMean(inputData, heading, statistic){
 	this.statsDone = false;
 	this.animationState = 0;
 	this.baseTransitionSpeed = 1000;
-	this.windowHelper = setUpWindow(this.radius);
+	// this.windowHelper = setUpWindow(this.radius);
+	this.windowHelper = setUpWindow3({'left':5, 'right':5, 'top':10, 'bottom':5}, false);
 	this.statistic = statistic;
 		this.popSetup = false;
 	this.sampSetup = false;
@@ -38,13 +39,13 @@ function oneMean(inputData, heading, statistic){
 			this.population.push(new item(value, i));
 		}
 
-		this.xScale = d3.scale.linear().range([this.radius,this.windowHelper.innerWidth]);
+		this.xScale = d3.scale.linear().range([this.windowHelper.graphSection.x,this.windowHelper.graphSection.width]);
 		this.xScale.domain([min,max]);
 
 		this.populationStatistic = 0;
 		this.populationStatistic = getStatistic(this.statistic, this.population);
-		makeBoxplot(this.radius,this.windowHelper.section1.twoThird + this.radius *2,this.windowHelper.innerWidth-this.radius,this.windowHelper.section1.bottom - this.windowHelper.section1.twoThird - this.radius*4,this.population,this.xScale);
-		heapYValues3(this.population, this.xScale, this.radius, 0, this.windowHelper.section1.top, this.windowHelper.section1.twoThird);
+		makeBoxplot(this.windowHelper.graphSection.x,this.windowHelper.graphSection.S1.getDivisions(3)[0][1] + this.radius *2,this.windowHelper.graphSection.width-this.radius,this.windowHelper.graphSection.S1.getDivisions(1)[0][0] - this.windowHelper.graphSection.S1.getDivisions(3)[0][1] - this.radius*4,this.population,this.xScale);
+		heapYValues3(this.population, this.xScale, this.windowHelper.graphSection.x, 0, this.windowHelper.graphSection.S1.y, this.windowHelper.graphSection.S1.getDivisions(3)[0][1]);
 		this.popSetup = true;
 		this.fontS = this.windowHelper.width * this.windowHelper.height / 50000;
 	}
@@ -59,10 +60,10 @@ function oneMean(inputData, heading, statistic){
 		this.samples = this.makeSamples(this.population, this.numSamples, this.sampleSize, true);
 		for(var k = 0; k < this.numSamples;k++){
 			var stat = getStatistic(this.statistic, this.samples[k])
-			heapYValues3(this.samples[k], this.xScale,this.radius, k+1, this.windowHelper.section2.top, this.windowHelper.section2.twoThird);
+			heapYValues3(this.samples[k], this.xScale,this.windowHelper.graphSection.x, k+1, this.windowHelper.graphSection.S2.y, this.windowHelper.graphSection.S2.getDivisions(3)[0][1]);
 			this.preCalculatedTStat.push(new item(stat, k));
 		}
-		heapYValues3(this.preCalculatedTStat, this.xScale, this.radius, 0, this.windowHelper.section3.top,this.windowHelper.section3.bottom);
+		heapYValues3(this.preCalculatedTStat, this.xScale, this.windowHelper.graphSection.x, 0, this.windowHelper.graphSection.S3.y,this.windowHelper.graphSection.S3.getDivisions(1)[0][0]);
 
 		this.statsDone = true;
 		this.sampSetup = true;
@@ -96,12 +97,12 @@ function oneMean(inputData, heading, statistic){
 		var svg = d3.select(".svg");
 		var xAxis = d3.svg.axis();
 		xAxis.scale(this.xScale)
-		svg.append("g").attr("class","axis").attr("transform", "translate(0," + (this.windowHelper.section1.bottom + this.radius) + ")").call(xAxis);
-		svg.append("g").attr("class","axis").attr("transform", "translate(0," + (this.windowHelper.section2.bottom + this.radius) + ")").call(xAxis);
-		svg.append("g").attr("class","axis").attr("transform", "translate(0," + (this.windowHelper.section3.bottom + this.radius) + ")").call(xAxis);
-		svg.append("text").attr("class","sectionLabel").attr("y",this.windowHelper.section1.top + 15).text("Population").style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold");
-		svg.append("text").attr("class","sectionLabel").attr("y",this.windowHelper.section2.top + 15*2.5).text("Sample").style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold");
-		svg.append("text").attr("class","sectionLabel").attr("y",this.windowHelper.section3.top + 15*2.5).text("Sampling Distribution").style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold");
+		svg.append("g").attr("class","axis").attr("transform", "translate(0," + (this.windowHelper.graphSection.S1.getDivisions(1)[0][0] + this.radius) + ")").call(xAxis);
+		svg.append("g").attr("class","axis").attr("transform", "translate(0," + (this.windowHelper.graphSection.S2.getDivisions(1)[0][0] + this.radius) + ")").call(xAxis);
+		svg.append("g").attr("class","axis").attr("transform", "translate(0," + (this.windowHelper.graphSection.S3.getDivisions(1)[0][0] + this.radius) + ")").call(xAxis);
+		svg.append("text").attr("class","sectionLabel").attr("y",this.windowHelper.graphSection.S1.y + 15).text("Population").style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold");
+		svg.append("text").attr("class","sectionLabel").attr("y",this.windowHelper.graphSection.S2.y + 15*2.5).text("Sample").style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold");
+		svg.append("text").attr("class","sectionLabel").attr("y",this.windowHelper.graphSection.S3.y + 15*2.5).text("Sampling Distribution").style("opacity", 1).style("font-size",15).style("fill","black").style("font-weight","bold");
 		svg.append("svg").attr("class","pop");
 		var circle = svg.select(".pop").selectAll("circle").data(this.population);
 		   circle.enter().append("circle")
@@ -115,9 +116,9 @@ function oneMean(inputData, heading, statistic){
 		    .attr("stroke","#556270")
 		    .attr("stroke-opacity",1);
 
-		svg.append("line").attr("x1", this.xScale(this.populationStatistic)).attr("y1", this.windowHelper.section1.twoThird+this.windowHelper.lineHeight).attr("x2", this.xScale(this.populationStatistic)).attr("y2", this.windowHelper.section1.twoThird-this.windowHelper.lineHeight).style("stroke-width", 2).style("stroke", "black");
+		svg.append("line").attr("x1", this.xScale(this.populationStatistic)).attr("y1", this.windowHelper.graphSection.S1.getDivisions(3)[0][1]+this.windowHelper.lineHeight).attr("x2", this.xScale(this.populationStatistic)).attr("y2", this.windowHelper.graphSection.S1.getDivisions(3)[0][1]-this.windowHelper.lineHeight).style("stroke-width", 2).style("stroke", "black");
 		svg.append("line").attr("x1", this.xScale(this.populationStatistic)).attr("y1", 0).attr("x2", this.xScale(this.populationStatistic)).attr("y2", this.windowHelper.height).style("stroke-width", 0.5).style("stroke", "black").attr("stroke-dasharray","5,5");
-		svg.append("text").attr("x", this.xScale(this.populationStatistic)).attr("y",this.windowHelper.section1.twoThird+this.windowHelper.lineHeight).text(Math.round((this.populationStatistic)*100)/100).style("stroke","blue").attr("font-size",this.fontS);
+		svg.append("text").attr("x", this.xScale(this.populationStatistic)).attr("y",this.windowHelper.graphSection.S1.getDivisions(3)[0][1]+this.windowHelper.lineHeight).text(Math.round((this.populationStatistic)*100)/100).style("stroke","blue").attr("font-size",this.fontS);
 
 	}
 	this.drawSamples = function(){
@@ -128,7 +129,7 @@ function oneMean(inputData, heading, statistic){
 		var sampleMeans = [];
 		var svg = d3.select(".svg");
 		//var meanLines = svg.select(".sampleLines").selectAll("line").data(this.preCalculatedTStat)
-		//	.enter().append("line").attr("y1", this.windowHelper.section1.twoThird+this.windowHelper.lineHeight).attr("y2", this.windowHelper.section1.twoThird-this.windowHelper.lineHeight).attr("x1", function(d){return self.xScale(d.value)}).attr("x2", function(d){return self.xScale(d.value)}).style("stroke-width", 2).style("stroke", "green").style("opacity", 0);
+		//	.enter().append("line").attr("y1", this.windowHelper.graphSection.S1.getDivisions(3)[0][1]+this.windowHelper.lineHeight).attr("y2", this.windowHelper.graphSection.S1.getDivisions(3)[0][1]-this.windowHelper.lineHeight).attr("x1", function(d){return self.xScale(d.value)}).attr("x2", function(d){return self.xScale(d.value)}).style("stroke-width", 2).style("stroke", "green").style("opacity", 0);
 		svg.append("svg").attr("id","circleOverlay")
 		var meanCircles = svg.select(".meanOfSamples").selectAll("circle").data(this.preCalculatedTStat)
 			.enter().append("circle")
@@ -194,9 +195,9 @@ function oneMean(inputData, heading, statistic){
 			var mLines = settings.svg.select(".sampleLines").selectAll("line").data(this.drawnMeans);
 			var opacity = 1;
 			if(settings.repititions == 1000) opacity = 0.2;
-			mLines.style("opacity",opacity).style("stroke", "steelblue").attr("y2", this.windowHelper.section2.twoThird +5);
+			mLines.style("opacity",opacity).style("stroke", "steelblue").attr("y2", this.windowHelper.graphSection.S2.getDivisions(3)[0][1] +5);
 			var circle = settings.svg.select(".pop").selectAll("circle").attr("cy", function(d, i){return d.yPerSample[0];}).style("fill", "#C7D0D5").attr("fill-opacity",0.2);
-			//settings.svg.select(".sampleLines").selectAll("line").style("opacity",0.2).style("stroke", "steelblue").attr("y2", this.windowHelper.section2.twoThird +5);
+			//settings.svg.select(".sampleLines").selectAll("line").style("opacity",0.2).style("stroke", "steelblue").attr("y2", this.windowHelper.graphSection.S2.getDivisions(3)[0][1] +5);
 			var powScale = d3.scale.pow();
 			powScale.exponent(4);
 			powScale.domain([0,settings.delay*2]);
@@ -264,9 +265,9 @@ function oneMean(inputData, heading, statistic){
 			if(sampMean.length > 1){
 				this.drawnMeans = this.drawnMeans.concat(sampMean.slice(0,-1));
 				mLines = settings.svg.select(".sampleLines").selectAll("line").data(this.drawnMeans);
-				mLines.enter().append("line").attr("y1", this.windowHelper.section2.twoThird+this.windowHelper.lineHeight).attr("y2", this.windowHelper.section2.twoThird -this.windowHelper.lineHeight).attr("x1", function(d){return self.xScale(d.value)}).attr("x2", function(d){return self.xScale(d.value)}).style("stroke-width", 2).style("stroke", "green").style("opacity", 1);
+				mLines.enter().append("line").attr("y1", this.windowHelper.graphSection.S2.getDivisions(3)[0][1]+this.windowHelper.lineHeight).attr("y2", this.windowHelper.graphSection.S2.getDivisions(3)[0][1] -this.windowHelper.lineHeight).attr("x1", function(d){return self.xScale(d.value)}).attr("x2", function(d){return self.xScale(d.value)}).style("stroke-width", 2).style("stroke", "green").style("opacity", 1);
 				
-				//mLines.style("opacity",0.2).style("stroke", "steelblue").attr("y2", this.windowHelper.section2.twoThird +5);
+				//mLines.style("opacity",0.2).style("stroke", "steelblue").attr("y2", this.windowHelper.graphSection.S2.getDivisions(3)[0][1] +5);
 				this.drawnMeans.push(sampMean[sampMean.length-1]);
 			}else{
 				this.drawnMeans = this.drawnMeans.concat(sampMean);
@@ -274,8 +275,8 @@ function oneMean(inputData, heading, statistic){
 			var mLines = settings.svg.select(".sampleLines").selectAll("line").data(this.drawnMeans);
 			var opacity = 1;
 			if(settings.repititions == 1000) opacity = 0.2;
-			mLines.style("opacity",opacity).style("stroke", "steelblue").attr("y2", this.windowHelper.section2.twoThird +5);
-			var meanLines = mLines.enter().append("line").attr("y1", this.windowHelper.section2.twoThird+this.windowHelper.lineHeight).attr("y2", this.windowHelper.section2.twoThird-this.windowHelper.lineHeight).attr("x1", function(d){return self.xScale(d.value)}).attr("x2", function(d){return self.xScale(d.value)}).style("stroke-width", 2).style("stroke", "green").style("opacity", 0);
+			mLines.style("opacity",opacity).style("stroke", "steelblue").attr("y2", this.windowHelper.graphSection.S2.getDivisions(3)[0][1] +5);
+			var meanLines = mLines.enter().append("line").attr("y1", this.windowHelper.graphSection.S2.getDivisions(3)[0][1]+this.windowHelper.lineHeight).attr("y2", this.windowHelper.graphSection.S2.getDivisions(3)[0][1]-this.windowHelper.lineHeight).attr("x1", function(d){return self.xScale(d.value)}).attr("x2", function(d){return self.xScale(d.value)}).style("stroke-width", 2).style("stroke", "green").style("opacity", 0);
 
 			this.settings.circle = circle;
 			this.settings.sampMean = sampMean;
@@ -310,7 +311,7 @@ function oneMean(inputData, heading, statistic){
 
 				meanLines = meanLines.transition().duration(settings.fadeIn)
 					.transition().duration(settings.pauseDelay * 2)
-					.transition().duration(this.transitionSpeed).style("opacity",1).attr("y1", this.windowHelper.section2.twoThird+this.windowHelper.lineHeight).attr("y2", this.windowHelper.section2.twoThird -this.windowHelper.lineHeight)
+					.transition().duration(this.transitionSpeed).style("opacity",1).attr("y1", this.windowHelper.graphSection.S2.getDivisions(3)[0][1]+this.windowHelper.lineHeight).attr("y2", this.windowHelper.graphSection.S2.getDivisions(3)[0][1] -this.windowHelper.lineHeight)
 
 
 		}else{
@@ -327,7 +328,7 @@ function oneMean(inputData, heading, statistic){
 						}
 					});
 
-				meanLines = meanLines.attr("y1", this.windowHelper.section2.twoThird+this.windowHelper.lineHeight).attr("y2", this.windowHelper.section2.twoThird -this.windowHelper.lineHeight).style("stroke", "green").style("opacity",1);
+				meanLines = meanLines.attr("y1", this.windowHelper.graphSection.S2.getDivisions(3)[0][1]+this.windowHelper.lineHeight).attr("y2", this.windowHelper.graphSection.S2.getDivisions(3)[0][1] -this.windowHelper.lineHeight).style("stroke", "green").style("opacity",1);
 		}
 
 	}
@@ -343,7 +344,7 @@ function oneMean(inputData, heading, statistic){
 			var sampMean = this.preCalculatedTStat.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
 			if(this.transitionSpeed > 200){
 				var downTo = this.preCalculatedTStat[settings.indexUpTo].yPerSample[0];
-				var redLine = settings.svg.select(".meanOfSamples").append("line").attr("id","redLine").attr("y1", this.windowHelper.section2.twoThird+this.windowHelper.lineHeight).attr("y2", this.windowHelper.section2.twoThird -this.windowHelper.lineHeight).attr("x1",this.xScale(sampMean[0].value)).attr("x2",this.xScale(sampMean[0].value)).style("stroke-width", 2).style("stroke", "red").style("opacity", 0);
+				var redLine = settings.svg.select(".meanOfSamples").append("line").attr("id","redLine").attr("y1", this.windowHelper.graphSection.S2.getDivisions(3)[0][1]+this.windowHelper.lineHeight).attr("y2", this.windowHelper.graphSection.S2.getDivisions(3)[0][1] -this.windowHelper.lineHeight).attr("x1",this.xScale(sampMean[0].value)).attr("x2",this.xScale(sampMean[0].value)).style("stroke-width", 2).style("stroke", "red").style("opacity", 0);
 
 			}
 			var meanCircles = settings.svg.select(".meanOfSamples").selectAll("circle").filter(function(d, i){
@@ -354,7 +355,7 @@ function oneMean(inputData, heading, statistic){
 			this.settings.meanCircles = meanCircles;
 		}else{
 			var self = this;
-			var downTo = this.preCalculatedTStat[settings.indexUpTo].yPerSample[0] -(this.windowHelper.section3.bottom-this.preCalculatedTStat[settings.indexUpTo].yPerSample[0])*2;
+			var downTo = this.preCalculatedTStat[settings.indexUpTo].yPerSample[0] -(this.windowHelper.graphSection.S3.getDivisions(1)[0][0]-this.preCalculatedTStat[settings.indexUpTo].yPerSample[0])*2;
 			var rL = this.settings.redLine;
 			d3.select("#redLine").remove();
 			if(rL) var redLine =  settings.svg.select(".meanOfSamples").append("line").attr("id","redLine").attr("y1", rL[0]).attr("y2", rL[1]).attr("x1",rL[2]).attr("x2",rL[2]).style("stroke-width", 2).style("stroke", "red").style("opacity", 0);
@@ -371,14 +372,14 @@ function oneMean(inputData, heading, statistic){
 				redLine.style("opacity",1).transition().duration(this.transitionSpeed*2).attr("y1", downTo+this.radius/2).attr("y2", downTo-this.radius/2).each("end",function(){d3.select(this).remove()});
 			}
 			if(settings.goSlow || settings.repititions == 5){
-				meanCircles = meanCircles.transition().delay(this.transitionSpeed*2).attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){return d.yPerSample[0] -(self.windowHelper.section3.bottom-d.yPerSample[0])*2}).each('end', function(d, i){
+				meanCircles = meanCircles.transition().delay(this.transitionSpeed*2).attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){return d.yPerSample[0] -(self.windowHelper.graphSection.S3.getDivisions(1)[0][0]-d.yPerSample[0])*2}).each('end', function(d, i){
 					if(!sentFinish){
 						self.animStepper(settings);
 						sentFinsih = true;
 					}
 				});
 			}else{
-				meanCircles = meanCircles.attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){if(self.settings.repititions != 1000){return d.yPerSample[0] -(self.windowHelper.section3.bottom-d.yPerSample[0])*2}else{return d.yPerSample[0]}})
+				meanCircles = meanCircles.attr("fill-opacity",1).attr("stroke-opacity",1).style("stroke", "steelblue").attr("cy", function(d){if(self.settings.repititions != 1000){return d.yPerSample[0] -(self.windowHelper.graphSection.S3.getDivisions(1)[0][0]-d.yPerSample[0])*2}else{return d.yPerSample[0]}})
 					.transition().duration(this.transitionSpeed*2).each('end', function(d, i){
 					if(d == self.preCalculatedTStat[settings.indexUpTo]){
 						self.animStepper(settings);
@@ -410,7 +411,7 @@ function oneMean(inputData, heading, statistic){
 		this.index = 1;
 		var self = this;
 		var svg = d3.select(".svg");
-		//var meanLines = svg.select(".sampleLines").selectAll("line").attr("y1", this.windowHelper.section1.twoThird+this.windowHelper.lineHeight).attr("y2", this.windowHelper.section1.twoThird-this.windowHelper.lineHeight).attr("x1", function(d){return self.xScale(d.value)}).attr("x2", function(d){return self.xScale(d.value)}).style("stroke-width", 2).style("stroke", "green").style("opacity", 0);
+		//var meanLines = svg.select(".sampleLines").selectAll("line").attr("y1", this.windowHelper.graphSection.S1.getDivisions(3)[0][1]+this.windowHelper.lineHeight).attr("y2", this.windowHelper.graphSection.S1.getDivisions(3)[0][1]-this.windowHelper.lineHeight).attr("x1", function(d){return self.xScale(d.value)}).attr("x2", function(d){return self.xScale(d.value)}).style("stroke-width", 2).style("stroke", "green").style("opacity", 0);
 		svg.select(".sampleLines").selectAll("line").remove();
 		this.drawnMeans = [];
 		var meanCircles = svg.select(".meanOfSamples").selectAll("circle")

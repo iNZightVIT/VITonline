@@ -17,7 +17,7 @@ class WindowSection {
 		this.height = Math.abs(y2-y1);
 	}
 
-	getDivisions(x, direction){
+	getDivisions(x, direction = 'height'){
 		if(direction = 'height'){
 			var sectionHeight = this.height/x;
 			var divisions = [];
@@ -25,6 +25,18 @@ class WindowSection {
 			for(var i = 1; i <= x; i++){
 				sum += sectionHeight;
 				divisions.push(sum);
+			}
+			return [divisions, sectionHeight];
+		}
+	}
+	getDivisionPlacement(x, direction = 'height'){
+		if(direction = 'height'){
+			var sectionHeight = this.height/x;
+			var divisions = [];
+			var sum = Math.min(this.y1, this.y2);
+			for(var i = 1; i <= x; i++){
+				sum += sectionHeight;
+				divisions.push(this.y + sum);
 			}
 			return [divisions, sectionHeight];
 		}
