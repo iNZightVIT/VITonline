@@ -17,7 +17,8 @@ function twoMeans(inputData, headingGroup, headingContinuous, statistic){
 	this.groups = [];
 	this.groupStats = {};
 	this.sampleSize = 40;
-	this.windowHelper = setUpWindow(this.radius);
+	// this.windowHelper = setUpWindow(this.radius);
+	this.windowHelper = setUpWindow3({'left':5, 'right':5, 'top':10, 'bottom':5}, false);
 	this.populations = {};
 	this.statistic = statistic;
 		this.popSetup = false;
@@ -31,7 +32,7 @@ function twoMeans(inputData, headingGroup, headingContinuous, statistic){
 	}
 	this.setUpPopulation = function(){
 		this.sampleSize = 40;
-		this.thirds = this.windowHelper.section2.height/4;
+		this.third = this.windowHelper.graphSection.S2.height/4;
 		var max = null;
 		var min = null;
 		for(var i = 0; i < inputData.length;i++){
@@ -52,13 +53,13 @@ function twoMeans(inputData, headingGroup, headingContinuous, statistic){
 			this.populations[thisItem.group].push(thisItem)
 
 		}
-		this.xScale = d3.scale.linear().range([this.radius,this.windowHelper.innerWidth]);
+		this.xScale = d3.scale.linear().range([this.windowHelper.graphSection.x,this.windowHelper.graphSection.width]);
 		this.xScale.domain([min,max]);
 		var s = [];
 		for(var j =0; j <this.groups.length;j++){
-			var top = (this.windowHelper.section1.top +(this.windowHelper.section1.height/this.groups.length) * j);
-			var bottom = (this.windowHelper.section1.top +(this.windowHelper.section1.height/this.groups.length) * (j + 1));
-			heapYValues3(this.populations[this.groups[j]], this.xScale, this.radius, 0, top,bottom);
+			var top = (this.windowHelper.graphSection.S1.y +(this.windowHelper.graphSection.S1.height/this.groups.length) * j);
+			var bottom = (this.windowHelper.graphSection.S1.y +(this.windowHelper.graphSection.S1.height/this.groups.length) * (j + 1));
+			heapYValues3(this.populations[this.groups[j]], this.xScale, this.windowHelper.graphSection.x, 0, top,bottom);
 			var stat = getStatistic(this.statistic,this.populations[this.groups[j]]);
 			this.groupStats[this.groups[j]] = stat;
 			s.push(stat);
@@ -82,18 +83,18 @@ function twoMeans(inputData, headingGroup, headingContinuous, statistic){
 		}
 		if(this.groups.length == 2){
 			var range = this.makeSample(this.populations, this.numSamples, sSize,this.statistic);
-			this.xScale2 = d3.scale.linear().range([this.radius,this.windowHelper.innerWidth]);
+			this.xScale2 = d3.scale.linear().range([this.windowHelper.graphSection.x,this.windowHelper.graphSection.width]);
 			var range2 = this.xScale.domain();
 			var halfDiff = (range2[1]-range2[0])/2;
 			this.xScale2.domain([0-halfDiff, 0+halfDiff]);
 			for(var j =0;j<2;j++){
-				var top = (this.windowHelper.section2.top +(this.windowHelper.section2.height/2) * j);
-				var bottom = (this.windowHelper.section2.top +(this.windowHelper.section2.height/2) * (j + 1) - this.thirds);
+				var top = (this.windowHelper.graphSection.S2.y +(this.windowHelper.graphSection.S2.height/2) * j);
+				var bottom = (this.windowHelper.graphSection.S2.y +(this.windowHelper.graphSection.S2.height/2) * (j + 1) - this.third);
 				for(var k = 0;k<this.numSamples;k++){
-					heapYValues3(this.samples[j][k], this.xScale, this.radius,k+1,top,bottom);
+					heapYValues3(this.samples[j][k], this.xScale, this.windowHelper.graphSection.x,k+1,top,bottom);
 				}
 			}
-			heapYValues3(this.preCalculatedTStat,this.xScale2,this.radius,0,this.windowHelper.section3.top,this.windowHelper.section3.bottom);
+			heapYValues3(this.preCalculatedTStat,this.xScale2,this.windowHelper.graphSection.x,0,this.windowHelper.graphSection.S3.y,this.windowHelper.graphSection.S3.getDivisions(1)[0][0]);
 		}else{
 			mainControl.notImplemented();
 		}
@@ -147,13 +148,13 @@ this.drawPop = function(){
 	var svg = d3.select(".svg");
 	var xAxis = d3.svg.axis();
 	xAxis.scale(this.xScale)
-	svg.append("g").attr("class","axis").attr("transform", "translate(0," + (this.windowHelper.section1.bottom + this.radius) + ")").call(xAxis);
-	svg.append("g").attr("class","axis").attr("transform", "translate(0," + (this.windowHelper.section2.bottom + this.radius) + ")").call(xAxis);
-		svg.append("text").attr("class","sectionLabel").attr("y",this.windowHelper.section1.top + 15).text("Population").style("opacity", 1).style("font-size",15).style("fill","black");
-		svg.append("text").attr("class","sectionLabel").attr("y",this.windowHelper.section2.top + 15*2.5).text("Sample").style("opacity", 1).style("font-size",15).style("fill","black");
-		svg.append("text").attr("class","sectionLabel").attr("y",this.windowHelper.section3.top + 15*2.5).text("Sampling Distribution").style("opacity", 1).style("font-size",15).style("fill","black");
+	svg.append("g").attr("class","axis").attr("transform", "translate(0," + (this.windowHelper.graphSection.S1.getDivisions(1)[0][0] + this.radius) + ")").call(xAxis);
+	svg.append("g").attr("class","axis").attr("transform", "translate(0," + (this.windowHelper.graphSection.S2.getDivisions(1)[0][0] + this.radius) + ")").call(xAxis);
+		svg.append("text").attr("class","sectionLabel").attr("y",this.windowHelper.graphSection.S1.y + 15).text("Population").style("opacity", 1).style("font-size",15).style("fill","black");
+		svg.append("text").attr("class","sectionLabel").attr("y",this.windowHelper.graphSection.S2.y + 15*2.5).text("Sample").style("opacity", 1).style("font-size",15).style("fill","black");
+		svg.append("text").attr("class","sectionLabel").attr("y",this.windowHelper.graphSection.S3.y + 15*2.5).text("Sampling Distribution").style("opacity", 1).style("font-size",15).style("fill","black");
 	for(var i = 0;i<this.groups.length;i++){
-		var pos = (this.windowHelper.section1.top +(this.windowHelper.section1.height/this.groups.length) * (i + 1));
+		var pos = (this.windowHelper.graphSection.S1.y +(this.windowHelper.graphSection.S1.height/this.groups.length) * (i + 1));
 		svg.append("svg").attr("id","pop"+i);
 		svg.select("#pop"+i).selectAll("circle").data(this.populations[this.groups[i]]).enter().append("circle")
 		    .attr("cx", function(d, i) { 
@@ -166,7 +167,7 @@ this.drawPop = function(){
 		    .attr("stroke","#556270")
 		    .attr("stroke-opacity",1);
 		svg.select("#pop"+i).append("line").attr("x1", this.xScale(this.groupStats[this.groups[i]])).attr("x2", this.xScale(this.groupStats[this.groups[i]])).attr("y1", pos+20).attr("y2", pos-20).style("stroke-width", 2).style("stroke", "black");
-		svg.select("#pop"+i).append("text").attr("y", pos).attr("x", this.windowHelper.innerWidth*0.9).text(this.groups[i]).attr("fill","red").style("font-size","0.75em").attr("text-anchor","left").style("opacity",1).style("font-size",this.windowHelper.section1.height / 10);
+		svg.select("#pop"+i).append("text").attr("y", pos).attr("x", this.windowHelper.graphSection.width*0.9).text(this.groups[i]).attr("fill","red").style("font-size","0.75em").attr("text-anchor","left").style("opacity",1).style("font-size",this.windowHelper.graphSection.S1.height / 10);
 	} 
 }
 
@@ -177,24 +178,24 @@ this.drawSample = function(){
 	if(this.groups.length > 2) return;
 	var xAxis2 = d3.svg.axis();
 	xAxis2.scale(this.xScale2);
-	svg.append("g").attr("class","axis").attr("transform", "translate(0," + (this.windowHelper.section3.bottom + this.radius) + ")").call(xAxis2);
+	svg.append("g").attr("class","axis").attr("transform", "translate(0," + (this.windowHelper.graphSection.S3.getDivisions(1)[0][0] + this.radius) + ")").call(xAxis2);
 	d3.selectAll(".axis text").filter(function(d){
 		return d == 0;
 	}).style("font-size",20).style("font-weight",700);
-	var middle = this.windowHelper.section1.top +(this.windowHelper.section1.height/4 * 3);
+	var middle = this.windowHelper.graphSection.S1.y +(this.windowHelper.graphSection.S1.height/4 * 3);
 	//svg.append("line").attr("x1", this.xScale(this.preCalculatedTStat[0].s0)).attr("x2", this.xScale(this.preCalculatedTStat[0].s1)).attr("y1", middle).attr("y2", middle).style("stroke-width", 2).style("stroke", "red");
 	drawArrow(this.xScale(this.preCalculatedTStat[0].s1), this.xScale(this.preCalculatedTStat[0].s0), middle, svg, "popDiff", 1, "blue");
 	svg.append("text").attr("x", this.xScale(this.preCalculatedTStat[0].s1)).attr("y", middle).text(Math.round((this.preCalculatedTStat[0].s1 - this.preCalculatedTStat[0].s0)*100)/100).style("stroke","blue");
-	svg.append("line").attr("x1", this.xScale2(this.preCalculatedTStat[0].value)).attr("x2", this.xScale2(this.preCalculatedTStat[0].value)).attr("y1", this.windowHelper.section3.bottom + this.radius*8).attr("y2", this.windowHelper.section3.bottom + this.radius).style("stroke-width", 2).style("stroke", "blue");
-	//drawArrow(this.xScale2(this.preCalculatedTStat[0].value), this.xScale2(0), this.windowHelper.section3.bottom + this.radius, svg, "popDiffBot", 1, "blue");
-	svg.append("text").attr("x", this.xScale2(this.preCalculatedTStat[0].value)).attr("y",this.windowHelper.section3.bottom + this.radius*8).text(Math.round((this.preCalculatedTStat[0].s1 - this.preCalculatedTStat[0].s0)*100)/100).style("stroke","blue");
+	svg.append("line").attr("x1", this.xScale2(this.preCalculatedTStat[0].value)).attr("x2", this.xScale2(this.preCalculatedTStat[0].value)).attr("y1", this.windowHelper.graphSection.S3.getDivisions(1)[0][0] + this.radius*8).attr("y2", this.windowHelper.graphSection.S3.getDivisions(1)[0][0] + this.radius).style("stroke-width", 2).style("stroke", "blue");
+	//drawArrow(this.xScale2(this.preCalculatedTStat[0].value), this.xScale2(0), this.windowHelper.graphSection.S3.getDivisions(1)[0][0] + this.radius, svg, "popDiffBot", 1, "blue");
+	svg.append("text").attr("x", this.xScale2(this.preCalculatedTStat[0].value)).attr("y",this.windowHelper.graphSection.S3.getDivisions(1)[0][0] + this.radius*8).text(Math.round((this.preCalculatedTStat[0].s1 - this.preCalculatedTStat[0].s0)*100)/100).style("stroke","blue");
 
-	var middle = this.windowHelper.section2.top +(this.windowHelper.section2.height/2) + this.radius * 2;
+	var middle = this.windowHelper.graphSection.S2.y +(this.windowHelper.graphSection.S2.height/2) + this.radius * 2;
 	svg.append("svg").attr("class","sampleDiffs");
 	svg.append("svg").attr("class","sampleLines2");
 	//var samplesLines = svg.select(".sampleLines").selectAll("line").data(this.preCalculatedTStat).enter();
 	//	samplesLines.append("line").attr("x1", function(d){return self.xScale(d.s0);}).attr("x2", function(d){return self.xScale(d.s0);}).attr("y1", middle - self.radius * 3).attr("y2", middle + this.radius * 1).style("stroke-width", 2).style("stroke", "black").style("opacity",0);
-	//svg.select(".sampleLines2").selectAll("line").data(this.preCalculatedTStat).enter().append("line").attr("x1", function(d){return self.xScale(d.s1);}).attr("x2", function(d){return self.xScale(d.s1);}).attr("y1", this.windowHelper.section2.bottom + this.radius * 2).attr("y2", this.windowHelper.section2.bottom - this.radius * 2).style("stroke-width", 2).style("stroke", "black").style("opacity",0);
+	//svg.select(".sampleLines2").selectAll("line").data(this.preCalculatedTStat).enter().append("line").attr("x1", function(d){return self.xScale(d.s1);}).attr("x2", function(d){return self.xScale(d.s1);}).attr("y1", this.windowHelper.graphSection.S2.getDivisions(1)[0][0] + this.radius * 2).attr("y2", this.windowHelper.graphSection.S2.getDivisions(1)[0][0] - this.radius * 2).style("stroke-width", 2).style("stroke", "black").style("opacity",0);
 
 	/*var meanCircles = svg.select(".sampleDiffs").selectAll("circle").data(this.preCalculatedTStat)
 		.enter().append("line")
@@ -212,7 +213,7 @@ this.drawSample = function(){
 	    .attr("cx", function(d, i) { 
 	    	return d.xPerSample[0]; })
 	    .attr("cy", function(d) {
-	    	return d.yPerSample[0] - (self.windowHelper.section3.bottom- self.windowHelper.section3.bottom);
+	    	return d.yPerSample[0] - (self.windowHelper.graphSection.S3.getDivisions(1)[0][0]- self.windowHelper.graphSection.S3.getDivisions(1)[0][0]);
 	    })
 	    .attr("r", function(d) { return self.radius; })
 	    .attr("fill-opacity", 0)
@@ -382,22 +383,22 @@ this.drawSample = function(){
 		for(var k = 0;k<sampMean.length-1;k++){
 			this.drawnMeans.push(sampMean[k]);
 		}
-			var middle = this.windowHelper.section2.top +(this.windowHelper.section2.height/2) + this.radius * 2;
+			var middle = this.windowHelper.graphSection.S2.y +(this.windowHelper.graphSection.S2.height/2) + this.radius * 2;
 			if(this.drawnMeans.length > 0){
 			var mLines = settings.svg.select(".sampleLines").selectAll("g").data(this.drawnMeans);
 			var meanLineG = mLines.enter().append("g");
-			meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.s0);}).attr("x2", function(d){return self.xScale(d.s0);}).attr("y1", middle + self.radius * 10 - this.thirds).attr("y2", middle - this.radius * 10 -this.thirds).style("stroke-width", 3).style("stroke", "black").style("opacity",0);
-			meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.s1);}).attr("x2", function(d){return self.xScale(d.s1);}).attr("y1", this.windowHelper.section2.bottom + this.radius * 10 - this.thirds).attr("y2", this.windowHelper.section2.bottom - this.radius * 10 - this.thirds).style("stroke-width", 3).style("stroke", "black").style("opacity",0);
+			meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.s0);}).attr("x2", function(d){return self.xScale(d.s0);}).attr("y1", middle + self.radius * 10 - this.third).attr("y2", middle - this.radius * 10 -this.third).style("stroke-width", 3).style("stroke", "black").style("opacity",0);
+			meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.s1);}).attr("x2", function(d){return self.xScale(d.s1);}).attr("y1", this.windowHelper.graphSection.S2.getDivisions(1)[0][0] + this.radius * 10 - this.third).attr("y2", this.windowHelper.graphSection.S2.getDivisions(1)[0][0] - this.radius * 10 - this.third).style("stroke-width", 3).style("stroke", "black").style("opacity",0);
 		
-			d3.selectAll(".memLine").style("opacity",0.2).style("stroke","steelblue").attr("y2",function(){ return d3.select(this).attr("y1")-self.thirds/2});
+			d3.selectAll(".memLine").style("opacity",0.2).style("stroke","steelblue").attr("y2",function(){ return d3.select(this).attr("y1")-self.getDivisions(3)[0][0]/2});
 			d3.selectAll("#diffLine").remove();
 		}
 			this.drawnMeans.push(sampMean[sampMean.length-1]);
 		mLines = settings.svg.select(".sampleLines").selectAll("g").data(this.drawnMeans);
 		meanLineG = mLines.enter().append("g");
 		meanLineG.append("line").attr("class","memLine").attr("x1", function(d){
-			return self.xScale(d.s0);}).attr("x2", function(d){return self.xScale(d.s0);}).attr("y1", middle + self.radius * 10 - this.thirds).attr("y2", middle - this.radius * 10 -this.thirds).style("stroke-width", 3).style("stroke", "black").style("opacity",0);
-		meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.s1);}).attr("x2", function(d){return self.xScale(d.s1);}).attr("y1", this.windowHelper.section2.bottom + this.radius * 10 - this.thirds).attr("y2", this.windowHelper.section2.bottom - this.radius * 10 - this.thirds).style("stroke-width", 3).style("stroke", "black").style("opacity",0);
+			return self.xScale(d.s0);}).attr("x2", function(d){return self.xScale(d.s0);}).attr("y1", middle + self.radius * 10 - this.third).attr("y2", middle - this.radius * 10 -this.third).style("stroke-width", 3).style("stroke", "black").style("opacity",0);
+		meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.s1);}).attr("x2", function(d){return self.xScale(d.s1);}).attr("y1", this.windowHelper.graphSection.S2.getDivisions(1)[0][0] + this.radius * 10 - this.third).attr("y2", this.windowHelper.graphSection.S2.getDivisions(1)[0][0] - this.radius * 10 - this.third).style("stroke-width", 3).style("stroke", "black").style("opacity",0);
 		drawArrow(function(d){return self.xScale(d.s1);},function(d){return self.xScale(d.s0);},middle, meanLineG, "diffLine", 0, "red")
 
 			this.settings.circle = circle;
@@ -437,7 +438,7 @@ this.drawSample = function(){
 
 				/*meanLines = meanLines.transition().duration(settings.fadeIn).style("opacity",1)
 					.transition().duration(settings.pauseDelay)
-					.transition().duration(this.transitionSpeed).attr("y1", this.windowHelper.section2.twoThird+this.windowHelper.lineHeight).attr("y2", this.windowHelper.section2.twoThird -this.windowHelper.lineHeight)
+					.transition().duration(this.transitionSpeed).attr("y1", this.windowHelper.graphSection.S2.twoThird+this.windowHelper.lineHeight).attr("y2", this.windowHelper.graphSection.S2.twoThird -this.windowHelper.lineHeight)
 				*/
 
 		}else{
@@ -468,7 +469,7 @@ this.drawSample = function(){
 		if(!this.settings.restarting){
 			var sentFinish = false;
 			var self = this;
-				var middle = this.windowHelper.section2.top +(this.windowHelper.section2.height/2) + this.radius * 2;
+				var middle = this.windowHelper.graphSection.S2.y +(this.windowHelper.graphSection.S2.height/2) + this.radius * 2;
 			var sampMean = this.preCalculatedTStat.slice(settings.indexUpTo+1, settings.indexUpTo+settings.jumps+1);
 			if(this.transitionSpeed > 200){
 				var downTo = this.preCalculatedTStat[settings.indexUpTo+1].yPerSample[0];
@@ -490,9 +491,9 @@ this.drawSample = function(){
 				}, function(d){
 					return self.xScale(d.s0);
 				}, middle, redLine, "redlineMain", 1, "red");
-		arrow[1].transition().duration(2000).attr("y1",this.windowHelper.section3.bottom).attr("y2",this.windowHelper.section3.bottom + headSize*arrowHead/2).attr("x1",this.xScale2(toScaled)).attr("x2", this.xScale2(toScaled) - arrowHead*headSize);
-		arrow[2].transition().duration(2000).attr("y1",this.windowHelper.section3.bottom).attr("y2",this.windowHelper.section3.bottom -headSize*arrowHead/2).attr("x1",this.xScale2(toScaled)).attr("x2", this.xScale2(toScaled) - arrowHead*headSize);
-		arrow[0].transition().duration(2000).attr("x1",this.xScale2(0)).attr("x2",this.xScale2(toScaled)).attr("y1",this.windowHelper.section3.bottom).attr("y2",this.windowHelper.section3.bottom);
+		arrow[1].transition().duration(2000).attr("y1",this.windowHelper.graphSection.S3.getDivisions(1)[0][0]).attr("y2",this.windowHelper.graphSection.S3.getDivisions(1)[0][0] + headSize*arrowHead/2).attr("x1",this.xScale2(toScaled)).attr("x2", this.xScale2(toScaled) - arrowHead*headSize);
+		arrow[2].transition().duration(2000).attr("y1",this.windowHelper.graphSection.S3.getDivisions(1)[0][0]).attr("y2",this.windowHelper.graphSection.S3.getDivisions(1)[0][0] -headSize*arrowHead/2).attr("x1",this.xScale2(toScaled)).attr("x2", this.xScale2(toScaled) - arrowHead*headSize);
+		arrow[0].transition().duration(2000).attr("x1",this.xScale2(0)).attr("x2",this.xScale2(toScaled)).attr("y1",this.windowHelper.graphSection.S3.getDivisions(1)[0][0]).attr("y2",this.windowHelper.graphSection.S3.getDivisions(1)[0][0]);
 
 			}
 
@@ -631,8 +632,8 @@ this.drawSample = function(){
 					}).attr("x2",function(d){
 						var goTo = self.xScale2(d.value);
 						return goTo+d.value/2;
-					}).attr("y1", this.windowHelper.section3.bottom).attr("y2", this.windowHelper.section3.bottom).each('end', function(d){
-						var middle = self.windowHelper.section2.top +(self.windowHelper.section2.height/2) + self.radius * 2;
+					}).attr("y1", this.windowHelper.graphSection.S3.getDivisions(1)[0][0]).attr("y2", this.windowHelper.graphSection.S3.getDivisions(1)[0][0]).each('end', function(d){
+						var middle = self.windowHelper.graphSection.S2.y +(self.windowHelper.graphSection.S2.height/2) + self.radius * 2;
 						d3.select(this).attr("x1", function(d){
 						var r = self.xScale(d.s0);
 						return r;
