@@ -104,7 +104,9 @@ class randVar_oneCat extends visBase {
 		var self = this;
 		placeInto.append("text").text(this.headingContinuous).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width/2).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
 		var popTextG = placeInto.selectAll("g").data(this.allPop).enter().append("g");
-		popTextG.append("text").text(function(d){return d.value}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width/2).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").attr("text-anchor","middle");
+		popTextG.append("text").text(function(d){return [...self.valueCategories][d.value]})
+		.attr('fill', (d) => colorByIndex[d.value])
+		.attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width/2).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").attr("text-anchor","middle");
 		placeInto.append("g").attr("id","redTContainer");
 		placeInto.append("text").text("Random Groups").attr("x",(self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width/2)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("display","inline-block").attr("text-anchor","middle");
 
@@ -187,7 +189,9 @@ class randVar_oneCat extends visBase {
             popText = d3.select("#sampleReRandomised").selectAll("text").data(settings.sample);
             var newText = popText.enter().append("text").text(function(d){
                 return d.group;
-            }).attr("x",self.windowHelper.sampleSection.S2.getMiddleWidth()).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill",function(d) {return self.colorIndex[2 + self.sampleGroups.indexOf(d.group)]}).style("opacity",1).attr("text-anchor", "middle");
+			})
+			// .attr('fill', (d) => colorByIndex[d.group])
+			.attr("x",self.windowHelper.sampleSection.S2.getMiddleWidth()).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill",function(d) {return self.colorIndex[2 + self.sampleGroups.indexOf(d.group)]}).style("opacity",1).attr("text-anchor", "middle");
         
         }else{
 			var circles = d3.selectAll("#samp circle");
