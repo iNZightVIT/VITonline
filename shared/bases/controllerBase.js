@@ -172,7 +172,7 @@ controllerBase.prototype.varSelected = function(e, fromURL){
 	var selOptions = new Set(e.target.selectedOptions);
 	for (var index = 0; index < e.target.selectedOptions.length; index++){
 		console.log(e.target.selectedOptions[index])
-		if(e.target.selectedOptions[index] == "placeholder"){
+		if(e.target.selectedOptions[index].value == "placeholder"){
 			continue
 		}
 		this.variables_selected.add(e.target.selectedOptions[index])
