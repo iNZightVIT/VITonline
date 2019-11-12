@@ -67,7 +67,7 @@
 			meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.stats[0]);}).attr("x2", function(d){return self.xScale(d.stats[0]);}).attr("y1", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][0] + this.windowHelper.lineHeight*3).attr("y2", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][0] - this.windowHelper.lineHeight).style("stroke-width", 3).style("stroke", "black").style("opacity",1);
 			meanLineG.append("line").attr("class","memLine").attr("x1", function(d){return self.xScale(d.stats[1]);}).attr("x2", function(d){return self.xScale(d.stats[1]);}).attr("y1", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][2] + this.windowHelper.lineHeight*3).attr("y2", this.windowHelper.graphSection.S2.displayArea.getDivisions(4,'height')[0][2] - this.windowHelper.lineHeight).style("stroke-width", 3).style("stroke", "black").style("opacity",1);
 		
-			d3.selectAll(".memLine").style("opacity",0.2).style("stroke","darkgrey").attr("y2",function(){ return d3.select(this).attr("y1")-self.windowHelper.lineHeight*2});;
+			d3.selectAll(".memLine").style("opacity",0.2).style("stroke","darkgrey").attr("y2", function(){ return d3.select(this).attr("y1")-self.windowHelper.lineHeight*2});
 			d3.selectAll("#diffLine").remove();
 		}
 		this.drawnMeans.push(sampMean[0]);
@@ -94,7 +94,7 @@
 				.style("stroke-width", 3)
 				.style("stroke", "black").style("opacity",1);
 		
-			d3.selectAll(".memLine").style("opacity",0.2).style("stroke","darkgrey").attr("y2", divSections[0] - divHeight*(1/4) - this.windowHelper.radius*2);;
+			d3.selectAll(".memLine").style("opacity",0.2).style("stroke","darkgrey").attr("y2", function(){ return d3.select(this).attr("y1")-self.windowHelper.lineHeight*2});
 			d3.selectAll("#diffLine").remove();
 		}
 		this.drawnMeans.push(sampMean[0]);

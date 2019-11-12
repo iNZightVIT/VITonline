@@ -10,7 +10,7 @@ class samp_twoCat extends visBase {
         this.includeSampleSection = false;
         this.sampleSize = 40;
 		// text labels for each section.
-		this.sectionLabels = ['Data','Re-Sample','Bootstrap Distribution'];
+		this.sectionLabels = ['Data','Sample','Sampling Distribution'];
 		//this.animationList = [this.populationDropDown,this.buildList, this.fadeIn, this.endNoDist, this.distDrop, this.endDist ];
         this.animationList = [this.populationDropDown.bind(this),
                         this.buildList.bind(this),
