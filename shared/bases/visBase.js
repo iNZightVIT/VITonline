@@ -670,10 +670,19 @@ class visBase {
 	drawSampleAxis(placeInto){
 		var xAxis2 = d3.svg.axis();
 		xAxis2.scale(this.sampleStatScale).tickSize(2);
-		placeInto.append("g").attr("class","axis").attr("transform", "translate(0," + (this.windowHelper.graphSection.S3.axisArea.y) + ")").call(xAxis2);	
+		placeInto.append("g").attr("class","axis").attr("id", "window_focus_axis").attr("transform", "translate(0," + (this.windowHelper.graphSection.S3.axisArea.y) + ")").call(xAxis2);	
 
 		// we want 0 to be bolded
 		d3.selectAll(".axis text").filter(function(d){
+			return d == 0;
+		}).style("font-weight",700);
+
+		var xAxis3 = d3.svg.axis();
+		xAxis3.scale(this.originalStatScale).tickSize(2);
+		placeInto.append("g").attr("class","axis").attr("id", "dist_focus_axis").attr("transform", "translate(0," + (this.windowHelper.graphSection.S3.axisArea.y) + ")").attr("opacity", 0).call(xAxis3);	
+
+		// we want 0 to be bolded
+		d3.selectAll("#dist_focus_axis text").filter(function(d){
 			return d == 0;
 		}).style("font-weight",700);
 	}
@@ -965,24 +974,79 @@ class visBase {
 
 	distFocus(){
 		let middle_stat = this.smallestStat + (this.largestStat - this.smallestStat) / 2;
-		let main_axis = document.querySelector('#samples .axis');
-		let main_axis_transform = main_axis.getAttribute("transform");
+		let dist_focus_axis = document.querySelector('#dist_focus_axis');
+		let window_focus_axis = document.querySelector('#window_focus_axis');
+		let main_axis_transform = dist_focus_axis.getAttribute("transform");
 		let main_axis_x = parseFloat(main_axis_transform.split('(')[1].split(',')[0])
 		let main_axis_y = parseFloat(main_axis_transform.split('(')[1].split(',')[1])
 		let dist_container = document.querySelector('#samples #sampleDisplay');
 		let dist_items = document.querySelectorAll('#samples #sampleDisplay circle');
 		let x_shift = -100;
-		main_axis.setAttribute("transform", `translate(${main_axis_x + x_shift}, ${main_axis_y})`);
+		// dist_focus_axis.setAttribute("transform", `translate(${main_axis_x + x_shift}, ${main_axis_y})`);
+		dist_focus_axis.setAttribute("opacity", 1);
+		window_focus_axis.setAttribute("opacity", 0);
 		// dist_container.setAttribute("transform", `translate(${x_shift}, 0)`);
 		for(let dist_item of dist_items){
 			console.log(this.originalStatScale.range);
 			console.log(this.originalStatScale.domain);
 			dist_item.setAttribute('cx', this.originalStatScale(parseFloat(dist_item.dataset.value)));
 		}
+
+		let dynamic_circle = document.querySelectorAll('#dynamic circle');
+		let dynamic_text = document.querySelectorAll('#dynamic text');
+		let dynamic_line = document.querySelectorAll('#dynamic line');
+
+		for(let di of [...dynamic_circle, ...dynamic_line, ...dynamic_text]){
+			di.setAttribute('data-distopacity', di.getAttribute('opacity'));
+			di.setAttribute('opacity', 0.1);
+		}
+
+		let population_circle = document.querySelectorAll('#population circle');
+		let population_text = document.querySelectorAll('#population text');
+		let population_line = document.querySelectorAll('#population line');
+
+		for(let di of [...population_circle, ...population_line, ...population_text]){
+			di.setAttribute('data-distopacity', di.getAttribute('opacity'));
+			di.setAttribute('opacity', 0.1);
+		}
 	}
 
 	distFocusOff(){
+		let middle_stat = this.smallestStat + (this.largestStat - this.smallestStat) / 2;
+		let dist_focus_axis = document.querySelector('#dist_focus_axis');
+		let window_focus_axis = document.querySelector('#window_focus_axis');
+		let main_axis_transform = dist_focus_axis.getAttribute("transform");
+		let main_axis_x = parseFloat(main_axis_transform.split('(')[1].split(',')[0])
+		let main_axis_y = parseFloat(main_axis_transform.split('(')[1].split(',')[1])
+		let dist_container = document.querySelector('#samples #sampleDisplay');
+		let dist_items = document.querySelectorAll('#samples #sampleDisplay circle');
+		let x_shift = -100;
+		// dist_focus_axis.setAttribute("transform", `translate(${main_axis_x + x_shift}, ${main_axis_y})`);
+		dist_focus_axis.setAttribute("opacity", 0);
+		window_focus_axis.setAttribute("opacity", 1);
+		// dist_container.setAttribute("transform", `translate(${x_shift}, 0)`);
+		for(let dist_item of dist_items){
+			console.log(this.originalStatScale.range);
+			console.log(this.originalStatScale.domain);
+			dist_item.setAttribute('cx', this.sampleStatScale(parseFloat(dist_item.dataset.value)));
+		}
+		let dynamic_circle = document.querySelectorAll('#dynamic circle');
+		let dynamic_text = document.querySelectorAll('#dynamic text');
+		let dynamic_line = document.querySelectorAll('#dynamic line');
 
+		for(let di of [...dynamic_circle, ...dynamic_line, ...dynamic_text]){
+			di.setAttribute('opacity', di.getAttribute('data-distopacity'));
+
+		}
+
+		let population_circle = document.querySelectorAll('#population circle');
+		let population_text = document.querySelectorAll('#population text');
+		let population_line = document.querySelectorAll('#population line');
+
+		for(let di of [...population_circle, ...population_line, ...population_text]){
+			di.setAttribute('opacity', di.getAttribute('data-distopacity'));
+
+		}
 	}
 
 }
