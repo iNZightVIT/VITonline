@@ -278,17 +278,17 @@ class visBase {
 		}
 	}
 
-	getStatisticEachSample(i, g, sample){
+	getStatisticEachSample(i, g, sample, prop_length){
 		var populationSize = this.inputData.length;
 		if(sample == undefined){
 			sample = this.samples[i];
 		}
-		return getStatistic(this.statistic, sample[g], populationSize);
+		return getStatistic(this.statistic, sample[g], prop_length ? prop_length : populationSize);
 	}
 	setSampleStatistic(diff, categoryStatistics){
 		return (this.sampleStatType == 'diff' || this.sampleStatType == "Deviation") ? diff : categoryStatistics[0];
 	}
-	handleSample(i, sample){
+	handleSample(i, sample, prop_length = null){
 		var categoryStatistics = [];
 		if(sample == undefined){
 			sample = this.samples[i];
@@ -296,7 +296,7 @@ class visBase {
 		for(var g = 0; g < sample.length; g++){
 
 			// statistic for sample i, catagory g;
-			var stat = this.getStatisticEachSample(i, g, sample)
+			var stat = this.getStatisticEachSample(i, g, sample, prop_length)
 			categoryStatistics.push(stat);
 
 

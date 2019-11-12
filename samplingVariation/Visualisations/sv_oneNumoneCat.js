@@ -10,6 +10,7 @@ class sv_oneNumOneCat extends visBase {
 		this.calcLargeCI = false;
 		//this.animationList = [this.populationDropDown,this.buildList, this.fadeIn, this.endNoDist, this.distDrop, this.endDist ];
 		this.animationList = [this.populationDropDown.bind(this),
+						this.buildList.bind(this), 
 						this.fadeIn.bind(this), 
 						this.endNoDist.bind(this), 
 						this.distDrop.bind(this),

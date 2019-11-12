@@ -395,7 +395,7 @@
 		});
 	}
 
-	sharedProportionBarFadeInNoExit = function(settings, currentAnimation){
+	sharedProportionBarFadeInNoExitNoStats = function(settings, currentAnimation){
 		var self = this;
 		if(!this.settings.restarting){
 			var allInSample = settings.sample.slice();
@@ -433,7 +433,16 @@
 
 			this.drawProportionBars(catSVG, divHeight, pos, self.xScale, focusGroup, otherGroup, "", 0, [...this.valueCategories]);
 		}
-
+	}
+	sharedProportionBarFadeInNoExitNoStatsHidden = function(settings, currentAnimation){
+		sharedProportionBarFadeInNoExitNoStats.apply(this, [settings, currentAnimation]);
+		d3.selectAll("#samp circle").style("opacity", 0);
+		d3.selectAll("#samp rect").style("opacity", 0);
+		d3.selectAll("#samp text").style("opacity", 0);
+	}
+	sharedProportionBarFadeInNoExit = function(settings, currentAnimation){
+		sharedProportionBarFadeInNoExitNoStats.apply(this, [settings, currentAnimation]);
+		var sampMean = this.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
 		showSingleStat.apply(this, [sampMean]);
 	}
 
