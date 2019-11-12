@@ -44,4 +44,6 @@ view.prototype.makeButtons = function(){
 		// 	.style("height","15%");
 		tab2.select("#tab2Bot").append("input").attr("type","button").attr("value","Fade On/Off").attr("class","bluebutton").classed("fadeButton",true).attr("id","fadeButton").attr("disabled",null).attr("onClick","mainControl.fadeToggle()").text("Fade On/Off")
 			.style("height","15%");
+		tab2.select("#tab2Bot").append("input").attr("type","button").attr("value","Distribution Focus").attr("class","bluebutton").classed("distFocus",true).attr("id","distFocus").attr("disabled",null).attr("onClick","mainControl.distFocusToggle()").text("Distribution Focus")
+			.style("height","15%");
 }

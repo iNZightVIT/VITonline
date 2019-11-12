@@ -385,4 +385,12 @@ viewBase.prototype.fadeOn = function(){
 viewBase.prototype.fadeOff = function(){
 		d3.select("#fadeBox").remove();
 	}
+viewBase.prototype.distFocus = function(){
+		d3.select("#distFocus").text("Window Focus");
+		d3.select("#distFocus").attr("value", "Window Focus");
+	}
+viewBase.prototype.distFocusOff = function(){
+		d3.select("#distFocus").text("Distribution Focus");
+		d3.select("#distFocus").attr("value", "Distribution Focus");
+	}
 

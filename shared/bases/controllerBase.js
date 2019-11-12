@@ -10,6 +10,7 @@ var controllerBase = function(){
 	this.paused = false;
 	this.going = false;
 	this.fadeOn = false;
+	this.distFocus = false;
 
 	this.variables_selected = new Set();
 }
@@ -386,5 +387,16 @@ controllerBase.prototype.fadeToggle = function(){
 		}else{
 			this.view.fadeOff();
 			this.fadeOn = false;
+		}
+	}
+controllerBase.prototype.distFocusToggle = function(){
+		if(!this.distFocus){
+			this.view.distFocus();
+			this.model.display.distFocus();
+			this.distFocus = true;
+		}else{
+			this.view.distFocusOff();
+			this.model.display.distFocusOff();
+			this.distFocus = false;
 		}
 	}

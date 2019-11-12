@@ -380,6 +380,8 @@ class visBase {
 		// this.setUpSampleStatistics();
 		var sampleStatRange = (this.sampleStatType == 'diff' || this.sampleStatType == "Deviation") ? [this.smallestDiff, this.largestDiff] : [this.smallestStat, this.largestStat];
 		this.sampleStatScale = d3.scale.linear().range([this.windowHelper.graphSection.x,this.windowHelper.graphSection.x + this.windowHelper.graphSection.width]);
+		this.originalStatScale = d3.scale.linear().range([this.windowHelper.graphSection.x,this.windowHelper.graphSection.x + this.windowHelper.graphSection.width]);
+		this.originalStatScale.domain(sampleStatRange);
 		var populationRange = this.xScale.domain();
 		var halfDiff = (populationRange[1]-populationRange[0])/2;
 		var sampleHalfDiff = (Math.max(Math.abs(sampleStatRange[0]),Math.abs(sampleStatRange[1]) ));
@@ -714,7 +716,8 @@ class visBase {
 		    	return d.xPerSample[0]; })
 		    .attr("cy", function(d) {
 		    	return d.yPerSample[0];
-		    })
+			})
+			.attr("data-value", (d) => d.value)
 		    .attr("r", this.windowHelper.radius)
 		    .attr("fill-opacity", 0)
 		    .attr("stroke-opacity",0)
@@ -958,6 +961,28 @@ class visBase {
 		}
 		this.settings.restarting = true;
 		this.animationController(this.settings, this.pauseState-1);
+	}
+
+	distFocus(){
+		let middle_stat = this.smallestStat + (this.largestStat - this.smallestStat) / 2;
+		let main_axis = document.querySelector('#samples .axis');
+		let main_axis_transform = main_axis.getAttribute("transform");
+		let main_axis_x = parseFloat(main_axis_transform.split('(')[1].split(',')[0])
+		let main_axis_y = parseFloat(main_axis_transform.split('(')[1].split(',')[1])
+		let dist_container = document.querySelector('#samples #sampleDisplay');
+		let dist_items = document.querySelectorAll('#samples #sampleDisplay circle');
+		let x_shift = -100;
+		main_axis.setAttribute("transform", `translate(${main_axis_x + x_shift}, ${main_axis_y})`);
+		// dist_container.setAttribute("transform", `translate(${x_shift}, 0)`);
+		for(let dist_item of dist_items){
+			console.log(this.originalStatScale.range);
+			console.log(this.originalStatScale.domain);
+			dist_item.setAttribute('cx', this.originalStatScale(parseFloat(dist_item.dataset.value)));
+		}
+	}
+
+	distFocusOff(){
+
 	}
 
 }
