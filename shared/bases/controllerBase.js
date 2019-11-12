@@ -99,6 +99,11 @@ controllerBase.prototype.parseRestOfURL = function() {
 			stat = "Mean";
 		this.model.display.changeStat(stat);
 	}
+	var ws = urlParams.get("ws");
+	if(ws){
+		this.model.changeWS(ws == 'true');
+		this.model.display.changeWS(ws == 'true');
+	}
 
 
 	var sampleSize = urlParams.has("samplesize") ? urlParams.get("samplesize") : null;
@@ -263,11 +268,21 @@ controllerBase.prototype.statChanged = function(e){
 		var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.search.split("&stat")[0] + "&stat=" + e.target.value;;
 		window.history.pushState({path:newurl},'', newurl);
 	}
+controllerBase.prototype.withinSampleChanged = function(e){
+	let checked = e.target.checked;
+	this.model.changeWS(checked);
+		this.model.display.changeWS(checked);
+		this.startVisPreveiw();
+		var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.search.split("&ws")[0] + "&ws=" + checked;;
+		window.history.pushState({path:newurl},'', newurl);
+	}
 controllerBase.prototype.startVisPressed = function(){
 		//this.view.finishSetUp();
 		let samp_field = d3.select("#sampsize");
 
 		let optionSampleSize = samp_field[0][0] ? parseInt(samp_field.property("value")) : 0;
+		let ws_field = d3.select("#withinSample");
+		let optionWithinSample = ws_field[0][0] ? ws_field.checked : 0;
 		this.startVisFull(optionSampleSize ? optionSampleSize : this.model.display.sampleSize);
 		d3.select("#Calculate").attr("disabled", true);
 		d3.select("#Pause").attr("disabled", null);
@@ -301,7 +316,7 @@ controllerBase.prototype.switchTab2 = function(){
 		let num_groups = this.model.display.groups ? this.model.display.groups.length : 1
 		let avg_dev = num_groups >= 3;
 		let showSampleSize = this.model.display.sampleSize != undefined;
-		this.view.setUpTab2(difference, avg_dev, showSampleSize);
+		this.view.setUpTab2(difference, avg_dev, showSampleSize, this.model.askWithinSampleOption(), this.model.askWithinSampleChecked());
 		if(this.model.display.sampleSize != 20){
 			d3.select("#sampsize").attr("value",String(this.model.display.sampleSize));
 		}

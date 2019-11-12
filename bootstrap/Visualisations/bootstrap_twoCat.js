@@ -50,7 +50,7 @@ class bootstrap_twoCat extends visBase {
 		}
 	}
 
-	makeSample(populations, numSamples, sampleSize, statistic, saveSample){
+	makeSample(populations, numSamples, sampleSize, statistic, saveSample, withinSample = true){
 		this.samples = [];
 		for(var i = 0; i<numSamples;i++){
 			// this.samples.push([]);
@@ -59,23 +59,48 @@ class bootstrap_twoCat extends visBase {
 				sample.push([]);
 			}
 			var stats = [];
-			for(var j = 0; j < sampleSize;j++){
-				var index = Math.ceil(Math.random()*this.allPop.length) - 1;
-				var pickedOriginal = this.allPop[index];
+			if(!withinSample){
+				for(var j = 0; j < sampleSize;j++){
+					var index = Math.ceil(Math.random()*this.allPop.length) - 1;
+					var pickedOriginal = this.allPop[index];
 
 
-				var group = pickedOriginal.group;
-				var groupIndex = this.groups.indexOf(group);
+					var group = pickedOriginal.group;
+					var groupIndex = this.groups.indexOf(group);
 
-				var nI = new item (pickedOriginal.value, j);
-					nI.popId = pickedOriginal.id;
-					nI.popGroup = groupIndex;
-					nI.xPerSample[0] = pickedOriginal.xPerSample[0];
-					nI.yPerSample[0] = pickedOriginal.yPerSample[0];
-					nI.group =	group;
-					nI.order = j;
-					nI.groupIndex = groupIndex;
-				sample[groupIndex].push(nI);
+					var nI = new item (pickedOriginal.value, j);
+						nI.popId = pickedOriginal.id;
+						nI.popGroup = groupIndex;
+						nI.xPerSample[0] = pickedOriginal.xPerSample[0];
+						nI.yPerSample[0] = pickedOriginal.yPerSample[0];
+						nI.group =	group;
+						nI.order = j;
+						nI.groupIndex = groupIndex;
+					sample[groupIndex].push(nI);
+				}
+			}else{
+				let sample_counter = 0;
+				for(let g of this.groups){
+					let group_pop_elements = this.allPop.filter((pe) => pe.group == g);
+					let num_in_group = group_pop_elements.length;
+					for(var j = 0; j < num_in_group;j++){
+						var index = Math.ceil(Math.random()*group_pop_elements.length) - 1;
+						var pickedOriginal = group_pop_elements[index];
+						var group = pickedOriginal.group;
+						var groupIndex = this.groups.indexOf(group);
+
+						var nI = new item (pickedOriginal.value, sample_counter);
+						nI.popId = pickedOriginal.id;
+						nI.popGroup = groupIndex;
+						nI.xPerSample[0] = pickedOriginal.xPerSample[0];
+						nI.yPerSample[0] = pickedOriginal.yPerSample[0];
+						nI.group =	group;
+						nI.order = sample_counter;
+						nI.groupIndex = groupIndex;
+						sample[groupIndex].push(nI);
+						sample_counter++;
+					}
+				}
 			}
 			this.handleSample(i, sample);
 			if(saveSample){

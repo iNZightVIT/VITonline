@@ -50,10 +50,16 @@ class visBase {
 		this.popDrawType = 0;
 
 		this.maxSize = 2000;
+
+		this.withinSample = false;
 	}
 
 	changeStat(newStatistic){
 		this.statistic = newStatistic;
+		this.destroy();
+	}
+	changeWS(new_ws){
+		this.withinSample = new_ws;
 		this.destroy();
 	}
 	setUpPopCategory(items, scale, radius, top, bottom){
@@ -248,7 +254,7 @@ class visBase {
 	setUpLargeCI(sSize){
 		// Get the tail proportion info for 10,000 samples.
 		this.resetSampleStatistics();
-		this.makeSample(this.populations, 10000, sSize, this.statistic, false);
+		this.makeSample(this.populations, 10000, sSize, this.statistic, false, this.withinSample);
 		// this.setUpSampleStatistics();
 		this.largeTailSize = 0;
 		for(var k = 0; k < this.sampleStatistics.length; k++){
@@ -370,7 +376,7 @@ class visBase {
 		}
 
 		this.resetSampleStatistics();
-		this.makeSample(this.populations, this.numSamples, sSize, this.statistic, true);
+		this.makeSample(this.populations, this.numSamples, sSize, this.statistic, true, this.withinSample);
 		// this.setUpSampleStatistics();
 		var sampleStatRange = (this.sampleStatType == 'diff' || this.sampleStatType == "Deviation") ? [this.smallestDiff, this.largestDiff] : [this.smallestStat, this.largestStat];
 		this.sampleStatScale = d3.scale.linear().range([this.windowHelper.graphSection.x,this.windowHelper.graphSection.x + this.windowHelper.graphSection.width]);
@@ -430,7 +436,7 @@ class visBase {
 	// I.E 2 samples with 2 categories: [[[1,2,3],[4,5,6]], [[1,3,5],[2,4,6]]]
 	// 	   2 samples with no categories: [[[1,2,3,4,5,6]], [[1,2,3,4,5,6]]] (counts as 1 category so consistant)
 	// Implementation will likely be different for each visualisation.
-	makeSample(populations, numSamples, sampleSize, statistic, saveSample){
+	makeSample(populations, numSamples, sampleSize, statistic, saveSample, withinSample){
 
 	}
 

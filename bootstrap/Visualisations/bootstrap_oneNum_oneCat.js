@@ -22,7 +22,7 @@ class bootstrap_oneNum_oneCat extends visBase {
 	getSampleSize(){
 		return this.allPop.length;
 	}
-	makeSample(populations, numSamples, sampleSize, statistic, saveSample){
+	makeSample(populations, numSamples, sampleSize, statistic, saveSample, withinSample = true){
 		this.samples = [];
 		for(var i = 0; i<numSamples;i++){
 			// this.samples.push([]);
@@ -31,10 +31,11 @@ class bootstrap_oneNum_oneCat extends visBase {
 				sample.push([]);
 			}
 			var stats = [];
-			for(var j = 0; j < sampleSize;j++){
-				var index = Math.ceil(Math.random()*this.allPop.length) - 1;
-				var group = this.allPop[index].group;
-				var groupIndex = this.groups.indexOf(group);
+			if(!withinSample){
+				for(var j = 0; j < sampleSize;j++){
+					var index = Math.ceil(Math.random()*this.allPop.length) - 1;
+					var group = this.allPop[index].group;
+					var groupIndex = this.groups.indexOf(group);
 					var nI = new item (this.allPop[index].value, j);
 					nI.popId = this.allPop[index].id;
 					nI.popGroup = groupIndex;
@@ -44,6 +45,28 @@ class bootstrap_oneNum_oneCat extends visBase {
 					nI.order = j;
 					nI.groupIndex = groupIndex;
 					sample[groupIndex].push(nI);
+				}
+			}else{
+				let sample_counter = 0;
+				for(let g of this.groups){
+					let group_pop_elements = this.allPop.filter((pe) => pe.group == g);
+					let num_in_group = group_pop_elements.length;
+					for(var j = 0; j < num_in_group; j++){
+						var index = Math.ceil(Math.random()*group_pop_elements.length) - 1;
+						var group = group_pop_elements[index].group;
+						var groupIndex = this.groups.indexOf(group);
+						var nI = new item (group_pop_elements[index].value, j);
+						nI.popId = group_pop_elements[index].id;
+						nI.popGroup = groupIndex;
+						nI.xPerSample[0] =group_pop_elements[index].xPerSample[0];
+						nI.yPerSample[0] =group_pop_elements[index].yPerSample[0];
+						nI.group =	group;
+						nI.order = sample_counter;
+						nI.groupIndex = groupIndex;
+						sample[groupIndex].push(nI);
+						sample_counter++;
+					}
+				}
 			}
 			this.handleSample(i, sample);
 			if(saveSample){

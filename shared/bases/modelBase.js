@@ -35,6 +35,7 @@ var modelBase = function(controller){
 	this.currentCategory = null;
 	this.currentDisplayType =0;
 	this.fileName = "no current file"
+	this.withinSample = false;
 	this.storedData = 
 		{
 		'olympics100m.csv':"YEAR,NAME,TIME,location,Gender\n1896,Tom Burke,12,USA,male\n1900,Frank Jarvis,11,USA,male\n1904,Archie Hahn,11,USA,male\n1906,Archie Hahn,11.2,USA,male\n1908,Reggie Walker,10.8,SAF,male\n1912,Ralph Craig,10.8,USA,male\n1920,Charles Paddock,10.8,USA,male\n1924,Harold Abrahams,10.6,GBR,male\n1928,Percy Williams,10.8,CAN,male\n1932,Eddie Tolan,10.38,USA,male\n1936,Jesse Owens,10.3,USA,male\n1948,Harrison Dillard,10.3,USA,male\n1952,Lindy Remigino,10.4,USA,male\n1956,Bobby Morrow,10.5,USA,male\n1960,Armin Hary,10.2,GER,male\n1964,Bob Hayes,10,USA,male\n1968,Jim Hines,9.95,USA,male\n1972,Valery Borzov,10.14,URS,male\n1976,Hasely Crawford,10.06,TRI,male\n1980,Allan Wells,10.25,GBR,male\n1984,Carl Lewis,9.99,USA,male\n1988,Carl Lewis,9.92,USA,male\n1992,Linford Christie,9.96,GBR,male\n1996,Donovan Bailey,9.84,CAN,male\n2000,Maurice Greene,9.87,USA,male\n2004,Justin Gatlin,9.85,USA,male\n2008,Usain Bolt,9.69,JAM,male\n2012,Usain Bolt,9.63,JAM,male\n2012,Shelly-Ann FRASER-PRYCE,10.75, JAM,female\n2008,Shelly-Ann FRASER-PRYCE,10.78, JAM,female\n2004,Yuliya NESTSIARENKA,10.93, BLR,female\n2000,,,,\n1996,Gail DEVERS,10.94, USA,female\n1992,Gail DEVERS,10.82, USA,female\n1988,Florence GRIFFITH JOYNER,10.54 , USA,female\n1984,Evelyn ASHFORD,10.97, USA,female\n1980,Lyudmila KONDRATYEVA,11.06, URS,female\n1972,Renate STECHER,11.07, GDR,female\n1968,Wyomia TYUS,11, USA,female\n1964,Wyomia TYUS,11.4, USA,female\n1960,Wilma RUDOLPH,11, USA,female\n1956,Betty CUTHBERT,11.5, AUS,female\n1952,Marjorie JACKSON,11.5, AUS,female\n1948,Fanny BLANKERS-KOEN,11.9, NED,female\n1936,Helen STEPHENS,11.5, USA,female\n1932,Stanislawa WALASIEWICZ,11.9, POL,female\n1928,Elizabeth ROBINSON,12.2, USA,female\n",
@@ -245,6 +246,15 @@ modelBase.prototype.getStatsCategories = function(){
 	// 	categories = ["Average Deviation"];
 	// }
 	return categories
+}
+modelBase.prototype.askWithinSampleOption = function(){
+	return this.visualisations[this.currentDisplayType].withinSampleOption ? true : false;
+}
+modelBase.prototype.askWithinSampleChecked = function(){
+	return this.withinSample;
+}
+modelBase.prototype.changeWS = function(ws){
+	this.withinSample = ws;
 }
 modelBase.prototype.filterMissingValues = function(numeric_vars, categorical_vars){
 	test_val = function(v){

@@ -14,7 +14,7 @@ viewBase.prototype.leaveVis = function(){
 		d3.select("#visControls1").remove();
 		d3.select("#visControls2").remove();
 	}
-viewBase.prototype.setUpTab2 = function(difference, avg_dev, sampleSize){
+viewBase.prototype.setUpTab2 = function(difference, avg_dev, sampleSize, within_sample = false, within_sample_checked){
 	var self = this;
 	var tab2Top = d3.select("#tab2Top");
 	tab2Top.selectAll("*").remove();
@@ -34,10 +34,20 @@ viewBase.prototype.setUpTab2 = function(difference, avg_dev, sampleSize){
 	if(difference){
 		tab2Top.append("select").attr("id","statTypeSelect").append("option").text(!avg_dev ? "Difference" : "Average Deviation");
 	}
+	if(within_sample){
+		tab2Top.append("label").text("Sample within group: ")
+		tab2Top.append("input").attr("type", "checkbox").attr("id", "withinSample").attr("checked", within_sample_checked ? "true" : null);
+	}
 	if(sampleSize){
 		let SSize = document.getElementById("sampsize");
 		SSize.onchange = function(e){
 			self.controller.startVisPreveiw();
+		}
+	}
+	if(within_sample){
+		let ws = document.getElementById("withinSample");
+		ws.onchange = function(e){
+			self.controller.withinSampleChanged(e);
 		}
 	}
 	var SS = document.getElementById("statSelect");
