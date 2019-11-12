@@ -4,7 +4,8 @@ function model(controller){
 	this.visualisations = [
 		// {name:"oneMean", numeretical:1,categorical:0,stats:0,setupParams:function(num, cat, modelObj){return new sv_oneNum(modelObj.filterMissingValues(num, cat), num[0], modelObj.stats[0][0])}},
 		{name:"oneMean", numeretical:1,categorical:0,stats:0,setupParams:function(num, cat, modelObj){return new sv_oneNum(modelObj.filterMissingValues(num, cat), null, num[0], modelObj.stats[0][0])}},
-	{name:"twoMeans", numeretical:1,categorical:1,stats:0,setupParams:function(num, cat, modelObj){return new twoMeans(modelObj.filterMissingValues(num, cat), cat[0], num[0], modelObj.stats[0][0])}},
+		// {name:"twoMeans", numeretical:1,categorical:1,stats:0,setupParams:function(num, cat, modelObj){return new twoMeans(modelObj.filterMissingValues(num, cat), cat[0], num[0], modelObj.stats[0][0])}},
+		{name:"twoMeans", numeretical:1,categorical:1,stats:0,setupParams:function(num, cat, modelObj){return new sv_oneNumOneCat(modelObj.filterMissingValues(num, cat), cat[0], num[0], modelObj.stats[0][0])}},
 	{name:"oneProportion", numeretical:0,categorical:1,stats:1,needsFocus:true,focusCat:0,setupParams:function(num, cat, modelObj, focus){var unique = modelObj.dataSplit[cat[0]].filter(onlyUnique); 
 		var preLength = modelObj.filterMissingValues(num, cat).length;		
 		var filtered = modelObj.filterMissingValues(num, cat).filter(function(d){
