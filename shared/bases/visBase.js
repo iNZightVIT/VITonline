@@ -467,9 +467,9 @@ class visBase {
 			    .attr("fill-opacity", 0.5)
 			    .attr("stroke-opacity",1).attr("class",function(d){return "c"+d.id})
 			    .style("fill", function(){return colorByIndex[i]});
-			catSVG.append("line").attr("x1", this.xScale(this.groupStats[this.groups[i]])).attr("x2", this.xScale(this.groupStats[this.groups[i]])).attr("y1", pos+this.windowHelper.lineHeight).attr("y2", pos-this.windowHelper.lineHeight).style("stroke-width", 2).style("stroke", "black").style("stroke-width",3);
-			catSVG.append("text").attr("y", pos - divHeight/4).attr("x", this.windowHelper.graphSection.x2).text(this.groups[i]).attr("fill",colorByIndex[i]).attr("text-anchor","end").style("opacity",1).style("font-size",this.windowHelper.fontSize).attr("alignment-baseline","middle");
-			catSVG.append("text").attr("y", pos - divHeight/4 + this.windowHelper.graphSection.S1.height).attr("x", this.windowHelper.graphSection.x2).text(this.groups[i]).attr("fill",colorByIndex[i]).attr("text-anchor","end").style("opacity",1).style("font-size",this.windowHelper.fontSize).attr("alignment-baseline","middle");
+			catSVG.append("line").attr("class", "pop-stat").attr("x1", this.xScale(this.groupStats[this.groups[i]])).attr("x2", this.xScale(this.groupStats[this.groups[i]])).attr("y1", pos+this.windowHelper.lineHeight).attr("y2", pos-this.windowHelper.lineHeight).style("stroke-width", 2).style("stroke", "black").style("stroke-width",3);
+			catSVG.append("text").attr("class", "pop-stat").attr("y", pos - divHeight/4).attr("x", this.windowHelper.graphSection.x2).text(this.groups[i]).attr("fill",colorByIndex[i]).attr("text-anchor","end").style("opacity",1).style("font-size",this.windowHelper.fontSize).attr("alignment-baseline","middle");
+			catSVG.append("text").attr("class", "pop-stat").attr("y", pos - divHeight/4 + this.windowHelper.graphSection.S1.height).attr("x", this.windowHelper.graphSection.x2).text(this.groups[i]).attr("fill",colorByIndex[i]).attr("text-anchor","end").style("opacity",1).style("font-size",this.windowHelper.fontSize).attr("alignment-baseline","middle");
 		}
 	}
 
@@ -752,7 +752,7 @@ class visBase {
 		// draw axis for section 3
 		this.drawSampleAxis(sampleDraw);
 
-		this.drawPopulationStatistic(sampleDraw);
+		this.drawPopulationStatistic(sampleDraw.append('g').attr('id', 'pop-stat'));
 		
 		this.drawSampleDisplay(sampleDraw);		
 
@@ -995,20 +995,46 @@ class visBase {
 		let dynamic_circle = document.querySelectorAll('#dynamic circle');
 		let dynamic_text = document.querySelectorAll('#dynamic text');
 		let dynamic_line = document.querySelectorAll('#dynamic line');
-
-		for(let di of [...dynamic_circle, ...dynamic_line, ...dynamic_text]){
-			di.setAttribute('data-distopacity', di.getAttribute('opacity'));
-			di.setAttribute('opacity', 0.1);
-		}
-
 		let population_circle = document.querySelectorAll('#population circle');
+		let population_rect = document.querySelectorAll('#population rect');
 		let population_text = document.querySelectorAll('#population text');
 		let population_line = document.querySelectorAll('#population line');
 
-		for(let di of [...population_circle, ...population_line, ...population_text]){
-			di.setAttribute('data-distopacity', di.getAttribute('opacity'));
+		// for(let di of [...dynamic_circle, ...dynamic_line, ...dynamic_text]){
+		// 	di.setAttribute('data-distopacity', di.getAttribute('opacity'));
+		// 	di.setAttribute('opacity', 0.1);
+		// 	di.setAttribute('data-diststroke-opacity', di.getAttribute('stroke-opacity'));
+		// 	di.setAttribute('stroke-opacity', 0.1);
+		// }
+
+
+		// for(let di of [...population_circle, ...population_line, ...population_text]){
+		// 	di.setAttribute('data-distopacity', di.getAttribute('opacity'));
+		// 	di.setAttribute('opacity', 0.1);
+		// 	di.setAttribute('data-diststroke-opacity', di.getAttribute('stroke-opacity'));
+		// 	di.setAttribute('stroke-opacity', 0.1);
+		// }
+		// let pop_stat_circle = document.querySelectorAll('#pop-stat circle');
+		// let pop_stat_text = document.querySelectorAll('#pop-stat text');
+		// let pop_stat_line = document.querySelectorAll('#pop-stat line');
+
+		// for(let di of [...pop_stat_circle, ...pop_stat_line, ...pop_stat_text]){
+		// 	di.setAttribute('data-distopacity', di.getAttribute('opacity'));
+		// 	di.setAttribute('opacity', 0.1);
+		// }
+		for(let di of [...dynamic_circle, ...dynamic_line, ...dynamic_text,
+			...population_circle, ...population_rect, ...population_line, ...population_text,
+			...document.querySelectorAll('.pop-stat')]){
+			di.setAttribute('data-distopacity', di.getAttribute('opacity') != undefined ? di.getAttribute('opacity') : di.style.opacity);
 			di.setAttribute('opacity', 0.1);
+			di.style.opacity = 0.1;
+			di.setAttribute('data-diststroke-opacity', di.getAttribute('stroke-opacity') != undefined ? di.getAttribute('stroke-opacity') : di.style['stroke-opacity']);
+			di.setAttribute('stroke-opacity', 0.1);
+			di.style['stroke-opacity'] = 0.1;
 		}
+		document.querySelector('#pop-stat').setAttribute('opacity', 0.1);
+		document.querySelector('.sampleLines').setAttribute('opacity', 0.1);
+		document.querySelector('.meanOfSamples').setAttribute('opacity', 0.1);
 	}
 
 	distFocusOff(){
@@ -1033,20 +1059,43 @@ class visBase {
 		let dynamic_circle = document.querySelectorAll('#dynamic circle');
 		let dynamic_text = document.querySelectorAll('#dynamic text');
 		let dynamic_line = document.querySelectorAll('#dynamic line');
-
-		for(let di of [...dynamic_circle, ...dynamic_line, ...dynamic_text]){
-			di.setAttribute('opacity', di.getAttribute('data-distopacity'));
-
-		}
-
 		let population_circle = document.querySelectorAll('#population circle');
+		let population_rect = document.querySelectorAll('#population rect');
 		let population_text = document.querySelectorAll('#population text');
 		let population_line = document.querySelectorAll('#population line');
+		let pop_stat_circle = document.querySelectorAll('#pop-stat circle');
+		let pop_stat_text = document.querySelectorAll('#pop-stat text');
+		let pop_stat_line = document.querySelectorAll('#pop-stat line');
 
-		for(let di of [...population_circle, ...population_line, ...population_text]){
-			di.setAttribute('opacity', di.getAttribute('data-distopacity'));
+		// for(let di of [...dynamic_circle, ...dynamic_line, ...dynamic_text]){
+		// 	di.setAttribute('opacity', di.getAttribute('data-distopacity'));
 
+		// }
+
+
+		// for(let di of [...population_circle, ...population_line, ...population_text]){
+		// 	di.setAttribute('opacity', di.getAttribute('data-distopacity'));
+		// 	di.setAttribute('stroke-opacity', di.getAttribute('data-diststroke-opacity'));
+
+		// }
+
+		// for(let di of [...pop_stat_circle, ...pop_stat_line, ...pop_stat_text]){
+		// 	di.setAttribute('opacity', di.getAttribute('data-distopacity'));
+		// 	di.setAttribute('stroke-opacity', di.getAttribute('data-diststroke-opacity'));
+
+		// }
+		for(let di of [...dynamic_circle, ...dynamic_line, ...dynamic_text,
+			...population_circle, ...population_rect, ...population_line, ...population_text,
+			...pop_stat_circle, ...pop_stat_line, ...pop_stat_text,
+			...document.querySelectorAll('.pop-stat')]){
+				di.setAttribute('opacity', di.getAttribute('data-distopacity'));
+				di.setAttribute('stroke-opacity', di.getAttribute('data-diststroke-opacity'));
+				di.style.opacity = di.getAttribute('opacity');
+				di.style['stroke-opacity'] = di.getAttribute('stroke-opacity');
 		}
+		document.querySelector('#pop-stat').setAttribute('opacity', 1);
+		document.querySelector('.sampleLines').setAttribute('opacity', 1);
+		document.querySelector('.meanOfSamples').setAttribute('opacity', 1);
 	}
 
 }
