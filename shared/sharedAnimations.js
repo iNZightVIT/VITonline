@@ -296,8 +296,10 @@
 			this.settings.sampMean = sampMean;
 			this.settings.meanCircles = meanCircles;
 		}else{
-			var sampMean = this.settings.sampMean;
-			var meanCircles = this.settings.meanCircles;
+			var sampMean = this.settings.sampMean? this.settings.sampMean :this.sampleStatistics.slice(settings.indexUpTo, settings.indexUpTo+settings.jumps);
+			var meanCircles = this.settings.meanCircles ? this.settings.meanCircles : d3.select("#sampleDisplay").selectAll("circle").filter(function(d, i){
+				return (i>=settings.indexUpTo) && (i <settings.indexUpTo+settings.jumps);
+			});
 
 			this.settings.restarting = false;
 		}

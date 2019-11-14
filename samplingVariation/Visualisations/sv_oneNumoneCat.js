@@ -92,6 +92,7 @@ class sv_oneNumOneCat extends visBase {
 		var self = this;
 		d3.selectAll(".memLine").style("opacity",0.2).style("stroke","darkgrey").attr("y2", function(){ return d3.select(this).attr("y1")-self.windowHelper.lineHeight*2});
 		d3.selectAll("#diffLine").remove();
+		d3.select('.meanOfSamples').selectAll('*').remove();
 	}
 	setUpCI(statList){
 			var CISplit = Math.abs(this.populationStatistic - statList[this.numSamples*0.95]);
@@ -339,7 +340,8 @@ class sv_oneNumOneCat extends visBase {
 			var sampMean = this.settings.sampMean;
 			var mLines = this.settings.mLines;
 			var meanLines = this.settings.meanLines;
-					    this.settings.restarting = false;
+			this.settings.restarting = false;
+			var circleOverlay = this.settings.circleOverlay;
 		}
 
 		

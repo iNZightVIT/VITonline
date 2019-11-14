@@ -280,7 +280,8 @@ class sv_oneNum extends visBase {
 			var sampMean = this.settings.sampMean;
 			var mLines = this.settings.mLines;
 			var meanLines = this.settings.meanLines;
-					    this.settings.restarting = false;
+			this.settings.restarting = false;
+			var circleOverlay = this.settings.circleOverlay;
 		}
 
 		
