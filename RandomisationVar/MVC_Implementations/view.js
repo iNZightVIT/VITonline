@@ -36,4 +36,7 @@ view.prototype.makeButtons = function(){
 		vs.append("label").attr("for","distThousand").attr("class","repLabel").text("1000");
 		vs.append("input").attr("type","button").attr("value","Go").attr("class","bluebutton").classed("goButton",true).attr("id","distSampling").attr("disabled",null).attr("onClick","mainControl.startSampling(true)").text("Go")
 			.style("height","15%");
+			
+		tab2.select("#tab2Bot").append("input").attr("type","button").attr("value","Distribution Focus").attr("class","bluebutton").classed("distFocus",true).attr("id","distFocus").attr("disabled",null).attr("onClick","mainControl.distFocusToggle()").text("Distribution Focus")
+			.style("height","15%");
 }

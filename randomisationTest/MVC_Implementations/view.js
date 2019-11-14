@@ -40,4 +40,6 @@ view.prototype.makeButtons = function(){
 			.style("height","15%");
 		tab2.select("#tab2Bot").append("input").attr("type","button").attr("value","10,000 Sample Tail").attr("class","bluebutton").classed("CIButton",true).attr("id","CIButtonLarge").attr("disabled",true).attr("onClick","mainControl.showLargeCI()").text("10,000 Sample Tail")
 			.attr("height","15%");
+		tab2.select("#tab2Bot").append("input").attr("type","button").attr("value","Distribution Focus").attr("class","bluebutton").classed("distFocus",true).attr("id","distFocus").attr("disabled",null).attr("onClick","mainControl.distFocusToggle()").text("Distribution Focus")
+			.style("height","15%");
 }
