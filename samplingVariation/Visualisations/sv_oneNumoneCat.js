@@ -10,7 +10,7 @@ class sv_oneNumOneCat extends visBase {
 		this.calcLargeCI = false;
 		//this.animationList = [this.populationDropDown,this.buildList, this.fadeIn, this.endNoDist, this.distDrop, this.endDist ];
 		this.animationList = [this.populationDropDown.bind(this),
-						this.buildList.bind(this), 
+			
 						this.fadeIn.bind(this), 
 						this.endNoDist.bind(this), 
 						this.distDrop.bind(this),
@@ -145,6 +145,31 @@ class sv_oneNumOneCat extends visBase {
 			tailText.text(self.largeTailSize + " / 10000 = " + self.largeTailSize/10000)	
 		}else{
 			this.showCI("10", true);
+		}
+	}
+	extraStatistics(populationStatistics){
+		var sum = 0;
+		for(var g = 0; g < this.groups.length; g++){
+			sum += populationStatistics.groups[this.groups[g]].groupDeviation;
+		}
+		populationStatistics.averageDeviation = sum/this.groups.length;
+		if(this.groups.length > 2){
+			this.sampleStatType = "Deviation";
+		}
+	}
+	drawPopExtra(placeInto){
+		if(this.groups.length > 2){
+			var stat = this.populationStatistics.population.statistic;
+			placeInto.append("line").attr("x1", this.xScale(stat)).attr("x2", this.xScale(stat)).attr("y1", this.windowHelper.graphSection.S1.displayArea.y1).attr("y2", this.windowHelper.graphSection.S2.displayArea.y2).style("stroke", "black").style("stroke-width",1).attr("stroke-dasharray", "5,3");
+			
+			var divisions = this.windowHelper.graphSection.S1.displayArea.getDivisions(this.groups.length, 'height');
+			var divSections = divisions[0];
+			var divHeight = divisions[1];
+			for(var g = 0; g < this.groups.length; g++){
+				var pos = divSections[g] - divHeight/2 - this.windowHelper.radius*2;
+				var groupName = this.groups[g];
+				drawArrow(this.xScale(this.populationStatistics.groups[groupName].statistic), this.xScale(this.populationStatistics.population.statistic), pos, placeInto, "popArrow"+g, 1, "blue");
+			}
 		}
 	}
 

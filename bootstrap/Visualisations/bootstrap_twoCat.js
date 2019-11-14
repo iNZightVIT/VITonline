@@ -180,7 +180,7 @@ class bootstrap_twoCat extends visBase {
 		var self = this;
 		var CIVar = this.CISplit;
 		var svg = d3.select(".svg");
-		if(num == "10000" || large || true){
+		if(num == "10000" || large || false){
 			CIVar = this.largeCISplit;
 		}
 		var container = !svg.select("#CISplitContainer").empty() ? svg.select("CISplitContainer") : svg.append("svg").attr("id","CISplitContainer");

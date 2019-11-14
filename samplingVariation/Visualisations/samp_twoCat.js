@@ -201,6 +201,21 @@ class samp_twoCat extends visBase {
 			this.showCI("10", true);
 		}
 	}
+	drawPopExtra(placeInto){
+		if(this.groups.length > 2){
+			var stat = this.populationStatistics.population.statistic;
+			placeInto.append("line").attr("x1", this.xScale(stat)).attr("x2", this.xScale(stat)).attr("y1", this.windowHelper.graphSection.S1.displayArea.y1).attr("y2", this.windowHelper.graphSection.S2.displayArea.y2).style("stroke", "black").style("stroke-width",1).attr("stroke-dasharray", "5,3");
+			
+			var divisions = this.windowHelper.graphSection.S1.displayArea.getDivisions(this.groups.length, 'height');
+			var divSections = divisions[0];
+			var divHeight = divisions[1];
+			for(var g = 0; g < this.groups.length; g++){
+				var pos = divSections[g] - divHeight/2 - this.windowHelper.radius*2;
+				var groupName = this.groups[g];
+				drawArrow(this.xScale(this.populationStatistics.groups[groupName].statistic), this.xScale(this.populationStatistics.population.statistic), pos, placeInto, "popArrow"+g, 1, "blue");
+			}
+		}
+	}
 
 
 	// *****************************ANIMATIONS********************************
