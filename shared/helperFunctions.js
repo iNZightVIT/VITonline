@@ -385,6 +385,9 @@ function heapYValues4(itemsToHeap, xScale, radius, sampleIndex, areaTopY, areaBo
 
 function getStatistic(stat, origItems, total){
 	var items = origItems.slice(0);
+	if(total <= 0 || items.length <= 0){
+		return 0;
+	}
 	if(stat =="Mean"){
 		var mean = 0;
 		for(var i =0;i<items.length;i++){
@@ -449,7 +452,7 @@ function getStatistic(stat, origItems, total){
 	}
 	if(stat = "Proportion"){
 		//var focusItems = items.filter(function(i){return i.value==0})
-		return items.length/total;
+		return total> 0 ? items.length/total : 0;
 	}
 }
 

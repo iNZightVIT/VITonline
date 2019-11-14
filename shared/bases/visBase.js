@@ -312,7 +312,11 @@ class visBase {
 			let pop_stat = this.populationStatistics.population.statistic;
 			diff = 0;
 			for(var g = 0; g < sample.length; g++){
-				diff += Math.abs(categoryStatistics[g] - pop_stat);
+				let deviation = Math.abs(categoryStatistics[g] - pop_stat)
+				if(isNaN(deviation)){
+					console.log(categoryStatistics[g]);
+				}
+				diff += deviation;
 			}
 			diff /= sample.length;
 		}
