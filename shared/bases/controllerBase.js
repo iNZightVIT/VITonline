@@ -329,6 +329,7 @@ controllerBase.prototype.switchTab2 = function(){
 controllerBase.prototype.switchTab1 = function(){
 		d3.select("#tab1").style("display","block");
 		d3.select("#tab2").style("display","none");
+		this.distFocus = false;
 		this.view.leaveVis();
 		//this.view.makeButtons();
 		//this.setUpStatSelection(this.model.stats[this.model.currentCategory])

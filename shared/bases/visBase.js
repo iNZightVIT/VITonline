@@ -977,6 +977,8 @@ class visBase {
 	}
 
 	distFocus(){
+		let self = this;
+		d3.selectAll(".CIButton").attr("disabled",true);
 		let middle_stat = this.smallestStat + (this.largestStat - this.smallestStat) / 2;
 		let dist_focus_axis = document.querySelector('#dist_focus_axis');
 		let window_focus_axis = document.querySelector('#window_focus_axis');
@@ -995,6 +997,30 @@ class visBase {
 			console.log(this.originalStatScale.domain);
 			dist_item.setAttribute('cx', this.originalStatScale(parseFloat(dist_item.dataset.value)));
 		}
+
+		let ci_scale_change = function(v){
+			return self.originalStatScale(self.sampleStatScale.invert(parseFloat(v)))
+		}
+		let ci_lines = document.querySelectorAll('#CISplitContainer line');
+		let ci_text = document.querySelectorAll('#CISplitContainer text');
+		let ci_split_lines = document.querySelectorAll('#CISplit line');
+		let ci_split_text = document.querySelectorAll('#CISplit text');
+		for(let ci_line of [...ci_lines, ...ci_text, ...ci_split_lines, ...ci_split_text]){
+			for(let attr_to_rescale of ["x1", "x2", "x"]){
+				let v = ci_line.getAttribute(attr_to_rescale);
+				if(v == null) continue;
+				let rescaled_v = ci_scale_change(v)
+				ci_line.setAttribute(attr_to_rescale, rescaled_v);
+				console.log(v);
+				console.log(rescaled_v)
+			}
+			// let x1 = parseFloat(ci_line.getAttribute("x1"));
+			// let x2 = parseFloat(ci_line.getAttribute("x2"));
+			
+		}
+
+
+
 
 		let dynamic_circle = document.querySelectorAll('#dynamic circle');
 		let dynamic_text = document.querySelectorAll('#dynamic text');
@@ -1042,6 +1068,8 @@ class visBase {
 	}
 
 	distFocusOff(){
+		let self = this;
+		d3.selectAll(".CIButton").attr("disabled",null);
 		let middle_stat = this.smallestStat + (this.largestStat - this.smallestStat) / 2;
 		let dist_focus_axis = document.querySelector('#dist_focus_axis');
 		let window_focus_axis = document.querySelector('#window_focus_axis');
@@ -1059,6 +1087,26 @@ class visBase {
 			console.log(this.originalStatScale.range);
 			console.log(this.originalStatScale.domain);
 			dist_item.setAttribute('cx', this.sampleStatScale(parseFloat(dist_item.dataset.value)));
+		}
+		let ci_scale_change = function(v){
+			return self.sampleStatScale(self.originalStatScale.invert(parseFloat(v)))
+		}
+		let ci_lines = document.querySelectorAll('#CISplitContainer line');
+		let ci_text = document.querySelectorAll('#CISplitContainer text');
+		let ci_split_lines = document.querySelectorAll('#CISplit line');
+		let ci_split_text = document.querySelectorAll('#CISplit text');
+		for(let ci_line of [...ci_lines, ...ci_text, ...ci_split_lines, ...ci_split_text]){
+			for(let attr_to_rescale of ["x1", "x2", "x"]){
+				let v = ci_line.getAttribute(attr_to_rescale);
+				if(v == null) continue;
+				let rescaled_v = ci_scale_change(v)
+				ci_line.setAttribute(attr_to_rescale, rescaled_v);
+				console.log(v);
+				console.log(rescaled_v)
+			}
+			// let x1 = parseFloat(ci_line.getAttribute("x1"));
+			// let x2 = parseFloat(ci_line.getAttribute("x2"));
+			
 		}
 		let dynamic_circle = document.querySelectorAll('#dynamic circle');
 		let dynamic_text = document.querySelectorAll('#dynamic text');
