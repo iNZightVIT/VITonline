@@ -373,10 +373,20 @@ controllerBase.prototype.doneVis = function(){
 		this.view.doneVis();
 	}
 controllerBase.prototype.showCI = function(){
+		// Distribution focus during CI animation
+		// Breaks scaling, so disable it and reenable after.
+		// Since hard to determine after, just timeout :)
+		d3.selectAll("#distFocus").attr("disabled",true);
 		this.model.display.showCI("1");
+		setTimeout(() => {d3.selectAll("#distFocus").attr("disabled",null)}, 2500);
 	}
 controllerBase.prototype.showLargeCI = function(){
+		// Distribution focus during CI animation
+		// Breaks scaling, so disable it and reenable after.
+		// Since hard to determine aftter, just timeout :)
+		d3.selectAll("#distFocus").attr("disabled",true);
 		this.model.display.showLargeCI();
+		setTimeout(() => {d3.selectAll("#distFocus").attr("disabled",null)}, 2500);
 	}
 controllerBase.prototype.showCITenk = function(){
 		this.model.display.showCI("10");

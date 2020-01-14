@@ -1069,6 +1069,10 @@ class visBase {
 
 	distFocusOff(){
 		let self = this;
+		// Turn off allowing the CI animation to play
+		// Need this because of scaling changes the animation
+		// doesnt know.
+		// Also would come from faded area.
 		d3.selectAll(".CIButton").attr("disabled",null);
 		let middle_stat = this.smallestStat + (this.largestStat - this.smallestStat) / 2;
 		let dist_focus_axis = document.querySelector('#dist_focus_axis');
