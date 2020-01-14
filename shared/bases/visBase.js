@@ -1003,9 +1003,9 @@ class visBase {
 		}
 		let ci_lines = document.querySelectorAll('#CISplitContainer line');
 		let ci_text = document.querySelectorAll('#CISplitContainer text');
-		let ci_split_lines = document.querySelectorAll('#CISplit line');
-		let ci_split_text = document.querySelectorAll('#CISplit text');
-		for(let ci_line of [...ci_lines, ...ci_text, ...ci_split_lines, ...ci_split_text]){
+		if(ci_lines.length == 0) ci_lines = document.querySelectorAll('#CISplit line');
+		if(ci_text.length == 0) ci_text = document.querySelectorAll('#CISplit text');
+		for(let ci_line of [...ci_lines, ...ci_text]){
 			for(let attr_to_rescale of ["x1", "x2", "x"]){
 				let v = ci_line.getAttribute(attr_to_rescale);
 				if(v == null) continue;
@@ -1093,9 +1093,9 @@ class visBase {
 		}
 		let ci_lines = document.querySelectorAll('#CISplitContainer line');
 		let ci_text = document.querySelectorAll('#CISplitContainer text');
-		let ci_split_lines = document.querySelectorAll('#CISplit line');
-		let ci_split_text = document.querySelectorAll('#CISplit text');
-		for(let ci_line of [...ci_lines, ...ci_text, ...ci_split_lines, ...ci_split_text]){
+		if(ci_lines.length == 0) ci_lines = document.querySelectorAll('#CISplit line');
+		if(ci_text.length == 0) ci_text = document.querySelectorAll('#CISplit text');
+		for(let ci_line of [...ci_lines, ...ci_text]){
 			for(let attr_to_rescale of ["x1", "x2", "x"]){
 				let v = ci_line.getAttribute(attr_to_rescale);
 				if(v == null) continue;
