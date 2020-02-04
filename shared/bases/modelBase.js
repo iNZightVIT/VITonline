@@ -94,7 +94,8 @@ modelBase.prototype.loadFromURL = function(filename, fromURL){
 	var self = this;
 	filename = encodeURIComponent(filename);
 		//this.controller.setUpDataVeiw(this.storedData[filename]);
-	var xhr = createCORSRequest('GET', "https://www.stat.auckland.ac.nz/~wild/VITonline/getFileFromURL.php"+"?fn=" +filename);
+	// var xhr = createCORSRequest('GET', "https://www.stat.auckland.ac.nz/~wild/VITonline/getFileFromURL.php"+"?fn=" +filename);
+	var xhr = createCORSRequest('GET', filename);
 	// var xhr = createCORSRequest('GET', "http://localhost:80/getFileFromURL.php"+"?fn=" +filename);	
 	if (!xhr) {
   		throw new Error('CORS not supported');
@@ -111,6 +112,9 @@ modelBase.prototype.loadFromURL = function(filename, fromURL){
 
 	  xhr.send();
 }
+
+
+
 modelBase.prototype.loadData = function(){
 		this.dataSplit = [];
 		var lines = this.testingData.split('\n');
