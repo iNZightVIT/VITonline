@@ -92,7 +92,9 @@ modelBase.prototype.loadFromPreset = function(filename, fromURL){
 
 modelBase.prototype.loadFromURL = function(filename, fromURL){
 	var self = this;
-	filename = encodeURIComponent(filename);
+	if(!fromURL){
+		filename = encodeURIComponent(filename);
+	}
 		//this.controller.setUpDataVeiw(this.storedData[filename]);
 	// var xhr = createCORSRequest('GET', "https://www.stat.auckland.ac.nz/~wild/VITonline/getFileFromURL.php"+"?fn=" +filename);
 	var xhr = createCORSRequest('GET', filename);
