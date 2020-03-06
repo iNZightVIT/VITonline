@@ -175,7 +175,17 @@ select {
   
   width: 100%;
   height:100%;
+  -ms-overflow-style: none;
 
+}
+.controls::-webkit-scrollbar {
+  display: none;
+}
+.tab::-webkit-scrollbar {
+  display: none;
+}
+#leftHalf::-webkit-scrollbar {
+  display: none;
 }
 circle {
   /*fill-opacity: 0.5;*/
