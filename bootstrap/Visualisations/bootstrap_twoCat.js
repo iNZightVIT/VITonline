@@ -164,14 +164,18 @@ class bootstrap_twoCat extends visBase {
 		// });
 
 		// this.largeCISplit = Math.abs(this.populationStatistic - statlist[10000*0.95]);
-		statList = statList.sort();
+		statList.sort(function(a, b){
+			return parseInt(a) - parseInt(b);
+		});
 		let lower_CI = statList[Math.floor(this.numSamples*0.025)];
 		let upper_CI = statList[Math.ceil(this.numSamples*0.975)];
 		this.largeCISplit = [lower_CI, upper_CI];
 	}
 	setUpCI(statList){
 		var CISplit = Math.abs(this.populationStatistic - statList[this.numSamples*0.95]);
-		statList = statList.sort();
+		statList.sort(function(a, b){
+			return parseInt(a) - parseInt(b);
+		});
 		let lower_CI = statList[Math.floor(this.numSamples*0.025)];
 		let upper_CI = statList[Math.ceil(this.numSamples*0.975)];
 		for(var k = 0; k < this.numSamples;k++){
