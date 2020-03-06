@@ -99,7 +99,7 @@ class bootstrap_oneNum_oneCat extends visBase {
 	setUpCI(statList){
 		var CISplit = Math.abs(this.populationStatistic - statList[this.numSamples*0.95]);
 		statList.sort(function(a, b){
-			return parseInt(a) - parseInt(b);
+			return parseFloat(a) - parseFloat(b);
 		});
 		let lower_CI = statList[Math.floor(this.numSamples*0.025)];
 		let upper_CI = statList[Math.ceil(this.numSamples*0.975)];
