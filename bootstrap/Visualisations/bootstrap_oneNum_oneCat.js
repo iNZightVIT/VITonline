@@ -97,15 +97,18 @@ class bootstrap_oneNum_oneCat extends visBase {
 		d3.selectAll("#diffLine").remove();
 	}
 	setUpCI(statList){
-			var CISplit = Math.abs(this.populationStatistic - statList[this.numSamples*0.95]);
-			for(var k = 0; k < this.numSamples;k++){
-				if(Math.abs(this.populationStatistic - this.sampleStatistics[k].value) >= CISplit){
-					this.sampleStatistics[k].inCI = false;
-				}else{
-					this.sampleStatistics[k].inCI = true;
-				}
+		var CISplit = Math.abs(this.populationStatistic - statList[this.numSamples*0.95]);
+		statList.sort();
+		let lower_CI = statList[Math.floor(this.numSamples*0.025)];
+		let upper_CI = statList[Math.ceil(this.numSamples*0.975)];
+		for(var k = 0; k < this.numSamples;k++){
+			if(this.sampleStatistics[k].value < lower_CI || this.sampleStatistics[k].value > upper_CI){
+				this.sampleStatistics[k].inCI = false;
+			}else{
+				this.sampleStatistics[k].inCI = true;
 			}
-			this.CISplit = CISplit;
+		}
+		this.CISplit = [lower_CI, upper_CI];
 	}
 	showCI(num, large){
 		var self = this;
@@ -136,14 +139,14 @@ class bootstrap_oneNum_oneCat extends visBase {
 				});
 				visibleCircles.style("opacity",0.2).transition().duration(500).each("end",function(d,i){
 					if(i==0){
-					drawArrowDown(self.windowHelper.graphSection.S3.axisArea.y2, self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.displayArea.height/2, self.sampleStatScale(self.populationStatistic-CIVar), container, "ciDownArrow", 1, "red",0.75);
-					drawArrowDown(self.windowHelper.graphSection.S3.axisArea.y2, self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.displayArea.height/2, self.sampleStatScale(self.populationStatistic+CIVar), container, "ciDownArrow", 1, "red",0.75);
-					//d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(self.populationStatistic-self.CISplit)).attr("x2",self.xScale2(self.populationStatistic-self.CISplit)).style("stroke","red");
-					//d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(self.populationStatistic+self.CISplit)).attr("x2",self.xScale2(self.populationStatistic+self.CISplit)).style("stroke","red");
-					container.append("text").attr("y",self.windowHelper.graphSection.S3.axisArea.y2).attr("x",self.sampleStatScale(self.populationStatistic+CIVar)).text(Math.round((self.populationStatistic+self.CISplit)*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging");
-					container.append("text").attr("y",self.windowHelper.graphSection.S3.axisArea.y2).attr("x",self.sampleStatScale(self.populationStatistic-CIVar)).text(Math.round((self.populationStatistic-self.CISplit)*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging")
+					drawArrowDown(self.windowHelper.graphSection.S3.axisArea.y2, self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.displayArea.height/2, self.sampleStatScale(CIVar[0]), container, "ciDownArrow", 1, "red",0.75);
+					drawArrowDown(self.windowHelper.graphSection.S3.axisArea.y2, self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.displayArea.height/2, self.sampleStatScale(CIVar[1]), container, "ciDownArrow", 1, "red",0.75);
+					//d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(CIVar[0])).attr("x2",self.xScale2(CIVar[0])).style("stroke","red");
+					//d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(CIVar[1])).attr("x2",self.xScale2(CIVar[1])).style("stroke","red");
+					container.append("text").attr("y",self.windowHelper.graphSection.S3.axisArea.y2).attr("x",self.sampleStatScale(CIVar[1])).text(Math.round((CIVar[1])*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging");
+					container.append("text").attr("y",self.windowHelper.graphSection.S3.axisArea.y2).attr("x",self.sampleStatScale(CIVar[0])).text(Math.round((CIVar[0])*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging")
 						.transition().duration(500).each("end",function(){
-							container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(self.populationStatistic-self.CISplit)).attr("x2",self.sampleStatScale(self.populationStatistic+self.CISplit)).style("stroke","red").style("stroke-width",5);
+							container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(CIVar[0])).attr("x2",self.sampleStatScale(CIVar[1])).style("stroke","red").style("stroke-width",5);
 
 						});
 					}
