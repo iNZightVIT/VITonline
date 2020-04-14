@@ -138,48 +138,91 @@ class bootstrap_oneCat extends visBase {
 		this.CISplit = [lower_CI, upper_CI];
 	}
 	showCI(num, large){
+		// var self = this;
+		// var CIVar = this.CISplit;
+		// var svg = d3.select(".svg");
+		// if(num == "10000" || large || false){
+		// 	CIVar = this.largeCISplit;
+		// }
+		// var container = !svg.select("#CISplitContainer").empty() ? svg.select("CISplitContainer") : svg.append("svg").attr("id","CISplitContainer");
+		// 		var visibleCircles = d3.selectAll(".notInCI").filter(function(){
+		// 			return this.attributes["fill-opacity"].value == "1";
+		// 		});
+		// 		visibleCircles.style("opacity",0.2).transition().duration(500).each("end",function(d,i){
+		// 			if(i==0){
+		// 			drawArrowDown(self.windowHelper.graphSection.S3.axisArea.y2, self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.displayArea.height/2, self.sampleStatScale(CIVar[0]), container, "ciDownArrow", 1, "red",0.75);
+		// 			drawArrowDown(self.windowHelper.graphSection.S3.axisArea.y2, self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.displayArea.height/2, self.sampleStatScale(CIVar[1]), container, "ciDownArrow", 1, "red",0.75);
+		// 			//d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(self.populationStatistic-CIVar)).attr("x2",self.xScale2(self.populationStatistic-CIVar)).style("stroke","red");
+		// 			//d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(self.populationStatistic+CIVar)).attr("x2",self.xScale2(self.populationStatistic+CIVar)).style("stroke","red");
+		// 								// proportion above sample
+					
+		// 			// var ciTextLabel = Math.round((self.populationStatistic+CIVar)*100)/100;
+		// 			// if(large){
+		// 			// 	ciTextLabel = Math.round((self.populationStatistic+self.largeCISplit)*100)/100;
+						
+		// 			// }
+
+		// 			container.append("text").attr("y",self.windowHelper.graphSection.S3.axisArea.y2).attr("x",self.sampleStatScale(CIVar[1])).text(Math.round((CIVar[1])*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging");
+		// 			container.append("text").attr("y",self.windowHelper.graphSection.S3.axisArea.y2).attr("x",self.sampleStatScale(CIVar[0])).text(Math.round((CIVar[0])*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging")
+		// 				.transition().duration(500).each("end",function(){
+		// 					container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(CIVar[0])).attr("x2",self.sampleStatScale(CIVar[1])).style("stroke","red").style("stroke-width",5)
+		// 						.transition().duration(500).each("end",function(){
+		// 							var midline = container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(CIVar[0])).attr("x2",self.sampleStatScale(CIVar[1])).style("stroke","red").style("stroke-width",5);
+		// 							var topline = container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(CIVar[0])).attr("x2",self.sampleStatScale(CIVar[1])).style("stroke","red").style("stroke-width",5);
+		// 							midline.transition().duration(1000).attr("y1",self.windowHelper.graphSection.S2.displayArea.y2 - self.windowHelper.graphSection.S2.displayArea.height/8).attr("y2",self.windowHelper.graphSection.S2.displayArea.y2 - self.windowHelper.graphSection.S2.displayArea.height/8);
+		// 							topline.transition().delay(1000).duration(1000).attr("y1",self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8 + 10).attr("y2",self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8 + 10)
+		// 							.transition().duration(50).each("end",function(){
+		// 								drawArrowDown(self.windowHelper.graphSection.S1.displayArea.y2, self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8 + 10, self.sampleStatScale(CIVar[0]), container, "ciDownArrow", 1, "red",0.75);
+		// 								drawArrowDown(self.windowHelper.graphSection.S1.displayArea.y2, self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8 + 10, self.sampleStatScale(CIVar[1]), container, "ciDownArrow", 1, "red",0.75);
+
+		// 							});
+		// 						});
+		// 				});
+		// 			}
+		// 		});
 		var self = this;
 		var CIVar = this.CISplit;
 		var svg = d3.select(".svg");
-		if(num == "10000" || large || false){
-			CIVar = this.largeCISplit;
+		if(num == "10000"){
+			CIVar = this.LargeCISplit;
 		}
-		var container = !svg.select("#CISplitContainer").empty() ? svg.select("CISplitContainer") : svg.append("svg").attr("id","CISplitContainer");
-				var visibleCircles = d3.selectAll(".notInCI").filter(function(){
-					return this.attributes["fill-opacity"].value == "1";
-				});
-				visibleCircles.style("opacity",0.2).transition().duration(500).each("end",function(d,i){
-					if(i==0){
-					drawArrowDown(self.windowHelper.graphSection.S3.axisArea.y2, self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.displayArea.height/2, self.sampleStatScale(CIVar[0]), container, "ciDownArrow", 1, "red",0.75);
-					drawArrowDown(self.windowHelper.graphSection.S3.axisArea.y2, self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.displayArea.height/2, self.sampleStatScale(CIVar[1]), container, "ciDownArrow", 1, "red",0.75);
-					//d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(self.populationStatistic-CIVar)).attr("x2",self.xScale2(self.populationStatistic-CIVar)).style("stroke","red");
-					//d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(self.populationStatistic+CIVar)).attr("x2",self.xScale2(self.populationStatistic+CIVar)).style("stroke","red");
-										// proportion above sample
+		var container = svg.append("svg").attr("id","CISplitContainer");
+
+		var middle = this.windowHelper.graphSection.S1.displayArea.getMiddleHeight();
+
+        // container.append("text").attr("x", self.sampleStatScale(self.populationStatistic)).attr("y", self.windowHelper.graphSection.S3.axisArea.y2).text(Math.round(self.populationStatistic*100)/100).style("stroke","red").style("opacity",1).attr("dominant-baseline","hanging");
+        // container.append("line").attr("x1", self.sampleStatScale(self.populationStatistic)).attr("x2", self.sampleStatScale(self.populationStatistic)).attr("y1", self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.axisArea.height/2).attr("y2", self.windowHelper.graphSection.S3.axisArea.y2).style("stroke-width", 2).style("stroke", "red");
+
+        var visibleCircles = d3.selectAll(".notInCI").filter(function(){
+            return this.attributes["fill-opacity"].value == "1";
+        });
+        visibleCircles.style("opacity",0.2).transition().duration(500).each("end",function(d,i){
+            if(i==0){
+            drawArrowDown(self.windowHelper.graphSection.S3.axisArea.y2, self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.displayArea.height/2, self.sampleStatScale(CIVar[0]), container, "ciDownArrow", 1, "red",0.75);
+            drawArrowDown(self.windowHelper.graphSection.S3.axisArea.y2, self.windowHelper.graphSection.S3.displayArea.y2 - self.windowHelper.graphSection.S3.displayArea.height/2, self.sampleStatScale(CIVar[1]), container, "ciDownArrow", 1, "red",0.75);
+            //d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(self.populationStatistic-self.CISplit)).attr("x2",self.xScale2(self.populationStatistic-self.CISplit)).style("stroke","red");
+            //d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(self.populationStatistic+self.CISplit)).attr("x2",self.xScale2(self.populationStatistic+self.CISplit)).style("stroke","red");
+            container.append("text").attr("y",self.windowHelper.graphSection.S3.axisArea.y2).attr("x",self.sampleStatScale(CIVar[1])).text(Math.round((self.CISplit[1])*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging");
+            container.append("text").attr("y",self.windowHelper.graphSection.S3.axisArea.y2).attr("x",self.sampleStatScale(CIVar[0])).text(Math.round((self.CISplit[0])*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging")
+                .transition().duration(500).each("end",function(){
+                    container.append("line").attr('id', 'crossLb').attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(self.CISplit[0])).attr("x2",self.sampleStatScale(self.CISplit[1])).style("stroke","red").style("stroke-width",5);
+					container.append("line").attr('id', 'crossLm').attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(self.CISplit[0])).attr("x2",self.sampleStatScale(self.CISplit[1])).style("stroke","red").style("stroke-width",5)
+					.transition().duration(2000).attr("y1", self.windowHelper.graphSection.S2.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S2.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2);
 					
-					// var ciTextLabel = Math.round((self.populationStatistic+CIVar)*100)/100;
-					// if(large){
-					// 	ciTextLabel = Math.round((self.populationStatistic+self.largeCISplit)*100)/100;
-						
-					// }
+					container.append("line").attr('id', 'crossLt').attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(self.CISplit[0])).attr("x2",self.sampleStatScale(self.CISplit[1])).style("stroke","red").style("stroke-width",5)
+					.transition().duration(2000).attr("y1", self.windowHelper.graphSection.S2.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S2.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2)
+					.transition().duration(2000).attr("y1", self.windowHelper.graphSection.S1.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S1.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).each("end", function(){
+						drawArrowDown(self.windowHelper.graphSection.S1.axisArea.y2, self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/2, self.sampleStatScale(CIVar[0]), container, "ciDownArrow", 1, "red",0.75);
+						drawArrowDown(self.windowHelper.graphSection.S1.axisArea.y2, self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/2, self.sampleStatScale(CIVar[1]), container, "ciDownArrow", 1, "red",0.75);
+						//d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(self.populationStatistic-self.CISplit)).attr("x2",self.xScale2(self.populationStatistic-self.CISplit)).style("stroke","red");
+						//d3.select("#CISplit").append("line").attr("y1",self.windowHelper.section3.bottom - self.windowHelper.section3.height/4).attr("y2",self.windowHelper.section3.bottom + self.windowHelper.section3.height/10).attr("x1",self.xScale2(self.populationStatistic+self.CISplit)).attr("x2",self.xScale2(self.populationStatistic+self.CISplit)).style("stroke","red");
+						container.append("text").attr("y",self.windowHelper.graphSection.S1.axisArea.y2).attr("x",self.sampleStatScale(CIVar[1])).text(Math.round((self.CISplit[1])*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging");
+						container.append("text").attr("y",self.windowHelper.graphSection.S1.axisArea.y2).attr("x",self.sampleStatScale(CIVar[0])).text(Math.round((self.CISplit[0])*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging")
+					});
 
-					container.append("text").attr("y",self.windowHelper.graphSection.S3.axisArea.y2).attr("x",self.sampleStatScale(CIVar[1])).text(Math.round((CIVar[1])*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging");
-					container.append("text").attr("y",self.windowHelper.graphSection.S3.axisArea.y2).attr("x",self.sampleStatScale(CIVar[0])).text(Math.round((CIVar[0])*100)/100).style("stroke","red").style("fill", "red").style("font-size", 12).attr("dominant-baseline","hanging")
-						.transition().duration(500).each("end",function(){
-							container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(CIVar[0])).attr("x2",self.sampleStatScale(CIVar[1])).style("stroke","red").style("stroke-width",5)
-								.transition().duration(500).each("end",function(){
-									var midline = container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(CIVar[0])).attr("x2",self.sampleStatScale(CIVar[1])).style("stroke","red").style("stroke-width",5);
-									var topline = container.append("line").attr("y1",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("y2",self.windowHelper.graphSection.S3.displayArea.y1 + self.windowHelper.graphSection.S3.displayArea.height/2).attr("x1",self.sampleStatScale(CIVar[0])).attr("x2",self.sampleStatScale(CIVar[1])).style("stroke","red").style("stroke-width",5);
-									midline.transition().duration(1000).attr("y1",self.windowHelper.graphSection.S2.displayArea.y2 - self.windowHelper.graphSection.S2.displayArea.height/8).attr("y2",self.windowHelper.graphSection.S2.displayArea.y2 - self.windowHelper.graphSection.S2.displayArea.height/8);
-									topline.transition().delay(1000).duration(1000).attr("y1",self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8 + 10).attr("y2",self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8 + 10)
-									.transition().duration(50).each("end",function(){
-										drawArrowDown(self.windowHelper.graphSection.S1.displayArea.y2, self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8 + 10, self.sampleStatScale(CIVar[0]), container, "ciDownArrow", 1, "red",0.75);
-										drawArrowDown(self.windowHelper.graphSection.S1.displayArea.y2, self.windowHelper.graphSection.S1.displayArea.y2 - self.windowHelper.graphSection.S1.displayArea.height/8 + 10, self.sampleStatScale(CIVar[1]), container, "ciDownArrow", 1, "red",0.75);
-
-									});
-								});
-						});
-					}
-				});
+                });
+            }
+        });
 
 	}
 	showLargeCI() {
