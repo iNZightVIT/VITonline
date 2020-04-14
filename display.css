@@ -154,7 +154,7 @@ select {
   width: 20%;
   height:97%;
    border-right: 3px solid rgba(24, 176, 226, 0.47);
-   overflow: auto;
+   overflow: overlay;
 }
 #rightHalf{
   display: block;
@@ -175,18 +175,11 @@ select {
   
   width: 100%;
   height:100%;
-  -ms-overflow-style: none;
+  overflow: overlay;
+  /* -ms-overflow-style: none; */
 
 }
-.controls::-webkit-scrollbar {
-  display: none;
-}
-.tab::-webkit-scrollbar {
-  display: none;
-}
-#leftHalf::-webkit-scrollbar {
-  display: none;
-}
+
 circle {
   /*fill-opacity: 0.5;*/
   stroke: #556270;

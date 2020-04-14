@@ -624,6 +624,7 @@ class visBase {
 
 	fillBaseSampleSection(placeInto){
 		var self = this;
+		let container = document.getElementById('sampleSectionPop');
 		placeInto.append("text").text(this.headingContinuous).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width/4).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
 		placeInto.append("text").text(this.headingGroup).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(3/4)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
 		var popTextG = placeInto.selectAll("g").data(this.allPop).enter().append("g");
@@ -638,8 +639,8 @@ class visBase {
 	drawSampleSection(placeInto){
 		var self = this;
 		var sampleSection = placeInto.append("g").attr("id","sampleSection");
-		sampleSection.append("rect").attr("width",self.windowHelper.sampleSection.S1.width).attr("x", self.windowHelper.sampleSection.S1.x).attr("height",self.windowHelper.sampleSection.S1.height).attr("y", self.windowHelper.sampleSection.S1.y).attr("rx", "20").attr("ry","20").style("fill","#D0D0D0").style("stroke","black");
-		sampleSection.append("rect").attr("width",self.windowHelper.sampleSection.S2.width).attr("x", self.windowHelper.sampleSection.S2.x).attr("height",self.windowHelper.sampleSection.S2.height).attr("y", self.windowHelper.sampleSection.S2.y).attr("rx", "20").attr("ry","20").style("fill","#D0D0D0").style("stroke","black");
+		sampleSection.append("rect").attr('id', 'sampleSectionPop').attr("width",self.windowHelper.sampleSection.S1.width).attr("x", self.windowHelper.sampleSection.S1.x).attr("height",self.windowHelper.sampleSection.S1.height).attr("y", self.windowHelper.sampleSection.S1.y).attr("rx", "20").attr("ry","20").style("fill","#D0D0D0").style("stroke","black");
+		sampleSection.append("rect").attr('id', 'sampleSectionSample').attr("width",self.windowHelper.sampleSection.S2.width).attr("x", self.windowHelper.sampleSection.S2.x).attr("height",self.windowHelper.sampleSection.S2.height).attr("y", self.windowHelper.sampleSection.S2.y).attr("rx", "20").attr("ry","20").style("fill","#D0D0D0").style("stroke","black");
 		this.fillBaseSampleSection(sampleSection);
 	}
 
@@ -978,6 +979,10 @@ class visBase {
 
 	distFocus(){
 		let self = this;
+		// Turn off allowing the CI animation to play
+		// Need this because of scaling changes the animation
+		// doesnt know.
+		// Also would come from faded area.
 		d3.selectAll(".CIButton").attr("disabled",true);
 		let middle_stat = this.smallestStat + (this.largestStat - this.smallestStat) / 2;
 		let dist_focus_axis = document.querySelector('#dist_focus_axis');
@@ -1069,10 +1074,7 @@ class visBase {
 
 	distFocusOff(){
 		let self = this;
-		// Turn off allowing the CI animation to play
-		// Need this because of scaling changes the animation
-		// doesnt know.
-		// Also would come from faded area.
+		// Reenable CI animation for normal screen
 		d3.selectAll(".CIButton").attr("disabled",null);
 		let middle_stat = this.smallestStat + (this.largestStat - this.smallestStat) / 2;
 		let dist_focus_axis = document.querySelector('#dist_focus_axis');

@@ -135,11 +135,29 @@ class randTest_oneNum_oneCat extends visBase {
 	}
 	fillBaseSampleSection(placeInto){
 		var self = this;
+		let container = document.getElementById('sampleSectionPop');
+		let bounds = container.getBoundingClientRect();
+		let max_y = bounds.height;
 		placeInto.append("text").text(this.headingContinuous).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width/4).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
 		placeInto.append("text").text(this.headingGroup).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(3/4)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
 		var popTextG = placeInto.selectAll("g").data(this.allPop).enter().append("g");
-		popTextG.append("text").text(function(d){return d.value}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width/4).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").attr("text-anchor","middle");
-		popTextG.append("text").text(function(d){return d.group}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(3/4)).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[self.groups.indexOf(d.group)]}).attr("text-anchor","middle");
+		popTextG.append("text").text(function(d, i){
+			let y = self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)
+			return i < 58 && y + self.windowHelper.fontSize < max_y ? d.value : "...";
+			// return d.value
+		}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width/4).attr("y",function(d,i){
+			let y = self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)
+			return i < 58 && y + self.windowHelper.fontSize < max_y ? (y) : max_y - self.windowHelper.fontSize;
+		}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").attr("text-anchor","middle");
+		popTextG.append("text").text(function(d, i){
+			let y = self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)
+			return i < 58 && y + self.windowHelper.fontSize < max_y ? d.group : "...";
+		}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(3/4)).attr("y",function(d,i){
+			let y = self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)
+			return i < 58 && y + self.windowHelper.fontSize < max_y ? (y) : max_y - self.windowHelper.fontSize;
+		}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[self.groups.indexOf(d.group)]}).attr("text-anchor","middle");
+		
+		// placeInto.append("text").text("...").attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width/4).attr("y", max_y).style("font-size",self.windowHelper.fontSize).style("display","inline-block").attr("text-anchor","bottom");
 
 		placeInto.append("g").attr("id","redTContainer");
 		placeInto.append("text").text("Re-randomised").attr("x",(self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width/2)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("display","inline-block").attr("text-anchor","middle");
@@ -211,9 +229,11 @@ class randTest_oneNum_oneCat extends visBase {
 					
 					// proportion above sample
 					if(!large){
-						svg.append("text").attr("id", "tailCountText").attr("x", self.sampleStatScale(self.populationStatistic) + 5).attr("y", self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - self.windowHelper.radius*16).text(self.tailCount + " / 1000 = " + self.tailCount/1000).style("stroke","red").style("opacity",1).attr("font-size", self.windowHelper.fontSize).attr("text-anchor", "middle");
+						// svg.append("text").attr("id", "tailCountText").attr("x", self.sampleStatScale(self.populationStatistic) + 5).attr("y", self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - self.windowHelper.radius*16).text(self.tailCount + " / 1000 = " + self.tailCount/1000).style("stroke","red").style("opacity",1).attr("font-size", self.windowHelper.fontSize).attr("text-anchor", "middle");
+						svg.append("text").attr("id", "tailCountText").attr("x", self.sampleStatScale(self.populationStatistic) + 5).attr("y", self.windowHelper.graphSection.S3.displayArea.y).text(self.tailCount + " / 1000 = " + self.tailCount/1000).style("stroke","red").style("opacity",1).attr("font-size", self.windowHelper.fontSize).attr("text-anchor", "middle");
 					}else{
-						svg.append("text").attr("id", "tailCountText").attr("x", self.sampleStatScale(self.populationStatistic) + 5).attr("y", self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - self.windowHelper.radius*16).text(self.largeTailSize + " / 10000 = " + self.largeTailSize/10000).style("stroke","red").style("opacity",1).attr("font-size", self.windowHelper.fontSize).attr("text-anchor", "middle");
+						// svg.append("text").attr("id", "tailCountText").attr("x", self.sampleStatScale(self.populationStatistic) + 5).attr("y", self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - self.windowHelper.radius*16).text(self.largeTailSize + " / 10000 = " + self.largeTailSize/10000).style("stroke","red").style("opacity",1).attr("font-size", self.windowHelper.fontSize).attr("text-anchor", "middle");
+						svg.append("text").attr("id", "tailCountText").attr("x", self.sampleStatScale(self.populationStatistic) + 5).attr("y", self.windowHelper.graphSection.S3.displayArea.y).text(self.largeTailSize + " / 10000 = " + self.largeTailSize/10000).style("stroke","red").style("opacity",1).attr("font-size", self.windowHelper.fontSize).attr("text-anchor", "middle");
 
 					}
 					svg.append("line").attr("x1", self.sampleStatScale(self.populationStatistic)).attr("x2", self.sampleStatScale(self.populationStatistic)).attr("y1", self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - self.windowHelper.radius*16).attr("y2", self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height + self.windowHelper.radius).style("stroke-width", 1).style("stroke", "red");
@@ -309,6 +329,9 @@ class randTest_oneNum_oneCat extends visBase {
 		var self = this;
 		order(settings.sample);
 		var opacity = 1;
+		let container = document.getElementById('sampleSectionPop');
+		let bounds = container.getBoundingClientRect();
+		let max_y = bounds.height;
 		if(settings.repititions == 1000) opacity = 0.2;
 		var popText = d3.select("#sampleReRandomised").empty() ? d3.select("#dynamic").append("g").attr("id", "sampleReRandomised") : d3.select("#sampleReRandomised");
 		popText = popText.selectAll("g").data([]);
@@ -318,9 +341,13 @@ class randTest_oneNum_oneCat extends visBase {
 		popText = d3.select("#sampleReRandomised").selectAll("g").data(settings.sample);
 
 		var popTextG =popText.enter().append("g");
-		popTextG.append("text").text(function(d){
-			return d.group;
-		}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width/2).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[self.groups.indexOf(d.group)]}).attr("text-anchor","middle");
+		popTextG.append("text").text(function(d, i){
+			let y = self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)
+			return i < 58 && y + self.windowHelper.fontSize < max_y ? d.group : "...";
+		}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width/2).attr("y",function(d,i){
+			let y = self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)
+			return i < 58 && y + self.windowHelper.fontSize < max_y ? (y) : max_y - self.windowHelper.fontSize;
+		}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[self.groups.indexOf(d.group)]}).attr("text-anchor","middle");
 
 		this.animationController(settings, currentAnimation);
 

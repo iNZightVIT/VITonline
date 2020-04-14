@@ -60,9 +60,18 @@ class bootstrap_oneCat extends visBase {
 	}
 	fillBaseSampleSection(placeInto){
 		var self = this;
+		let container = document.getElementById('sampleSectionPop');
+		let bounds = container.getBoundingClientRect();
+		let max_y = bounds.height;
 		placeInto.append("text").text(this.headingContinuous).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(2/4)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("margin",self.windowHelper.marginSample+"px").style("display","inline-block").attr("text-anchor","middle");
 		var popTextG = placeInto.selectAll("g").data(this.allPop).enter().append("g");
-		popTextG.append("text").text(function(d){return [...self.valueCategories][d.value]}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(2/4)).attr("y",function(d,i){return i < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[d.value]}).attr("text-anchor","middle");
+		popTextG.append("text").text(function(d, i){
+			let y = self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1);
+			return i < 58 && y + self.windowHelper.fontSize < max_y ? [...self.valueCategories][d.value] : "...";
+		}).attr("x",self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(2/4)).attr("y",function(d,i){
+			let y = self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1);
+			return i < 58 && y + self.windowHelper.fontSize < max_y ? y : max_y - self.windowHelper.fontSize;
+		}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[d.value]}).attr("text-anchor","middle");
 
 		placeInto.append("g").attr("id","redTContainer");
 		placeInto.append("text").text("ReSample").attr("x",(self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width/2)).attr("y",self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize).style("font-size",self.windowHelper.fontSize).style("font-weight", 700).style("display","inline-block").attr("text-anchor","middle");
@@ -214,6 +223,9 @@ class bootstrap_oneCat extends visBase {
 	}
 	buildList(settings, currentAnimation){
 		var self = this;
+		let container = document.getElementById('sampleSectionPop');
+		let bounds = container.getBoundingClientRect();
+		let max_y = bounds.height;
 		if(!settings.restarting){
 			order(settings.sample);
 			var goSlow = (settings.repititions == 1 || settings.repititions == 5) && !settings.incDist;
@@ -226,9 +238,13 @@ class bootstrap_oneCat extends visBase {
 
 			var popTextG =popText.enter().append("g");
 			popTextG.append("text").text(
-				function(d){
-					return [...self.valueCategories][d.value];
-				}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(2/4)).attr("y",function(d,i){return i < 59 ? (self.windowHelper.sampleSection.S2.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)) : -10}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[d.value]}).attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
+				function(d, i){
+					let y = self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1);
+					return i < 58 && y + self.windowHelper.fontSize < max_y ? [...self.valueCategories][d.value] : "...";
+				}).attr("class",function(d){return "t"+d.order}).attr("x",self.windowHelper.sampleSection.S2.x + self.windowHelper.sampleSection.S2.width*(2/4)).attr("y",function(d,i){
+					let y = self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize + (self.windowHelper.fontSize+2)*(i+1)
+					return i < 58 && y + self.windowHelper.fontSize < max_y ? (y) : max_y - self.windowHelper.fontSize;
+				}).style("font-size",self.windowHelper.fontSize).style("display","inline-block").style("fill", function(d){return colorByIndex[d.value]}).attr("text-anchor","middle").style("opacity", goSlow ? 0 : 1);
 
 			if(goSlow){
 				this.buildUpSlow(settings, currentAnimation, 0, popText, Math.min(self.allPop.length, 40), self);
