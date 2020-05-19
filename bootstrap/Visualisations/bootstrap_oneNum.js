@@ -198,6 +198,8 @@ class bootstrap_oneNum extends visBase {
 				self.trackListLines(settings, currentAnimation, 0, popText, max, self);
 				return;
 			}
+			popText.selectAll('text').style('opacity', 1).style('fill', "black");
+			d3.select("#circleOverlay").selectAll("circle").attr("stroke-opacity", 1).attr("fill-opacity", 1);
 			this.animationController(settings, currentAnimation);
 			return;
 		}

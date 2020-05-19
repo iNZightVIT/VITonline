@@ -253,6 +253,8 @@ class bootstrap_oneCat extends visBase {
 		d3.selectAll("#redHighlight").remove();
 		if(upto >= max){
 			this.animationController(settings, currentAnimation);
+			popText.selectAll('text').style('opacity', 1);
+			d3.select("#circleOverlay").selectAll("circle").attr("stroke-opacity", 1).attr("fill-opacity", 1);
 			return;
 		}
 		drawArrow(self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(2/8), self.windowHelper.sampleSection.S1.x + self.windowHelper.sampleSection.S1.width*(1/8), settings.sample[upto].popId < 58 ? (self.windowHelper.sampleSection.S1.y + self.windowHelper.fontSize/2 + (self.windowHelper.fontSize+2)*(settings.sample[upto].popId+1)) : -10, popText, "redHighlight", 1, "red" );
