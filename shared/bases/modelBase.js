@@ -73,6 +73,7 @@ modelBase.prototype.loadFromPreset = function(filename, fromURL){
 	var self = this;
 		//this.controller.setUpDataVeiw(this.storedData[filename]);
 	var xhr = createCORSRequest('GET', "https://www.stat.auckland.ac.nz/~wild/VITonline/getFileTest.php"+"?fn=" +filename);
+	// var xhr = createCORSRequest('GET', "https://www.stat.auckland.ac.nz/~fergusson/VITonlineDev/getFileTest.php"+"?fn=" +filename);
 	//var xhr = createCORSRequest('GET', "http://localhost:8080/getFileTest.php"+"?fn=" +filename);	
 	if (!xhr) {
   		throw new Error('CORS not supported');
@@ -96,7 +97,8 @@ modelBase.prototype.loadFromURL = function(filename, fromURL){
 	filename = encodeURIComponent(filename);
 	// }
 		//this.controller.setUpDataVeiw(this.storedData[filename]);
-	var xhr = createCORSRequest('GET', "https://www.stat.auckland.ac.nz/~wild/VITonline/getFileFromURL.php"+"?fn=" +filename);
+	//var xhr = createCORSRequest('GET', "https://www.stat.auckland.ac.nz/~wild/VITonline/getFileFromURL.php"+"?fn=" +filename);
+	var xhr = createCORSRequest('GET', "https://www.stat.auckland.ac.nz/~fergusson/VITonlineDev/getFileFromURL.php"+"?fn=" +filename);
 	//var xhr = createCORSRequest('GET', decodeURIComponent(filename));
 	// var xhr = createCORSRequest('GET', "http://localhost:80/getFileFromURL.php"+"?fn=" +filename);	
 	if (!xhr) {
@@ -104,7 +106,7 @@ modelBase.prototype.loadFromURL = function(filename, fromURL){
 	}
 		  // Response handlers.
 	  xhr.onload = function() {
-	    var text = xhr.responseText;
+	    var text = xhr.responseText.trim();
 	    self.controller.setUpDataVeiw(text, fromURL);
 	  };
 

@@ -150,6 +150,10 @@ class visBase {
 
 		}
 
+		if ([...allValueCategories].length == 1){
+			alert("Chosen categorical variable only has one level: " + [...allValueCategories][0]);
+		}
+
 		//If there are only 2 categories for the value, call the second by its name instead of other
 		if([...allValueCategories].length == 2) {
 			this.valueCategories.delete("Other");
