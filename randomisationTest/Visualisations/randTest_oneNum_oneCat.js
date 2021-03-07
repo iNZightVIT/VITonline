@@ -202,7 +202,7 @@ class randTest_oneNum_oneCat extends visBase {
 		var self = this;
 		var tailText = d3.select("#tailCountText");
 		if(tailText[0][0] != null){
-			tailText.text(self.tailCount + " / 1000 = " + self.tailCount/1000);	
+			tailText.text(self.tailCount + " / 1000 = " + self.tailCount/self.numSamples);	
 		}else{
 			var CIVar = this.CISplit;
 			var svg = d3.select(".svg");
@@ -229,8 +229,8 @@ class randTest_oneNum_oneCat extends visBase {
 					
 					// proportion above sample
 					if(!large){
-						// svg.append("text").attr("id", "tailCountText").attr("x", self.sampleStatScale(self.populationStatistic) + 5).attr("y", self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - self.windowHelper.radius*16).text(self.tailCount + " / 1000 = " + self.tailCount/1000).style("stroke","red").style("opacity",1).attr("font-size", self.windowHelper.fontSize).attr("text-anchor", "middle");
-						svg.append("text").attr("id", "tailCountText").attr("x", self.sampleStatScale(self.populationStatistic) + 5).attr("y", self.windowHelper.graphSection.S3.displayArea.y).text(self.tailCount + " / 1000 = " + self.tailCount/1000).style("stroke","red").style("opacity",1).attr("font-size", self.windowHelper.fontSize).attr("text-anchor", "middle");
+						// svg.append("text").attr("id", "tailCountText").attr("x", self.sampleStatScale(self.populationStatistic) + 5).attr("y", self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - self.windowHelper.radius*16).text(self.tailCount + " / 1000 = " + self.tailCount/self.numSamples).style("stroke","red").style("opacity",1).attr("font-size", self.windowHelper.fontSize).attr("text-anchor", "middle");
+						svg.append("text").attr("id", "tailCountText").attr("x", self.sampleStatScale(self.populationStatistic) + 5).attr("y", self.windowHelper.graphSection.S3.displayArea.y).text(self.tailCount + " / 1000 = " + self.tailCount/self.numSamples).style("stroke","red").style("opacity",1).attr("font-size", self.windowHelper.fontSize).attr("text-anchor", "middle");
 					}else{
 						// svg.append("text").attr("id", "tailCountText").attr("x", self.sampleStatScale(self.populationStatistic) + 5).attr("y", self.windowHelper.graphSection.S3.displayArea.y + self.windowHelper.graphSection.S3.displayArea.height - self.windowHelper.radius*16).text(self.largeTailSize + " / 10000 = " + self.largeTailSize/10000).style("stroke","red").style("opacity",1).attr("font-size", self.windowHelper.fontSize).attr("text-anchor", "middle");
 						svg.append("text").attr("id", "tailCountText").attr("x", self.sampleStatScale(self.populationStatistic) + 5).attr("y", self.windowHelper.graphSection.S3.displayArea.y).text(self.largeTailSize + " / 10000 = " + self.largeTailSize/10000).style("stroke","red").style("opacity",1).attr("font-size", self.windowHelper.fontSize).attr("text-anchor", "middle");

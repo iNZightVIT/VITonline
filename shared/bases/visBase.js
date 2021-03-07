@@ -26,7 +26,7 @@ class visBase {
 		this.sampleStatType = 'diff';
 
 		// max number of samples to take
-		this.numSamples = 1100;
+		this.numSamples = 1000;
 
 		// include the boxes for samples
 		this.includeSampleSection = true;
@@ -922,7 +922,7 @@ class visBase {
 	resetData(){
 
 		// max number of samples to take
-		this.numSamples = 1100;
+		this.numSamples = 1000;
 
 
 		this.animationIndex = 0;
