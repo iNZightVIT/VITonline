@@ -115,7 +115,8 @@ viewBase.prototype.loadMain = function(dataHeadings){
 		tab2.append("div").attr("class","tab2Divider").attr("id","tab2Top");
 		tab2.append("div").attr("class","tab2Divider").attr("id","tab2Mid");
 		tab2.append("div").attr("class","tab2Divider").attr("id","tab2Bot");
-		var backToMain = tab1.append("a").attr("name", "backToMain").attr("class","bluebutton").attr("value","mainButton").attr("id","mainButton").attr("href","../index.html").text("< Back To Main Menu");
+		// var backToMain = tab1.append("a").attr("name", "backToMain").attr("class","bluebutton").attr("value","mainButton").attr("id","mainButton").attr("href","../index.php").text("< Back To Main Menu");
+		var backToMain = tab1.append("input").attr("name", "backToMain").attr("class","bluebutton").attr("value","< Back To Main Menu").attr("id","mainButton").text("< Back To Main Menu");
 
 		var importFileB = tab1.append("input").attr("name", "importfiles").attr("type", "file").attr("value","import files").attr("id","importButton");
 		var label = tab1.append("label").attr("for", "importButton").text("Choose a Local file").attr("class","bluebutton");
@@ -130,6 +131,9 @@ viewBase.prototype.loadMain = function(dataHeadings){
 		var presetSelect = tab1.append("div").attr("id","presetSelect");
 
 		var usePreset = tab1.append("input").attr("class","bluebutton").attr("name", "dataPreset").attr("type", "button").attr("value","Use test data").attr("id","dataPreset").attr("onClick","mainControl.loadTestData()").text("Use test data");
+
+		var useJSON = tab1.append("input").attr("class","bluebutton").attr("name", "use_json").attr("type", "button").attr("value","Use JSON").attr("id","dataPreset").attr("onClick","mainControl.loadJSONData()").text("Use JSON");
+
 		var container = tab1.append("div").attr("id","inputContainer").attr("class","selectContainer");
 		var varSelector = tab1.append("div").attr("id","varSelector").attr("class","selectContainer");
 		var focusContainer = tab1.append("div").attr("id","focusContainer").attr("class","selectContainer");
@@ -163,6 +167,9 @@ viewBase.prototype.loadMain = function(dataHeadings){
 		// urlButton.onchange = function(e){
 		// 	controller.loadFromURL(document.getElementById("URLInput").value);
 		// }
+		$("#mainButton").click(function(){
+			postKeepingJSON("../index.php");
+		 })
 		$("#importURL").click(function(){
 		 	self.controller.loadFromURL($("#URLInput").val());
 		 })
@@ -396,3 +403,38 @@ viewBase.prototype.distFocusOff = function(){
 		d3.select("#distFocus").attr("value", "Distribution Focus");
 	}
 
+
+function getJSONPostStringFromHTML(){
+	let json_script = document.getElementById('json_post_data');
+	let json_data = json_script.textContent;
+	return json_data
+}
+function getJSONURLStringFromHTML(){
+	let json_script = document.getElementById('json_url_data');
+	let json_data = json_script.textContent;
+	return json_data
+}
+
+function getJSONStringFromHTML(){
+	// Check post data
+	let json_data = getJSONPostStringFromHTML();
+
+	// If no post data, try checking if URL data was set
+	if (json_data.length == 0){
+		json_script = getJSONURLStringFromHTML()
+	}
+	return json_data;
+}
+
+
+function getJSONPostFromHTML(){
+	let jsonStr = getJSONPostStringFromHTML();
+	let decoded = decodeHtml(jsonStr);
+	return decoded ? JSON.parse(decoded) : null;
+}
+
+function getJSONURLFromHTML(){
+	let jsonStr = getJSONURLStringFromHTML();
+	let decoded = decodeHtml(jsonStr);
+	return decoded ? JSON.parse(decoded) : null;
+}

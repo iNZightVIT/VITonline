@@ -1,3 +1,7 @@
+<?php
+$JSON_URL = $_GET['jsonb64'];
+$JSON_POST = $_POST['p_data'];
+?>
 <!doctype html>
 <html>
 	<head>
@@ -17,15 +21,17 @@
 		<script src="../shared/bases/viewBase.js"></script>
 		<script src="MVC_Implementations/view.js"></script>
 
-		<script src="Visualisations/D3-Test.js"></script>
-		<script src="Visualisations/sv_oneCat.js"></script>
-		<script src="Visualisations/sv_oneNum.js"></script>
-		<script src="Visualisations/sv_oneNumoneCat.js"></script>
-		<script src="Visualisations/twoMeans.js"></script>
+		<script src="Visualisations/bootstrap_oneNum_oneCat.js"></script>
+		<script src="Visualisations/bootstrap_oneNum.js"></script>
+		<script src="Visualisations/bootstrap_oneCat.js"></script>
+		<script src="Visualisations/bootstrap_twoCat.js"></script>
+		<script src="Visualisations/oneMean.js"></script>
 		<script src="Visualisations/oneProportion.js"></script>
 		<script src="Visualisations/twoProportion.js"></script>
-		<script src="Visualisations/samp_twoCat.js"></script>
-		<script src="Visualisations/slope.js"></script>	
+		<script src="Visualisations/slope.js"></script>
+
+        <script id="json_url_data" type="application/json"><?php echo htmlspecialchars($JSON_URL);?></script>
+		<script id="json_post_data" type="application/json"><?php echo htmlspecialchars($JSON_POST);?></script>
 	</head>
 	<body>
 	<div id="banner"></div>

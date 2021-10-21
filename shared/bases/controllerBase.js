@@ -3,10 +3,10 @@ var URLSearchParams=URLSearchParams||function(){"use strict";function e(e){var n
 var controllerBase = function(){
 	this.view = new view(this);
 	this.model = new model(this);
+	this.originalURLComponents = this.parseOriginalURLComponents(window.location.search);
 	this.model.loadData();
 	this.view.loadMain(this.model.dataHeadings);
 	this.parseURL(window.location.search);
-
 	this.paused = false;
 	this.going = false;
 	this.fadeOn = false;
@@ -14,6 +14,23 @@ var controllerBase = function(){
 
 	this.variables_selected = new Set();
 }
+
+controllerBase.prototype.parseOriginalURLComponents = function(originalURL){
+	let urlParams = new URLSearchParams(window.location.search);
+	originalURLComponents = {};
+	originalURLComponents['file'] = urlParams.get('file');
+	originalURLComponents['single'] = urlParams.get('single');
+	originalURLComponents['output'] = urlParams.get('output');
+	originalURLComponents['jsonb64'] = urlParams.get('jsonb64');
+	return originalURLComponents;
+}
+
+controllerBase.prototype.loadNewFile = function(fileType, updateHistory){
+	let newURL = deleteFromUrl(['focus', 'var'], updateHistory);
+	newURL = updateUrl('file', fileType, updateHistory);
+	this.fileURL = newURL;
+}
+
 controllerBase.prototype.getPresets = function(){
 		this.model.getPresets(this.view.setupPresets);
 	}
@@ -22,20 +39,57 @@ controllerBase.prototype.loadFromPreset = function(filename, fromURL){
 		filename = filename.split(':')[1];
 	}
 	this.model.loadFromPreset(filename, fromURL);
-	var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?file=preset:' + filename;
-	this.fileURL = newurl;
-	if(!fromURL){
-		window.history.pushState({path:newurl},'', newurl);
-	}
+	this.loadNewFile('preset:'+filename, !fromURL);
+	// let newURL = updateUrl('file', 'preset:'+filename, !fromURL);
+	// this.fileURL = newURL;
+
+	// var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?file=preset:' + filename;
+	// this.fileURL = newurl;
+	// if(!fromURL){
+	// 	window.history.pushState({path:newurl},'', newurl);
+	// }
 }
 controllerBase.prototype.loadFromURL = function(url, fromURL) {
 	this.model.loadFromURL(url, fromURL);
-	var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?file=' + url;
-	this.fileURL = newurl;
-	if(!fromURL){
-		window.history.pushState({path:newurl},'', newurl);
-	}
+	this.loadNewFile(url, !fromURL);
+	// let newURL = updateUrl('file', 'preset:'+filename, !fromURL);
+	// this.fileURL = newURL;
+	// var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?file=' + url;
+	// this.fileURL = newurl;
+	// if(!fromURL){
+	// 	window.history.pushState({path:newurl},'', newurl);
+	// }
 }
+
+controllerBase.prototype.loadFromText = function(text){
+	this.model.loadFromText(text);
+}
+controllerBase.prototype.loadTestData = function(fromURL){
+	this.view.destroyFocus();
+	this.view.destroyVSelect();
+	this.model.loadPresetData(fromURL);
+	this.loadNewFile('testdata', !fromURL);
+	// var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?file=testdata';
+	// this.fileURL = newurl;
+	// if(!fromURL){
+	// 	window.history.pushState({path:newurl},'', newurl);
+	// }
+}
+
+controllerBase.prototype.loadJSONData = function(fromURL){
+	this.view.destroyFocus();
+	this.view.destroyVSelect();
+	let jsonFromURL = getURLParameter(window.location.href, 'jsonb64');
+	let jsonFromHTML = getJSONStringFromHTML();
+	this.model.loadJSONData(jsonFromURL, jsonFromHTML, fromURL);
+	this.loadNewFile('JSON', !fromURL);
+	// var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?file=JSON';
+	// this.fileURL = newurl;
+	// if(!fromURL){
+	// 	window.history.pushState({path:newurl},'', newurl);
+	// }
+}
+
 function isURL(str) {
   var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
   '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
@@ -52,7 +106,10 @@ controllerBase.prototype.parseURL = function(url){
 	if(file){
 		if(file == "testdata"){
 			this.loadTestData(true);
-		}else if(isURL(file)){
+		}else if(file == "JSON"){
+			this.loadJSONData(true);
+		}
+		else if(isURL(file)){
 			var single = urlParams.get("single");
 			var outputType = urlParams.get("output");
 			if(single || outputType){
@@ -142,9 +199,7 @@ controllerBase.prototype.startVisFull = function(sampleSize){
 controllerBase.prototype.notImplemented = function(){
 
 	}
-controllerBase.prototype.loadFromText = function(text){
-		this.model.loadFromText(text);
-	}
+
 controllerBase.prototype.startVisPreveiw = function(){
 		d3.select("#Calculate").attr("disabled", null);
 		d3.select("#tab2Mid").selectAll("*").remove();
@@ -161,16 +216,6 @@ controllerBase.prototype.impButPressed = function(e){
 		this.view.destroyFocus();
 		this.view.destroyVSelect();
 		this.model.getFile(e);
-	}
-controllerBase.prototype.loadTestData = function(fromURL){
-		this.view.destroyFocus();
-		this.view.destroyVSelect();
-		this.model.loadPresetData(fromURL);
-		var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?file=testdata';
-		this.fileURL = newurl;
-		if(!fromURL){
-			window.history.pushState({path:newurl},'', newurl);
-		}
 	}
 
 
@@ -288,11 +333,11 @@ controllerBase.prototype.startVisPressed = function(){
 		d3.select("#Calculate").attr("disabled", true);
 		d3.select("#Pause").attr("disabled", null);
 	}
-controllerBase.prototype.setUpDataVeiw = function(csv, fromURL){
-		var self = this;
-		this.model.setUpDataVeiw(csv, function(h){self.view.setUpDataVeiw(h); if(fromURL){self.parseRestOfURL()}});
-		
-	}
+controllerBase.prototype.setUpDataVeiw = function(data, dataType, fromURL){
+	var self = this;
+	this.model.setUpDataVeiw(data, dataType, function(h){self.view.setUpDataVeiw(h); if(fromURL){self.parseRestOfURL()}});
+}
+
 controllerBase.prototype.setUpStatSelection = function(category){
 		this.view.setUpStatSelection(category);
 	}
@@ -411,3 +456,6 @@ controllerBase.prototype.distFocusToggle = function(){
 			this.distFocus = false;
 		}
 	}
+
+
+

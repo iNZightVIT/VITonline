@@ -490,21 +490,21 @@ function order(array) {
 }
 
 function pickRand(numToPick, numFrom){
-var indexs = [];
-while(indexs.length < numToPick){
-	var randomNumber = Math.ceil(Math.random()*numFrom) - 1;
-	var found = false;
-	for(var i =0;i<indexs.length;i++){
-		if(indexs[i] == randomNumber){
-			found = true;
-			break;
+	var indexs = [];
+	while(indexs.length < Math.min(numFrom, numToPick)){
+		var randomNumber = Math.ceil(Math.random()*numFrom) - 1;
+		var found = false;
+		for(var i =0;i<indexs.length;i++){
+			if(indexs[i] == randomNumber){
+				found = true;
+				break;
+			}
+		}
+		if(!found){
+			indexs.push(randomNumber);
 		}
 	}
-	if(!found){
-		indexs.push(randomNumber);
-	}
-}
-return indexs;
+	return indexs;
 }
 
 function findMean(numbers){
@@ -547,6 +547,9 @@ function leastSquares(xSeries, ySeries){
 var colorByIndex = ['#377eb8','#e41a1c','#4daf4a','#984ea3','#ff7f00','#AAAA33','#a65628','magenta']
 //alert(leastSquares([60,61,62,63,65],[3.1,3.6,3.8,4,4.1]));
 function onlyUnique(value, index, self) { 
+	if (value == null){
+		return false;
+	}
 	if(["na", "n/a", "n\\a"].includes(value.toLowerCase())){
 		return false;
 	}
@@ -580,3 +583,114 @@ function getMiddle(a,b){
 	return (a + (b-a)/2);
 }
 
+function postWithJSON(url, json){
+    let form = document.createElement("form");
+    form.setAttribute("method", "post");
+    form.setAttribute("action", url);
+
+	if (json != null){
+		let data = document.createElement("input");
+		data.setAttribute("type", "text");
+		data.setAttribute("name", "p_data");
+		data.setAttribute("value", JSON.stringify(json));
+		form.appendChild(data);
+	}
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function decodeHtml(html) {
+	var txt = document.createElement("textarea");
+	txt.innerHTML = html;
+	return txt.value;
+}
+
+function encodeHtml(str){
+	let p = document.createElement("p");
+	p.textContent = JSON.stringify(str);
+	let converted = p.innerHTML;
+	return converted
+}
+
+// From stack overflow :)
+function updateURLParameter(url, param, paramVal){
+    var newAdditionalURL = "";
+    var tempArray = url.split("?");
+    var baseURL = tempArray[0];
+    var additionalURL = tempArray[1];
+    var temp = "";
+    if (additionalURL) {
+        tempArray = additionalURL.split("&");
+        for (var i=0; i<tempArray.length; i++){
+            if(tempArray[i].split('=')[0] != param){
+                newAdditionalURL += temp + tempArray[i];
+                temp = "&";
+            }
+        }
+    }
+
+    var rows_txt = temp + "" + param + "=" + paramVal;
+    return baseURL + "?" + newAdditionalURL + rows_txt;
+}
+
+function deleteURLParameter(url, params){
+    var newAdditionalURL = "";
+    var tempArray = url.split("?");
+    var baseURL = tempArray[0];
+    var additionalURL = tempArray[1];
+    var temp = "";
+    if (additionalURL) {
+        tempArray = additionalURL.split("&");
+        for (var i=0; i<tempArray.length; i++){
+            if($.inArray(tempArray[i].split('=')[0], params) == -1){
+                newAdditionalURL += temp + tempArray[i];
+                temp = "&";
+            }
+        }
+    }
+    return baseURL + "?" + newAdditionalURL;
+}
+
+
+function getURLParameter(url, param){
+    var paramValue = null;
+    var tempArray = url.split("?");
+    var baseURL = tempArray[0];
+    var additionalURL = tempArray[1];
+    if (additionalURL) {
+        tempArray = additionalURL.split("&");
+        for (var i=0; i<tempArray.length; i++){
+            if(tempArray[i].split('=')[0] == param){
+                paramValue = decodeURIComponent(tempArray[i].split('=')[1]);
+            }
+        }
+    }
+
+    return paramValue;
+}
+
+function updateUrl(url_param, value, updateHistory){
+    let newURL = updateURLParameter(window.location.href, url_param, value);
+	if (updateHistory){
+		window.history.pushState({path:newURL},'', newURL);
+	}
+	return newURL
+}
+
+function deleteFromUrl(params, updateHistory){
+    var newURL = deleteURLParameter(window.location.href, params);
+	if (updateHistory){
+		window.history.pushState({path:newURL},'', newURL);
+	}
+	return newURL
+}
+
+function postKeepingJSON(url){
+	let jsonPost = getJSONPostFromHTML();
+    let jsonURL = getJSONURLFromHTML();
+    if (jsonURL){
+        url = updateURLParameter(url, 'jsonb64', JSON.stringify(jsonURL));
+    }
+    postWithJSON(url, jsonPost)
+}

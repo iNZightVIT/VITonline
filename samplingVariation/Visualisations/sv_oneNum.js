@@ -23,7 +23,7 @@ class sv_oneNum extends visBase {
 
 	getSampleSize(){
 		this.sampleSize = d3.select("#sampsize").property("value");
-		return this.sampleSize;
+		return Math.min(this.sampleSize, this.allPop.length);
 	}
 	makeSample(populations, numSamples, sampleSize, statistic, saveSample){
 		this.samples = [];

@@ -27,7 +27,7 @@ class samp_twoCat extends visBase {
 
 	getSampleSize(sampleSize){
         this.sampleSize = parseInt(sampleSize ? sampleSize : this.sampleSize);
-		return parseInt(this.sampleSize);
+		return Math.min(this.sampleSize, this.allPop.length);
 	}
 	setSampleStatistic(diff, categoryStatistics){
 		if(this.groups.length <= 2){

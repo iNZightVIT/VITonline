@@ -81,7 +81,7 @@ modelBase.prototype.loadFromPreset = function(filename, fromURL){
 		  // Response handlers.
 	  xhr.onload = function() {
 	    var text = xhr.responseText;
-	    self.controller.setUpDataVeiw(text, fromURL);
+	    self.controller.setUpDataVeiw(text, 'csv', fromURL);
 	  };
 
 	  xhr.onerror = function() {
@@ -107,7 +107,7 @@ modelBase.prototype.loadFromURL = function(filename, fromURL){
 		  // Response handlers.
 	  xhr.onload = function() {
 	    var text = xhr.responseText.trim();
-	    self.controller.setUpDataVeiw(text, fromURL);
+	    self.controller.setUpDataVeiw(text, 'csv', fromURL);
 	  };
 
 	  xhr.onerror = function() {
@@ -160,12 +160,12 @@ modelBase.prototype.getFile = function(inputFile){
 		this.dataSplit = {};
 		reader.onload = function(e){
 			var csv = e.target.result;
-			self.controller.setUpDataVeiw(csv);
+			self.controller.setUpDataVeiw(csv, 'csv');
 		}
 
 	}
 modelBase.prototype.loadFromText = function(text){
-		this.controller.setUpDataVeiw(text);
+		this.controller.setUpDataVeiw(text, 'csv');
 	}
 // modelBase.prototype.loadFromURL = function(url){
 // 		var file;
@@ -178,34 +178,69 @@ modelBase.prototype.loadFromText = function(text){
 // 		});
 // 	}
 
-modelBase.prototype.setUpDataVeiw = function(csv, callback){
-		this.dataSplit = [];
-		var self = this;
-		var parsed = d3.csv.parse(csv);
+modelBase.prototype.setUpDataVeiw = function(data, dataType, callback){
+	var self = this;
+	this.dataSplit = [];
+	let parsed = undefined;
+	if (dataType == 'csv'){
+		parsed = d3.csv.parse(data);
 		if(parsed.length == 0){
 			alert("Not valid CSV data");
 			return;
 		}
-		this.inputData = parsed;
-		this.dataHeadings = [];
-		Object.keys(parsed[0]).forEach(function(d){self.dataHeadings.push([d,'n']); self.dataSplit[d] = []});
-		
-		this.inputData.forEach(function(row){
-			self.dataHeadings.forEach(function(heading){
-				self.dataSplit[heading[0]].push(row[heading[0]]);
-				if(isNaN(row[heading[0]])){
-					if(row[heading[0]] != "NA" && row[heading[0]] != "" && row[heading[0]] != " " && row[heading[0]] != "N\\A"){
-						heading[1] = 'c';
-					}
+	}else if (dataType == 'json'){
+		validJSON = validateJSON(data);
+		if (!validateJSON){
+			alert("Not valid JSON data");
+			return;
+		}
+		parsed = data;
+	}
+	this.inputData = parsed;
+	this.dataHeadings = [];
+	Object.keys(parsed[0]).forEach(function(d){self.dataHeadings.push([d,'n']); self.dataSplit[d] = []});
+	
+	this.inputData.forEach(function(row){
+		self.dataHeadings.forEach(function(heading){
+			self.dataSplit[heading[0]].push(row[heading[0]]);
+			if(isNaN(row[heading[0]])){
+				if(row[heading[0]] != "NA" && row[heading[0]] != "" && row[heading[0]] != " " && row[heading[0]] != "N\\A"){
+					heading[1] = 'c';
 				}
-			})
+			}
 		})
-		callback(this.dataHeadings);
-	}
+	})
+	callback(this.dataHeadings);
+}
 modelBase.prototype.loadPresetData = function(fromURL){
-		this.fileName = "test data";
-		this.controller.setUpDataVeiw(this.testingData, fromURL);
+	this.fileName = "test data";
+	this.controller.setUpDataVeiw(this.testingData, 'csv', fromURL);
+}
+
+modelBase.prototype.loadJSONData = function(jsonFromURL, jsonFromHTML, fromURL){
+	this.fileName = "JSON";
+	let json_data = this.parseCurrentJSONData(jsonFromURL, jsonFromHTML);
+	if (json_data == null){
+		return;
 	}
+	this.controller.setUpDataVeiw(json_data, 'json', fromURL);
+}
+
+modelBase.prototype.parseCurrentJSONData = function(jsonFromURL, jsonFromHTML){
+	let urlParsed = decodeHtml(jsonFromURL);
+	let htmlParsed = decodeHtml(jsonFromHTML);
+
+	if (urlParsed.length > 0) {
+		return JSON.parse(urlParsed);
+	}else if (htmlParsed.length > 0){
+		return JSON.parse(htmlParsed);
+	}else{
+		alert("Not valid JSON data");
+		return null;
+	}
+}
+
+
 modelBase.prototype.handleFocusSelector = function(num, cat, focusCat){
 	var category_to_focus = focusCat != null ? focusCat : 0;
 	var unique = this.dataSplit[cat[category_to_focus]].filter(onlyUnique);
@@ -266,6 +301,12 @@ modelBase.prototype.changeWS = function(ws){
 }
 modelBase.prototype.filterMissingValues = function(numeric_vars, categorical_vars){
 	test_val = function(v){
+		if (v == null){
+			return false
+		}
+		if (typeof v == "number"){
+			v = v.toString();
+		}
 		v = v.toLowerCase().trim();
 		filled = true;
 		filled &= v != undefined
@@ -324,3 +365,9 @@ modelBase.prototype.switchVar = function(changeTo){
 		}
 
 	}
+
+
+function validateJSON(data){
+	return true
+}
+
