@@ -1,6 +1,6 @@
 <?php
-$JSON_URL = $_GET['jsonb64'];
-$JSON_POST = $_POST['p_data'];
+$JSON_URL = $_GET['jsonb64'] ?? '';
+$JSON_POST = $_POST['p_data'] ?? '';
 ?>
 <!doctype html>
 <html>

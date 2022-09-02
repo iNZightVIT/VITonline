@@ -1,6 +1,6 @@
 <?php
-$JSON_URL = $_GET['jsonb64'];
-$JSON_POST = $_POST['p_data'];
+$JSON_URL = $_GET['jsonb64'] ?? '';
+$JSON_POST = $_POST['p_data'] ?? '';
 ?>
 <!doctype html>
 <html>
@@ -29,7 +29,7 @@ $JSON_POST = $_POST['p_data'];
 		<script src="Visualisations/oneProportion.js"></script>
 		<script src="Visualisations/twoProportion.js"></script>
 		<script src="Visualisations/samp_twoCat.js"></script>
-		<script src="Visualisations/slope.js"></script>	
+		<script src="Visualisations/slope.js"></script>
 
 		<script id="json_url_data" type="application/json"><?php echo htmlspecialchars($JSON_URL);?></script>
 		<script id="json_post_data" type="application/json"><?php echo htmlspecialchars($JSON_POST);?></script>

@@ -1,13 +1,13 @@
 <?php
-$JSON_URL = $_GET['jsonb64'];
-$JSON_POST = $_POST['p_data'];
+$JSON_URL = $_GET['jsonb64'] ?? '';
+$JSON_POST = $_POST['p_data'] ?? '';
 ?>
 <!doctype html>
 <html>
 	<head>
 		<link rel = "stylesheet" href="indexCSS.css">
 		<link rel = "stylesheet" href="display.css">
-		<script src="index.js"></script>	
+		<script src="index.js"></script>
 		<script src="shared/bases/modelBase.js"></script>
 		<script src="shared/bases/viewBase.js"></script>
 		<script src="shared/helperFunctions.js"></script>
