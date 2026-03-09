@@ -1,3 +1,3 @@
-FROM php:7.4-apache
+FROM trafex/php-nginx:latest
 
 COPY . /var/www/html
